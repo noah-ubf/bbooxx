@@ -1,0 +1,69 @@
+{
+  "name": "BBooxx",
+  "version": "0.1.0",
+  "author": "Oleksandr Zaikin aka Noah<nuh.ubf@gmail.com>",
+  "description": "Cross-platform Bible reading and studying",
+  "private": true,
+  "devDependencies": {
+    "electron": "^1.7.9",
+    "electron-builder": "^13.6.0",
+    "foreman": "^2.0.0",
+    "react-scripts": "0.8.5"
+  },
+  "dependencies": {
+    "classnames": "latest",
+    "file-loader": "^2.0.0",
+    "iconv-lite": "latest",
+    "lodash": "latest",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1",
+    "react-intl": "2.3.0",
+    "react-redux": "latest",
+    "redux": "latest",
+    "redux-thunk": "latest"
+  },
+  "homepage": "./",
+  "main": "./src/electron-starter.js",
+  "scripts": {
+    "start": "nf start -p 3000",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "dev": "nf start -p 3000",
+    "electron-start": "node src/electron-wait-react",
+    "react-start": "react-scripts start",
+    "pack": "build --dir",
+    "dist": "npm run build && build",
+    "postinstall": "install-app-deps"
+  },
+  "build": {
+    "appId": "com.electron.Bbooxx",
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "iconUrl": "https://cdn2.iconfinder.com/data/icons/designer-skills/128/react-256.png"
+    },
+    "directories": {
+      "buildResources": "public"
+    }
+  }
+}

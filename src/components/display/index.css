@@ -1,0 +1,72 @@
+.bx-layout {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.bx-section {
+  border: solid 1px #7f7f7f;
+  border-radius: 5px;
+  overflow-y: auto;
+  flex-grow: 50;
+}
+
+.bx-fixed-size {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.bx-list-element {
+  background-color: #eeeeee;
+  cursor: pointer;
+  margin: 1px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.bx-list-element:hover {
+  background-color: #cccccc;
+}
+
+.selected {
+  background: #ccccee;
+}
+
+.bx-chapter-link {
+  width: 30px;
+  height: 30px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  justify-content: center;
+}
+
+.bx-vsplitter {
+  background: #ccccf7;
+  width: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.bx-vsplitter .bx-splitter-icon {
+  font-size: 8px;
+  color: #7f7ff7;
+  padding: 3px;
+  text-align: center;
+}
+
+.bx-search-section {
+  flex-grow: 50;
+}
+
+.bx-searchlist {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  max-width: 400px;
+}

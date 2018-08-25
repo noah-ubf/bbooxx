@@ -1,0 +1,29 @@
+.bx-verselist {
+  flex-grow: 100;
+  margin: 10px;
+}
+
+.bx-verse {
+  margin: 1px;
+  background: #f2f2ff;
+  padding: 5px;
+}
+
+.bx-verse:hover {
+  margin: 1px;
+  background: #f5f5ff;
+  padding: 5px;
+}
+
+.bx-verse-header {
+  font-weight: bold;
+  font-size: 90%;
+}
+
+.bx-verse img {
+  max-width: 100%;
+}
+
+.bx-verse.selected, .bx-verse.selected:hover {
+  background: #fffff2;
+}

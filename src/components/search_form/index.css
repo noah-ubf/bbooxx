@@ -1,0 +1,99 @@
+.bx-search-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  flex-shrink: 0;
+  margin: 10px 10px 20px;
+  position: relative;
+  min-width: 300px;
+}
+
+.bx-search-form-input-block {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  flex-grow: 0;
+  justify-content: stretch;
+  position: relative;
+}
+
+.bx-search-form-input {
+  font-size: 120%;
+  height: 36px;
+  flex-grow: 100;
+  flex-shrink: 100;
+  padding-right: 40px;
+}
+
+.bx-search-form-history-button {
+  border: solid 1px #7f7f7f;
+  font-size: 120%;
+  height: 40px;
+  margin-left: 5px;
+  width: 40px;
+}
+
+.bx-search-form-history-button:hover {
+  background: #cccccc;
+}
+
+.bx-search-form-history-block {
+  position: relative;
+}
+
+.bx-search-form-history {
+  background: #ffffff;
+  border: solid 1px #7f7f7f;
+  position: absolute;
+  width: 100%;
+}
+
+.bx-search-form-history-item {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.bx-search-form-history-item:hover {
+  background: #cccccc;
+}
+
+.bx-search-form-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.bx-search-form-options label {
+  padding: 5px;
+}
+
+.bx-search-form-submit {
+  background: #f5f5ff;
+  border: solid 1px #7f7f7f;
+  border-radius: 5px;
+  font-size: 120%;
+  font-stretch: 50%;
+  height: 35px;
+  position: absolute;
+  right: 50px;
+  white-space: nowrap;
+  width: 35px;
+}
+.bx-search-form-submit:hover {
+  background: #cccccc;
+}
+
+.bx-search-form-blocker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}

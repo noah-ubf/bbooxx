@@ -1,0 +1,42 @@
+.bx-modulelist {
+  margin: 10px;
+  width: 440px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.bx-booklist {
+  width: 420px;
+  margin-left: 20px;
+}
+
+.bx-module-remove {
+  display: none;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  border-radius: 10px;
+  background: #f5f5ff;
+  z-index: 2;
+}
+
+.bx-module-link {
+  display: block;
+  width: auto;
+  margin-right: 40px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.bx-list-element:hover .bx-module-remove {
+  display: flex;
+  right: 5px;
+}
+
+.bx-module-remove:hover {
+  background: #f0f0ff;
+}
