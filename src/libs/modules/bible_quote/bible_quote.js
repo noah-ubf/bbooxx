@@ -50,7 +50,8 @@ export default class BibleQuoteModule {
   }
 
   getBookByShortName(name) {
-    return _.find(this.books, b => (b.getShortName() === name));
+    const res = _.find(this.books, b => (b.getShortName() === name));
+    return res;
   }
 
   search(searchText, options, portion, done, stopped) {

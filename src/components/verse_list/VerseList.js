@@ -6,26 +6,14 @@ import VerseView from './VerseView';
 
 class VerseList extends Component {
   state = {
-    descriptor: null,
-    verses: [],
     selected: [],
-    removed: [],
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log('componentDidUpdate: ', prevProps, prevState, snapshot)
-    if (prevProps.descriptor !== this.props.descriptor) {
-      this.setState({
-        verses: [...this.props.verses],
-        selected: [],
-        removed: [],
-      });
-    }
     if (prevProps.verses !== this.props.verses) {
-      const verses = _.filter(this.props.verses, v => !this.isRemoved(v));
       this.setState({
-        verses,
-        selected: _.filter(verses, v => !!_.find(this.state.selected, v)),
+        selected: _.filter(this.props.verses, v => (this.state.selected.indexOf(v) !== -1)),
       });
     }
   }
@@ -42,7 +30,7 @@ class VerseList extends Component {
   }
 
   renderTools() {
-    if (!this.props.showToolbar) return null;
+    if (!this.props.toolbar) return null;
     return (
       <div className="bx-verse-list-toolbar">
         { this.renderToolbarButtons() }
@@ -52,21 +40,29 @@ class VerseList extends Component {
 
   renderToolbarButtons() {
     return [
-      (<button key="select" onClick={() => this.selectAll()}>__Select all</button>),
-      (<button key="deselect" onClick={() => this.deselectAll()}>__Deselect all</button>),
-      (<button key="invert" onClick={() => this.invertSelection()}>__Invert selection</button>),
-      (<button key="remove" onClick={() => this.removeSelected()}>__Remove selected</button>),
-      (<button key="copy" onClick={() => this.props.copyVersesAction([...this.state.selected])}>__Copy</button>),
-      (<button key="paste" onClick={() => this.props.pasteVersesAction(this)}>__Paste</button>),
+      (_.get(this.props.toolbar, 'select')
+        ? <button key="select" onClick={() => this.selectAll()}>__Select all</button> : null
+      ),
+      (_.get(this.props.toolbar, 'deselect')
+        ? <button key="deselect" onClick={() => this.deselectAll()}>__Deselect all</button> : null
+      ),
+      (_.get(this.props.toolbar, 'invert')
+        ? <button key="invert" onClick={() => this.invertSelection()}>__Invert selection</button> : null
+      ),
+      (_.get(this.props.toolbar, 'remove')
+        ? <button key="remove" onClick={() => this.props.toolbar.remove(this.state.selected)}>__Remove selected</button> : null
+      ),
+      (_.get(this.props.toolbar, 'copy')
+        ? <button key="copy" onClick={() => this.props.toolbar.copy(this.state.selected)}>__Copy</button> : null
+      ),
+      (_.get(this.props.toolbar, 'paste')
+        ? <button key="paste" onClick={() => this.props.toolbar.paste()}>__Paste</button> : null
+      ),
     ];
   }
 
   isSelected(verse) {
-    return !!_.find(this.state.selected, verse);
-  }
-
-  isRemoved(verse) {
-    return !!_.find(this.state.removed, verse);
+    return (this.state.selected.indexOf(verse) !== -1);
   }
 
   toggleSelect(verse) {
@@ -75,7 +71,7 @@ class VerseList extends Component {
   }
 
   selectAll() {
-    this.setState({selected: [...this.state.verses]});
+    this.setState({selected: [...this.props.verses]});
   }
 
   deselectAll() {
@@ -83,13 +79,7 @@ class VerseList extends Component {
   }
 
   invertSelection() {
-    this.setState({selected: _.filter(this.state.verses, v => !this.isSelected(v))});
-  }
-
-  removeSelected() {
-    const verses = _.filter(this.state.verses, v => !this.isSelected(v));
-    const removed = [...this.state.removed, ..._.filter(this.state.verses, v => this.isSelected(v))];
-    this.setState({verses, removed});
+    this.setState({selected: _.filter(this.props.verses, v => !this.isSelected(v))});
   }
 
   render() {
@@ -98,7 +88,7 @@ class VerseList extends Component {
         { this.renderHeader() }
         { this.renderTools() }
         {
-          this.state.verses.map((v, i) => (
+          _.map(this.props.verses, (v, i) => (
             <VerseView
               key={i}
               verse={v}

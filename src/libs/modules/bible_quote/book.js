@@ -64,7 +64,10 @@ export default class Book {
   }
 
   getShortName() {
-    return this.params.ShortName.split(' ')[0];
+    let name = _.chain(this.params).get('ShortName').split(' ').first().value();
+    if (_.isUndefined(name)) name = this.getNum();
+    else name = name.replace(/\.$/, '');
+    return name;
   }
 
   getChapters() {
@@ -72,7 +75,8 @@ export default class Book {
   }
 
   getChapterByNum(num) {
-    return _.find(this.chapters, c => (c.getNum() === num));
+    const res = _.find(this.chapters, c => (c.getNum() === +num));
+    return res;
   }
 
   getText(chapter) {

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // import { Box, Button, TextInput } from 'proton-native';
 import * as _ from 'lodash';
+import classNames from 'classnames';
 
 import * as Actions from '../../actions/file';
 import VerseList from '../verse_list/VerseList';
@@ -57,7 +58,7 @@ class Display extends Component {
   renderSearch() {
     // console.log('SEARCH RESULTS:', this.props.searchResult)
     if (this.props.searchbarHidden) return null;
-    const module = this.props.searchModule && this.props.searchModule.getDescriptor();
+    const module = this.props.searchModule && this.props.searchModule.getDescriptor(); // TODO: get it from store
     return (
       <div className="bx-searchlist">
         <SearchForm
@@ -69,15 +70,24 @@ class Display extends Component {
           descriptor={`search:${module}:${this.props.searchText}`}
           verses={this.props.searchResult}
           showHeader={true}
-          showToolbar={true}
+          toolbar={this.getToolbar('search')}
         />
       </div>
     );
   }
 
-  render() {
-    const verses = this.props.selectedChapter ? [...this.props.selectedChapter.getVerses()] : []
+  getToolbar(list) {
+    return {
+      select: true,
+      deselect: true,
+      invert: true,
+      remove: verses => this.props.removeVersesAction(list.id, verses),
+      copy: verses => this.props.copyVersesAction(verses),
+      paste: () => this.props.pasteVersesAction(list.id),
+    };
+  }
 
+  render() {
     return (
       <Box vertical={false} className={`${this.props.className} bx-layout`}>
         <div className="bx-section bx-fixed-size">
@@ -85,11 +95,44 @@ class Display extends Component {
         </div>
         { this.renderSplitter('left') }
         <div className="bx-section">
-          <VerseList
-            descriptor={this.props.selectedChapter && this.props.selectedChapter.getDescriptor()}
-            verses={verses}
-            showToolbar={true}
-          />
+          <div className="bx-tabs">
+            <div className="bx-tabs-bar">
+              <div className="bx-tabs-bar-tabs">
+                {
+                  this.props.tabs.map(l => (
+                    <div
+                      key={l.id}
+                      className={classNames({'bx-tabs-bar-tab': true, selected: this.props.selectedTab === l.id})}
+                    >
+                      <div className="bx-tabs-bar-tab-name" onClick={() => this.props.selectTabListAction(l.id)}>
+                        {l.name || l.config.descriptor || '__Empty'}{_.get(l, 'config.params.customized') ? '*' : ''}
+                      </div>
+                      {
+                        this.props.tabs.length > 1 ? (<button onClick={() => this.props.removeTabListAction(l.id)}>x</button>) : null
+                      }
+                    </div>
+                  ))
+                }
+              </div>
+              <div className="bx-tabs-bar-actions">
+                <button onClick={() => this.props.addTabListAction()}>+</button>
+              </div>
+            </div>
+            <div className="bx-tabs-content">
+              {
+                this.props.lists.filter(l => l.config.type === 'tab').map(l => (
+                  <div key={l.id} className={classNames({'bx-tabs-content-item': true, active: this.props.selectedTab === l.id})}>
+                    <VerseList
+                      descriptor={l.config.descriptor}
+                      verses={l.verses}
+                      toolbar={this.getToolbar(l)}
+                    />
+                    <hr/>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
         </div>
         { this.renderSplitter('right') }
         <div className="bx-section bx-fixed-size bx-search-section">
@@ -102,6 +145,8 @@ class Display extends Component {
 
 
 function mapStateToProps(state, props) {
+  console.log('STATE: ', state)
+  const lists = state.lists.map(l => ({...l, config: _.find(state.config.lists, c => (c.id === l.id))}));
   return {
     modules: state.modules,
     books: state.books,
@@ -114,8 +159,9 @@ function mapStateToProps(state, props) {
     searchModule: state.searchModule,
     searchResult: state.searchResult,
     searchHistory: state.config.searchHistory,
-    lists: state.lists,
-    tabs: state.tabs,
+    lists,
+    tabs: _.filter(lists, l => (l.config.type === 'tab')),
+    selectedTab: state.config.selectedTab,
   };
 }
 

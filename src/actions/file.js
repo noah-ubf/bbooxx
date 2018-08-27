@@ -239,7 +239,33 @@ export const searchStopAction = () => ({
 export const copyVersesAction = verses => ({
   type: 'COPY_VERSES',
   verses
-})
+});
+
+export const removeVersesAction = (listId, verses) => ({
+  type: 'REMOVE_VERSES',
+  listId,
+  verses,
+});
+
+export const pasteVersesAction = listId => ({
+  type: 'PASTE_VERSES',
+  listId
+});
+
+export const addTabListAction = verses => ({
+  type: 'ADD_TAB_LIST',
+  verses
+});
+
+export const removeTabListAction = listId => ({
+  type: 'REMOVE_TAB_LIST',
+  listId
+});
+
+export const selectTabListAction = listId => ({
+  type: 'SELECT_TAB_LIST',
+  listId
+});
 
 export const tempAction = (verse) => {
   return function (dispatch, getState) {

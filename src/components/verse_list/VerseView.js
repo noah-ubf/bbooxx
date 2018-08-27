@@ -6,7 +6,6 @@ import "./index.css"
 
 class VerseView extends Component {
   renderHeader() {
-    if (!this.props.showHeader) return null;
     return (
       <div className="bx-verse-header">
         { this.props.verse.getHeader() }

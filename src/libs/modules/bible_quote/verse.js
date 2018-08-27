@@ -30,12 +30,20 @@ export default class Verse {
     return this;
   }
 
+  getDescriptor() {
+    const module = this.params.module.getShortName();
+    const book = this.params.book.getShortName();
+    const chapter = this.params.chapter.getNum();
+    const verse = this.getNum();
+    return `(${module})${book}.${chapter}:${verse}`;
+  }
+
   getModule() {
     return this.params.module;
   }
 
   getNum() {
-    return this.params.num;
+    return +this.params.num;
   }
 
   getHeader() {

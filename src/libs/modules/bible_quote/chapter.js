@@ -18,7 +18,7 @@ export default class Chapter {
   }
 
   getNum() {
-    return this.params.num;
+    return +this.params.num;
   }
 
   getName() {
@@ -40,9 +40,14 @@ export default class Chapter {
     this.verses = this.params.book._getChapterVerses(this).map((lines, num) => new Verse({...config, lines, num}));
   }
 
-  getVerses() {
+  getVerses(v1=null, v2=null) {
     this.parse();
-    return this.verses.map(v => v.getNewInstance());
+    if (_.isNull(v1)) return this.verses.map(v => v.getNewInstance());
+    else if (_.isNull(v2)) return this.verses.filter(v => v.getNum() === v1).map(v => v.getNewInstance());
+    else return _.chain(this.verses)
+      .filter(v => (v.getNum() >= v1 && v.getNum() <= v2))
+      .map(v => v.getNewInstance())
+      .value();
   }
 
   search(words, options) {

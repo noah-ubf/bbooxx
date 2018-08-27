@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { getListFromDescriptor, getDescriptorFromList } from '../libs/modules/descriptor';
 
 
 const defaultState = {
@@ -27,12 +28,7 @@ const defaultState = {
       //   descriptor: '',
       // }
     ],
-    tabs: [
-      // {
-      //   title: '',
-      //   listId: '',
-      // }
-    ],
+    selectedTab: null,
   },
   modules: [],
   books: [],
@@ -42,14 +38,7 @@ const defaultState = {
   lists: [
     // {
     //   id: '',
-    //   type: '',
     //   verses: [],
-    // }
-  ],
-  tabs: [
-    // {
-    //   title: '',
-    //   listId: '',
     // }
   ],
   searchModule: null,
@@ -59,6 +48,7 @@ const defaultState = {
   searchInProgress: false,
   buffer: [],
 };
+
 
 const fileReducer = (state = defaultState, action) => {
   console.log('ACTION: ', action);
@@ -99,6 +89,7 @@ const fileReducer = (state = defaultState, action) => {
     case 'READ_CONFIG': {
       const config = action.config;
       const modules = _.filter(action.modules, m => (!state.config.modules[m.getShortName()]));
+      const modulesDict = _.chain(modules).map(m => ([m.getShortName(), m])).fromPairs().value();
       const selectedModule = config.selectedModule
         ? (_.find(modules, m => (m.getShortName() === config.selectedModule)))
         : null;
@@ -106,42 +97,68 @@ const fileReducer = (state = defaultState, action) => {
       const selectedBook = selectedModule ? selectedModule.getBookByShortName(config.selectedBook) : null;
       const selectedChapter = selectedBook ? selectedBook.getChapterByNum(config.selectedChapter) : null;
 
+      let lists = config.lists ? [...config.lists] : [];
+      let tabs = config.tabs ? [...config.tabs] : [];
+
+      if (!_.find(lists, l => l.type === 'tab')) {
+        lists = [
+          ...lists,
+          {
+            id: 'initial',
+            type: 'tab',
+            params: {},
+            descriptor: selectedChapter && selectedChapter.getDescriptor(),
+          }
+        ];
+      }
+
+      if (!_.find(lists, l => l.type === 'search')) {
+        lists = [
+          ...lists,
+          {
+            id: 'search',
+            type: 'search',
+            params: {},
+            descriptor: '',
+          }
+        ];
+      }
+
+      const selectedTab = _.find(lists, t => (t.id === config.selectedTab))
+        ? config.selectedTab
+        : _.find(lists, t => (t.type === 'tab')).id;
+
       return {
         ...state,
-        config: action.config,
+        config: {...action.config, lists, tabs, selectedTab},
         modules: action.modules,
+        modulesDict,
         books,
         selectedModule,
         selectedBook,
         selectedChapter,
         toolbarHidden: config.toolbarHidden,
         searchbarHidden: config.searchbarHidden,
+        lists: lists.map(li => ({...li, verses: getListFromDescriptor(li, modulesDict)}))
       };
     }
-/*
-  constructor(props) {
-    super(props);
+    /*
+        this.props.createListsAction([
+          {
+            id: 'search',
+            type: 'verse_list',
+            params: {
+              custom: true,
+            }
+          },
+          {
+            id: 'tab0',
+            type: 'verse_list',
 
-    if (this.props.lists.length === 0) {
-      this.props.createListsAction([
-        {
-          id: 'search',
-          type: 'verse_list',
-          params: {
-            custom: true,
-          }
-        },
-        {
-          id: 'tab0',
-          type: 'verse_list',
-
-        },
-      ]);
-    }
-  }
-
-
-*/
+          },
+        ]);
+      }
+    */
     case 'SELECT_MODULE': {
       const books = action.module.getBooks();
       if (state.selectedModule === action.module) {
@@ -229,13 +246,33 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'SELECT_CHAPTER': {
+      const verses = action.chapter.getVerses();
+      const descriptor = action.chapter.getDescriptor();
+      let targetList = _.find(state.config.lists, l => (l.id === state.config.selectedTab && !_.get(l, 'params.customized')))
+        || _.find(state.config.lists, l => (l.type === 'tab' && !_.get(l, 'params.customized') && _.get(l, 'descriptor', '') === ''));
+      const isNewList = !targetList;
+      targetList = targetList  || {
+          id: _.uniqueId(),
+          type: 'tab',
+          descriptor: '',
+        };
+      const listConfigs = isNewList
+        ? [ ...state.config.lists, targetList ]
+        : state.config.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, descriptor }));
+      const lists = isNewList
+        ? [ ...state.lists, { id: targetList.id, verses } ]
+        : state.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, verses }));
+
       return {
         ...state,
         config: {
           ...state.config,
+          lists: listConfigs,
           selectedChapter: action.chapter.getNum(),
+          selectedTab: targetList.id,
         },
-        selectedChapter: action.chapter
+        selectedChapter: action.chapter,
+        lists
       };
     }
 
@@ -262,6 +299,13 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'SEARCH_START': {
+      // const lists = state.config.lists.map(l => {
+      //   if (l.type !== 'search') return l;
+      //   return ({
+      //     ...l,
+      //     descriptor: 
+      //   });
+      // });
       return {
         ...state,
         config: {
@@ -270,6 +314,7 @@ const fileReducer = (state = defaultState, action) => {
             action.searchText,
             ..._.chain(state.config.searchHistory).without(action.searchText).value()
             ],
+          // lists, // TODO (see above): update descriptor
         },
         searchModule: action.selectedModule,
         searchText: action.searchText,
@@ -307,9 +352,132 @@ const fileReducer = (state = defaultState, action) => {
       };
     }
 
-    case 'PASTE_VERSES': {
+    case 'REMOVE_VERSES': {
+      const verses = _.chain(state.lists)
+        .find(l => l.id === action.listId)
+        .get('verses')
+        .filter(v => action.verses.indexOf(v) === -1)
+        .value();
+      const lists = state.lists.map(l => {
+        if (l.id !== action.listId) return l;
+        return {
+          ...l,
+          verses,
+        };
+      });
+      const listsConfigs = state.config.lists.map(l => {
+        if (l.id !== action.listId) return l;
+        return {
+          ...l,
+          descriptor: getDescriptorFromList(verses),
+          params: {
+            ...l.params,
+            customized: true
+          }
+        };
+      });
       return {
-        ...state, // TODO
+        ...state,
+        config: {
+          ...state.config,
+          lists: listsConfigs,
+        },
+        lists,
+      };
+    }
+
+    case 'ADD_TAB_LIST': {
+      const newId = _.uniqueId();
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          lists: [
+            ...state.config.lists,
+            {
+              id: newId,
+              type: 'tab',
+              params: {},
+              descriptor: '',
+            }
+          ],
+          selectedTab: newId,
+        },
+        lists: [
+          ...state.lists,
+          {
+            id: newId,
+            verses: action.verses || [],
+          },
+        ],
+      };
+    }
+
+    case 'REMOVE_TAB_LIST': {
+      if (_.filter(state.config.lists, l => l.type === 'tab').length <= 1) return state;
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          lists: [
+            ..._.filter(state.config.lists, l => l.id !==action.listId),
+          ],
+          selectedTab: action.listId === state.config.selectedTab
+            ? _.chain(state.config.lists).find(l => (l.type === 'tab' && l.id !== action.listId)).get('id').value()
+            : state.config.selectedTab
+        },
+        lists: [
+          ..._.filter(state.lists, l => l.id !==action.listId),
+        ],
+      };
+    }
+
+    case 'PASTE_VERSES': {
+      const verses = [
+        ..._.chain(state.lists)
+          .find(l => l.id === action.listId)
+          .get('verses')
+          .value(),
+        ...state.buffer.map(v => v.getNewInstance()),
+      ];
+
+      const lists = state.lists.map(l => {
+        if (l.id !== action.listId) return l;
+        return {
+          ...l,
+          verses,
+        };
+      });
+
+      const listsConfigs = state.config.lists.map(l => {
+        if (l.id !== action.listId) return l;
+        return {
+          ...l,
+          descriptor: getDescriptorFromList(verses),
+          params: {
+            ...l.params,
+            customized: true
+          },
+        };
+      });
+
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          lists: listsConfigs,
+        },
+        lists,
+      };
+    }
+
+    case 'SELECT_TAB_LIST': {
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          selectedTab: action.listId || _.chain(state.config.lists).find(l => (l.type === 'tab')).get('id').value()
+        },
       };
     }
 
