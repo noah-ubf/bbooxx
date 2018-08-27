@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import * as _ from 'lodash';
 
+import Button from '../button/Button';
+
 import './index.css';
 
 
@@ -13,7 +15,7 @@ const Box = props => (
   </div>
 )
 
-const Button = props => (
+const Item = props => (
   <div {...props} className={(props.className || '') + " bx-list-element"}>
     { props.children }
   </div>
@@ -30,19 +32,17 @@ class ModuleList extends Component {
     const selected = (module === this.props.selectedModule);
     return (
       <Box key={i} vertical={true}>
-        <Button className={selected ? 'selected': ''}>
-          <div
-            className="bx-module-remove"
-            title="__Remove module"
-            onClick={e => { this.props.removeModule(module); e.stopPropagation();} }
-          >x</div>
-          <div
-            className="bx-module-link"
-            onClick={() => this.props.selectModule(module)}
-          >
-            { module.getName() }
+        <Item className={selected ? 'selected': ''}onClick={() => this.props.selectModule(module)}>
+          <div className="bx-module-remove">
+            <Button
+              action={e => this.props.removeModule(module)}
+              icon="trash"
+              title="__Remove module"
+              round={true}
+            />
           </div>
-        </Button>
+          { module.getName() }
+        </Item>
         {
           this.props.selectedModule === module
           ? (
@@ -64,9 +64,9 @@ class ModuleList extends Component {
     const selected = (book === this.props.selectedBook);
     return (
       <Box key={i}>
-        <Button className={selected ? 'selected' : null} onClick={() => this.props.selectBook(book)}>
+        <Item className={selected ? 'selected' : null} onClick={() => this.props.selectBook(book)}>
           { book.getName() }
-        </Button>
+        </Item>
         { this.renderChapters(book) }
       </Box>
     );
@@ -80,11 +80,11 @@ class ModuleList extends Component {
       <div className="bx-modulelist-chapters">
       {
         chapters.map((chapter, j) => (
-          <Button
+          <Item
             key={j}
             className={(chapter === this.props.selectedChapter) ? 'bx-chapter-link selected': 'bx-chapter-link'}
             onClick={() => this.props.selectChapter(chapter)}
-          >{ chapter.getName() }</Button>
+          >{ chapter.getName() }</Item>
         ))
       }
       </div>
@@ -105,7 +105,18 @@ class ModuleList extends Component {
             onChange={e => this.searchHandler(e)} value={this.state.searchText}
             placeholder="__Search modules"
           />
-          <div className="bx-modulelist-search-clear" onClick={e => this.searchHandler()}>x</div>
+          <div className="bx-modulelist-search-clear">
+            {
+              this.state.searchText ? (
+                <Button
+                  action={() => this.searchHandler()}
+                  icon="remove"
+                  title="__Clear filter"
+                  round={true}
+                />
+                ) : null
+            }
+          </div>
         </div>
         <div className="bx-modulelist-content">
           {

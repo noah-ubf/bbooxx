@@ -400,6 +400,9 @@ const fileReducer = (state = defaultState, action) => {
 
     case 'REMOVE_TAB_LIST': {
       if (_.filter(state.config.lists, l => l.type === 'tab').length <= 1) return state;
+      const selectedTab = (action.listId === state.config.selectedTab)
+            ? _.chain(state.config.lists).find(l => (l.type === 'tab' && l.id !== action.listId)).get('id').value()
+            : state.config.selectedTab;
       return {
         ...state,
         config: {
@@ -407,9 +410,7 @@ const fileReducer = (state = defaultState, action) => {
           lists: [
             ..._.filter(state.config.lists, l => l.id !==action.listId),
           ],
-          selectedTab: action.listId === state.config.selectedTab
-            ? _.chain(state.config.lists).find(l => (l.type === 'tab' && l.id !== action.listId)).get('id').value()
-            : state.config.selectedTab
+          selectedTab,
         },
         lists: [
           ..._.filter(state.lists, l => l.id !==action.listId),

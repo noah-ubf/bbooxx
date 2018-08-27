@@ -15,7 +15,7 @@ class VerseView extends Component {
   }
 
   renderVerseNum() {
-    if (!this.props.verse.getModule().isBible()) return null;
+    if (this.props.showHeader || !this.props.verse.getModule().isBible()) return null;
     return (
       <span className="bx-verse-num">{ this.props.verse.getNum() }</span>
     );

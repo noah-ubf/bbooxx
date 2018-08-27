@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import * as _ from 'lodash';
 
 import * as Actions from '../../actions/file';
+import Button from '../button/Button';
 
 import './index.css';
 
@@ -146,8 +147,10 @@ class SearchForm extends Component {
             onChange={e => this.changeHandler(e)}
             value={this.state.searchText}
           />
-          <button className="bx-search-form-submit" onClick={() => this.search()}>-></button>
-          <button className="bx-search-form-history-button" onClick={() => this.toggleHistory()}>V</button>
+          <div className="bx-search-form-submit">
+            <Button action={() => this.search()} icon="search" title="__Search" round={true}/>
+          </div>
+          <Button action={() => this.toggleHistory()} icon="down" title="__Search History"/>
         </div>
         <div className="bx-search-form-history-block">
         { this.renderHistory() }

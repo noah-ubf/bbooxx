@@ -9,6 +9,7 @@ import * as Actions from '../../actions/file';
 import VerseList from '../verse_list/VerseList';
 import SearchForm from '../search_form/SearchForm';
 import ModuleList from '../module_list/ModuleList';
+import Button from '../button/Button';
 
 import './index.css';
 
@@ -105,17 +106,27 @@ class Display extends Component {
                       className={classNames({'bx-tabs-bar-tab': true, selected: this.props.selectedTab === l.id})}
                     >
                       <div className="bx-tabs-bar-tab-name" onClick={() => this.props.selectTabListAction(l.id)}>
-                        {l.name || l.config.descriptor || '__Empty'}{_.get(l, 'config.params.customized') ? '*' : ''}
+                        {_.get(l, 'config.params.customized') ? '*' : ''}
+                        {l.name || l.config.descriptor || '__Empty'}
                       </div>
-                      {
-                        this.props.tabs.length > 1 ? (<button onClick={() => this.props.removeTabListAction(l.id)}>x</button>) : null
-                      }
+                      <div className="bx-tabs-bar-tab-close" onClick={() => this.props.selectTabListAction(l.id)}>
+                        {
+                          this.props.tabs.length > 1 ? (
+                            <Button
+                              action={() => this.props.removeTabListAction(l.id)}
+                              icon="remove"
+                              title="__Close Tab"
+                              round={true}
+                            />
+                          ) : null
+                        }
+                      </div>
                     </div>
                   ))
                 }
               </div>
               <div className="bx-tabs-bar-actions">
-                <button onClick={() => this.props.addTabListAction()}>+</button>
+                <Button action={() => this.props.addTabListAction()} icon="addList" title="__New Tab"/>
               </div>
             </div>
             <div className="bx-tabs-content">
@@ -126,6 +137,7 @@ class Display extends Component {
                       descriptor={l.config.descriptor}
                       verses={l.verses}
                       toolbar={this.getToolbar(l)}
+                      showHeader={!!_.get(l, 'config.params.customized')}
                     />
                     <hr/>
                   </div>

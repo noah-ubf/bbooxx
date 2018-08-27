@@ -69,19 +69,9 @@
 }
 
 .bx-search-form-submit {
-  background: #f5f5ff;
-  border: solid 1px #7f7f7f;
-  border-radius: 5px;
-  font-size: 120%;
-  font-stretch: 50%;
-  height: 35px;
   position: absolute;
-  right: 50px;
-  white-space: nowrap;
+  right: 35px;
   width: 35px;
-}
-.bx-search-form-submit:hover {
-  background: #cccccc;
 }
 
 .bx-search-form-blocker {

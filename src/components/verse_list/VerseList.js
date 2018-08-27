@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as _ from 'lodash';
 
 import VerseView from './VerseView';
+import Button from '../button/Button';
 
 
 class VerseList extends Component {
@@ -41,22 +42,23 @@ class VerseList extends Component {
   renderToolbarButtons() {
     return [
       (_.get(this.props.toolbar, 'select')
-        ? <button key="select" onClick={() => this.selectAll()}>__Select all</button> : null
+        ? <Button key="select" onClick={() => this.selectAll()} icon="selectAll" title="__Select all"/> : null
       ),
       (_.get(this.props.toolbar, 'deselect')
-        ? <button key="deselect" onClick={() => this.deselectAll()}>__Deselect all</button> : null
+        ? <Button key="deselect" onClick={() => this.deselectAll()} icon="deselectAll" title="__Deselect all"/> : null
       ),
       (_.get(this.props.toolbar, 'invert')
-        ? <button key="invert" onClick={() => this.invertSelection()}>__Invert selection</button> : null
+        ? <Button key="invert" onClick={() => this.invertSelection()} icon="invert" title="__Invert selection"/> : null
       ),
+      (<div key="separator" className="bx-toolbar-separator"></div>),
       (_.get(this.props.toolbar, 'remove')
-        ? <button key="remove" onClick={() => this.props.toolbar.remove(this.state.selected)}>__Remove selected</button> : null
+        ? <Button key="remove" onClick={() => this.props.toolbar.remove(this.state.selected)} icon="trash" title="__Remove selected"/> : null
       ),
       (_.get(this.props.toolbar, 'copy')
-        ? <button key="copy" onClick={() => this.props.toolbar.copy(this.state.selected)}>__Copy</button> : null
+        ? <Button key="copy" onClick={() => this.props.toolbar.copy(this.state.selected)} icon="copy" title="__Copy"/> : null
       ),
       (_.get(this.props.toolbar, 'paste')
-        ? <button key="paste" onClick={() => this.props.toolbar.paste()}>__Paste</button> : null
+        ? <Button key="paste" onClick={() => this.props.toolbar.paste()} icon="paste" title="__Paste"/> : null
       ),
     ];
   }
@@ -87,17 +89,19 @@ class VerseList extends Component {
       <div className="bx-verselist">
         { this.renderHeader() }
         { this.renderTools() }
-        {
-          _.map(this.props.verses, (v, i) => (
-            <VerseView
-              key={i}
-              verse={v}
-              onClick={() => this.toggleSelect(v)}
-              showHeader={this.props.showHeader}
-              selected={this.isSelected(v)}
-            />
-          ))
-        }
+        <div className="bx-verse-list-content">
+          {
+            _.map(this.props.verses, (v, i) => (
+              <VerseView
+                key={i}
+                verse={v}
+                onClick={() => this.toggleSelect(v)}
+                showHeader={this.props.showHeader}
+                selected={this.isSelected(v)}
+              />
+            ))
+          }
+        </div>
       </div>
     );
   }
