@@ -27,3 +27,8 @@
 .bx-verse.selected, .bx-verse.selected:hover {
   background: #fffff2;
 }
+
+.bx-verse-num {
+  font-weight: bold;
+  margin-right: 10px;
+}

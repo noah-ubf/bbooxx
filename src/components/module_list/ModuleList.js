@@ -21,6 +21,10 @@ const Button = props => (
 
 
 class ModuleList extends Component {
+  state = {
+    searchText: '',
+  };
+
   renderModule(module, i) {
     if (!module) return null;
     const selected = (module === this.props.selectedModule);
@@ -71,37 +75,47 @@ class ModuleList extends Component {
   renderChapters(book) {
     if (book !== this.props.selectedBook) return null;
     const chapters = book.getChapters();
-    const chunx = _.chunk(chapters, 10);
+    if (chapters.length === 1) return null;
     return (
-      <Box>
+      <div className="bx-modulelist-chapters">
       {
-        chunx.map((row, i) => (
-          <Box vertical={false} key={i}>
-          {
-            row.map((chapter, j) => (
-              <Button
-                key={j}
-                className={(chapter === this.props.selectedChapter) ? 'bx-chapter-link selected': 'bx-chapter-link'}
-                onClick={() => this.props.selectChapter(chapter)}
-              >{ chapter.getName() }</Button>
-            ))
-          }
-          </Box>
+        chapters.map((chapter, j) => (
+          <Button
+            key={j}
+            className={(chapter === this.props.selectedChapter) ? 'bx-chapter-link selected': 'bx-chapter-link'}
+            onClick={() => this.props.selectChapter(chapter)}
+          >{ chapter.getName() }</Button>
         ))
       }
-      </Box>
+      </div>
     );
   }
 
+  searchHandler(e) {
+    this.setState({searchText: _.get(e, 'target.value', '')});
+  }
+
   render() {
+    const searchText = this.state.searchText.toLowerCase();
     return (
       <div className="bx-modulelist">
-      {
-        _.chain(this.props.modules)
-        .map((module, i) => this.renderModule(module, i))
-        .compact()
-        .value()
-      }
+        <div className="bx-modulelist-search">
+          <input
+            className="bx-modulelist-search-input"
+            onChange={e => this.searchHandler(e)} value={this.state.searchText}
+            placeholder="__Search modules"
+          />
+          <div className="bx-modulelist-search-clear" onClick={e => this.searchHandler()}>x</div>
+        </div>
+        <div className="bx-modulelist-content">
+          {
+            _.chain(this.props.modules)
+            .filter(m => (m.getName().toLowerCase().indexOf(searchText) !== -1))
+            .map((module, i) => this.renderModule(module, i))
+            .compact()
+            .value()
+          }
+        </div>
       </div>
     );
   }

@@ -235,6 +235,18 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'SELECT_BOOK': {
+      if (action.book.getChapters().length === 1) {
+        return selectChapter({
+          ...state,
+          config: {
+            ...state.config,
+            selectedBook: action.book.getShortName(),
+            selectedChapter: action.book.getShortName(),
+          },
+          selectedBook: action.book
+        }, action.book.getChapters()[0]);
+      }
+
       return {
         ...state,
         config: {
@@ -246,34 +258,7 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'SELECT_CHAPTER': {
-      const verses = action.chapter.getVerses();
-      const descriptor = action.chapter.getDescriptor();
-      let targetList = _.find(state.config.lists, l => (l.id === state.config.selectedTab && !_.get(l, 'params.customized')))
-        || _.find(state.config.lists, l => (l.type === 'tab' && !_.get(l, 'params.customized') && _.get(l, 'descriptor', '') === ''));
-      const isNewList = !targetList;
-      targetList = targetList  || {
-          id: _.uniqueId(),
-          type: 'tab',
-          descriptor: '',
-        };
-      const listConfigs = isNewList
-        ? [ ...state.config.lists, targetList ]
-        : state.config.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, descriptor }));
-      const lists = isNewList
-        ? [ ...state.lists, { id: targetList.id, verses } ]
-        : state.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, verses }));
-
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          lists: listConfigs,
-          selectedChapter: action.chapter.getNum(),
-          selectedTab: targetList.id,
-        },
-        selectedChapter: action.chapter,
-        lists
-      };
+      return selectChapter(state, action.chapter);
     }
 
     case 'TOGGLE_TOOLBAR': {
@@ -487,3 +472,35 @@ const fileReducer = (state = defaultState, action) => {
 };
 
 export default fileReducer;
+
+
+function selectChapter(state, chapter) {
+  const verses = chapter.getVerses();
+  const descriptor = chapter.getDescriptor();
+  let targetList = _.find(state.config.lists, l => (l.id === state.config.selectedTab && !_.get(l, 'params.customized')))
+    || _.find(state.config.lists, l => (l.type === 'tab' && !_.get(l, 'params.customized') && _.get(l, 'descriptor', '') === ''));
+  const isNewList = !targetList;
+  targetList = targetList  || {
+      id: _.uniqueId(),
+      type: 'tab',
+      descriptor: '',
+    };
+  const listConfigs = isNewList
+    ? [ ...state.config.lists, targetList ]
+    : state.config.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, descriptor }));
+  const lists = isNewList
+    ? [ ...state.lists, { id: targetList.id, verses } ]
+    : state.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, verses }));
+
+  return {
+    ...state,
+    config: {
+      ...state.config,
+      lists: listConfigs,
+      selectedChapter: chapter.getNum(),
+      selectedTab: targetList.id,
+    },
+    selectedChapter: chapter,
+    lists
+  };
+}

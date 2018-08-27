@@ -6,10 +6,18 @@ import "./index.css"
 
 class VerseView extends Component {
   renderHeader() {
+    if (!this.props.showHeader) return null;
     return (
       <div className="bx-verse-header">
         { this.props.verse.getHeader() }
       </div>
+    );
+  }
+
+  renderVerseNum() {
+    if (!this.props.verse.getModule().isBible()) return null;
+    return (
+      <span className="bx-verse-num">{ this.props.verse.getNum() }</span>
     );
   }
 
@@ -26,9 +34,11 @@ class VerseView extends Component {
       return (
         <div
           dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
-          dangerouslySetInnerHTML={{__html: composed}}
           title={this.props.verse.getHeader()}
-        />
+        >
+          { this.renderVerseNum() }
+          <span dangerouslySetInnerHTML={{__html: composed}} />
+        </div>
       );
     }
   }
