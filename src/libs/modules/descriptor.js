@@ -27,9 +27,7 @@ export const parseDescriptor = descr => {
 }
 
 export const getDescriptorFromList = (verses) => {
-  return verses.map(v => {
-    return v.getDescriptor();
-  }).join(';');
+  return verses.map(v => v.getDescriptor()).join(';');
 }
 
 export const getListFromDescriptor = (li, modulesDict) => {

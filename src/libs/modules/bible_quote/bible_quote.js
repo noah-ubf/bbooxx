@@ -57,8 +57,8 @@ export default class BibleQuoteModule {
   search(searchText, options, portion, done, stopped) {
     const words = _.chain(options.caseSensitive ? searchText : searchText.toLowerCase())
       .split(' ').compact().uniq().value();
-    // return this.getBooks()[0].search(words, options);
-    let books = [...this.getBooks()];
+
+    let books = options.book ? [options.book] : [...this.getBooks()];
 
     const searchNext = () => {
       if (stopped()) books = [];

@@ -59,7 +59,8 @@ class Display extends Component {
   renderSearch() {
     // console.log('SEARCH RESULTS:', this.props.searchResult)
     if (this.props.searchbarHidden) return null;
-    const module = this.props.searchModule && this.props.searchModule.getDescriptor(); // TODO: get it from store
+    const verses = _.get(this.props.searchResult, 'verses', []);
+    const descriptor = this.props.searchModule && this.props.searchModule.getDescriptor(); // TODO: get it from store
     return (
       <div className="bx-searchlist">
         <SearchForm
@@ -68,23 +69,25 @@ class Display extends Component {
           history={this.props.searchHistory}
         />
         <VerseList
-          descriptor={`search:${module}:${this.props.searchText}`}
-          verses={this.props.searchResult}
+          descriptor={descriptor}
+          verses={verses}
           showHeader={true}
-          toolbar={this.getToolbar('search')}
+          toolbar={this.getToolbar(this.props.searchResult)}
+          subtitle={verses.length > 0 ? `__Found: ${verses.length}`: null}
         />
       </div>
     );
   }
 
   getToolbar(list) {
+    if (!list) return null;
     return {
       select: true,
       deselect: true,
       invert: true,
       remove: verses => this.props.removeVersesAction(list.id, verses),
       copy: verses => this.props.copyVersesAction(verses),
-      paste: () => this.props.pasteVersesAction(list.id),
+      paste: list.id === 'search' ? null : () => this.props.pasteVersesAction(list.id),
     };
   }
 
@@ -103,9 +106,10 @@ class Display extends Component {
                   this.props.tabs.map(l => (
                     <div
                       key={l.id}
+                      onClick={() => this.props.selectTabListAction(l.id)}
                       className={classNames({'bx-tabs-bar-tab': true, selected: this.props.selectedTab === l.id})}
                     >
-                      <div className="bx-tabs-bar-tab-name" onClick={() => this.props.selectTabListAction(l.id)}>
+                      <div className="bx-tabs-bar-tab-name">
                         {_.get(l, 'config.params.customized') ? '*' : ''}
                         {l.name || l.config.descriptor || '__Empty'}
                       </div>
@@ -159,6 +163,7 @@ class Display extends Component {
 function mapStateToProps(state, props) {
   console.log('STATE: ', state)
   const lists = state.lists.map(l => ({...l, config: _.find(state.config.lists, c => (c.id === l.id))}));
+  const searchResult = _.find(lists, l => (l.id === 'search'));
   return {
     modules: state.modules,
     books: state.books,
@@ -169,7 +174,7 @@ function mapStateToProps(state, props) {
     searchbarHidden: state.searchbarHidden,
     searchText: state.searchText,
     searchModule: state.searchModule,
-    searchResult: state.searchResult,
+    searchResult,
     searchHistory: state.config.searchHistory,
     lists,
     tabs: _.filter(lists, l => (l.config.type === 'tab')),

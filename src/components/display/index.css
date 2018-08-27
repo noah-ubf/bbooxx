@@ -7,8 +7,13 @@
 .bx-section {
   border: solid 1px #7f7f7f;
   border-radius: 5px;
-  overflow-y: auto;
   flex-grow: 50;
+  flex-shrink: 50;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: stretch;
+  overflow: hidden;
 }
 
 .bx-fixed-size {
@@ -33,14 +38,6 @@
 
 .selected {
   background: #ccccee;
-}
-
-.bx-chapter-link {
-  width: 30px;
-  height: 30px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  justify-content: center;
 }
 
 .bx-vsplitter {
@@ -95,6 +92,7 @@
   display: flex;
   flex-direction: row;
   flex-grow: 100;
+  flex-shrink: 100;
   justify-content: stretch;
   overflow-x: auto;
   white-space: nowrap;
@@ -109,11 +107,12 @@
   display: inline-flex;
   flex-direction: row;
   flex-grow: 100;
+  flex-shrink: 100;
   justify-content: stretch;
   margin: 0 1px 0 0;
   max-width: 100%;
   min-width: 120px;
-  padding: 5px;
+  padding: 5px 25px 5px 5px;
   position: relative;
 }
 
@@ -123,6 +122,11 @@
   border-bottom: #ccccee solid 1px ;
   margin-bottom: -1px;
   z-index: 2;
+}
+
+.bx-tabs-bar-tab-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bx-tabs-bar-actions {
@@ -153,14 +157,6 @@
 
 .bx-tabs-content-item.active {
   display: flex;
-}
-
-.bx-tabs-bar-tab-name {
-  flex-grow: 100;
-  margin-right: 30px;
-  overflow: hidden;
-  width: 100%;
-  text-overflow: ellipsis;
 }
 
 .bx-tabs-bar-tab-close {

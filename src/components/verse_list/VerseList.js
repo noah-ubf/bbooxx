@@ -42,23 +42,23 @@ class VerseList extends Component {
   renderToolbarButtons() {
     return [
       (_.get(this.props.toolbar, 'select')
-        ? <Button key="select" onClick={() => this.selectAll()} icon="selectAll" title="__Select all"/> : null
+        ? <Button key="select" action={() => this.selectAll()} icon="selectAll" title="__Select all"/> : null
       ),
       (_.get(this.props.toolbar, 'deselect')
-        ? <Button key="deselect" onClick={() => this.deselectAll()} icon="deselectAll" title="__Deselect all"/> : null
+        ? <Button key="deselect" action={() => this.deselectAll()} icon="deselectAll" title="__Deselect all"/> : null
       ),
       (_.get(this.props.toolbar, 'invert')
-        ? <Button key="invert" onClick={() => this.invertSelection()} icon="invert" title="__Invert selection"/> : null
+        ? <Button key="invert" action={() => this.invertSelection()} icon="invert" title="__Invert selection"/> : null
       ),
       (<div key="separator" className="bx-toolbar-separator"></div>),
       (_.get(this.props.toolbar, 'remove')
-        ? <Button key="remove" onClick={() => this.props.toolbar.remove(this.state.selected)} icon="trash" title="__Remove selected"/> : null
+        ? <Button key="remove" action={() => this.props.toolbar.remove(this.state.selected)} icon="trash" title="__Remove selected"/> : null
       ),
       (_.get(this.props.toolbar, 'copy')
-        ? <Button key="copy" onClick={() => this.props.toolbar.copy(this.state.selected)} icon="copy" title="__Copy"/> : null
+        ? <Button key="copy" action={() => this.props.toolbar.copy(this.state.selected)} icon="copy" title="__Copy"/> : null
       ),
       (_.get(this.props.toolbar, 'paste')
-        ? <Button key="paste" onClick={() => this.props.toolbar.paste()} icon="paste" title="__Paste"/> : null
+        ? <Button key="paste" action={() => this.props.toolbar.paste()} icon="paste" title="__Paste"/> : null
       ),
     ];
   }

@@ -43,9 +43,9 @@ export default class Chapter {
   getVerses(v1=null, v2=null) {
     this.parse();
     if (_.isNull(v1)) return this.verses.map(v => v.getNewInstance());
-    else if (_.isNull(v2)) return this.verses.filter(v => v.getNum() === v1).map(v => v.getNewInstance());
+    else if (_.isNull(v2)) return this.verses.filter(v => (v.getNum() === +v1)).map(v => v.getNewInstance());
     else return _.chain(this.verses)
-      .filter(v => (v.getNum() >= v1 && v.getNum() <= v2))
+      .filter(v => (v.getNum() >= +v1 && v.getNum() <= +v2))
       .map(v => v.getNewInstance())
       .value();
   }

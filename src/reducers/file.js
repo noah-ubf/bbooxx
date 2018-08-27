@@ -139,7 +139,7 @@ const fileReducer = (state = defaultState, action) => {
         selectedChapter,
         toolbarHidden: config.toolbarHidden,
         searchbarHidden: config.searchbarHidden,
-        lists: lists.map(li => ({...li, verses: getListFromDescriptor(li, modulesDict)}))
+        lists: lists.map(li => ({id: li.id, verses: getListFromDescriptor(li, modulesDict)}))
       };
     }
     /*
@@ -284,26 +284,20 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'SEARCH_START': {
-      // const lists = state.config.lists.map(l => {
-      //   if (l.type !== 'search') return l;
-      //   return ({
-      //     ...l,
-      //     descriptor: 
-      //   });
-      // });
+      const module = state.selectedModule ? state.selectedModule.getShortName() : '';
       return {
         ...state,
         config: {
           ...state.config,
-          searchHistory: [
-            action.searchText,
-            ..._.chain(state.config.searchHistory).without(action.searchText).value()
-            ],
-          // lists, // TODO (see above): update descriptor
+          lists: state.config.lists.map(l => ((l.id === 'search') ? {
+            ...l, descriptor: `search(${module}):${action.searchText}`
+          } : l)),
         },
-        searchModule: action.selectedModule,
+        lists: state.lists.map(l => ((l.id === 'search') ? {
+          ...l, verses: []
+        } : l)),
+        searchModule: state.selectedModule,
         searchText: action.searchText,
-        searchResult: [],
         searchStop: false,
         searchInProgress: true,
       };
@@ -312,7 +306,9 @@ const fileReducer = (state = defaultState, action) => {
     case 'SEARCH_PORTION': {
       return {
         ...state,
-        searchResult: [...state.searchResult, ...action.verses],
+        lists: state.lists.map(l => ((l.id === 'search') ? {
+          ...l, verses: [...l.verses, ...action.verses]
+        } : l)),
       };
     }
 

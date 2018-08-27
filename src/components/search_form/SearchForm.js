@@ -14,6 +14,7 @@ class SearchForm extends Component {
   state = {
     searchText: '',
     fuzzy: false,
+    selectedBookOnly: false,
     historyOpen: false,
   };
 
@@ -36,6 +37,7 @@ class SearchForm extends Component {
     this.searchInput = thisEl.getElementsByClassName('bx-search-form-input')[0];
     this.fuzzyCB = thisEl.getElementsByClassName('bx-search-form-fuzzy')[0];
     this.caseCB = thisEl.getElementsByClassName('bx-search-form-case')[0];
+    this.bookCB = thisEl.getElementsByClassName('bx-search-form-book')[0];
   }
 
   componentWillUnmount() {
@@ -74,6 +76,7 @@ class SearchForm extends Component {
       const options = {
         fuzzy: this.fuzzyCB.checked,
         caseSensitive: this.caseCB.checked,
+        selectedBookOnly: this.bookCB.checked,
       };
       return this.props.searchTextAction(this.state.searchText, this.props.selectedModule, options);
     }
@@ -120,6 +123,10 @@ class SearchForm extends Component {
         <label>
           <input className="bx-search-form-case" type="checkbox" value={this.state.caseSensitive} />
           <span>__Case sensitive</span>
+        </label>
+        <label>
+          <input className="bx-search-form-book" type="checkbox" value={this.state.selectedBookOnly} />
+          <span>__Selected Book only</span>
         </label>
       </div>
     );

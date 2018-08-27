@@ -205,15 +205,13 @@ export const toggleToolbarAction = (position) => ({
 export const searchTextAction = (searchText, module, options) => {
   console.log('searchTextAction: ', searchText, module, options)
   return function (dispatch, getState) {
-    if(!searchText || getState.searchInProgress) return;
+    if(!searchText || getState().searchInProgress) return;
+    if (options.selectedBookOnly) options = {...options, book: getState().selectedBook};
+
     dispatch ({
       type: 'SEARCH_START',
       searchText,
     });
-    let stopped = false;
-
-    // const unsubscribe = store.subscribe(handleChange) ???
-    // unsubscribe()
 
     setTimeout(() => {
       module.search(
@@ -226,7 +224,7 @@ export const searchTextAction = (searchText, module, options) => {
         (verses) => dispatch ({
           type: 'SEARCH_DONE',
         }),
-        () => stopped,
+        () => getState().searchStop,
       );
     }, 10);
   }
