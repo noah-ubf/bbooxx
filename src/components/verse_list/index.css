@@ -64,3 +64,15 @@
   overflow-y: auto;
   padding: 0 10px;
 }
+
+.bx-verse-list-content:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.bx-toolbar-text {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  margin-left: 20px;
+}

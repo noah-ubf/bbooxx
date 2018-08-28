@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from "react-dom";
 import * as _ from 'lodash';
 
 import VerseView from './VerseView';
@@ -9,6 +10,14 @@ class VerseList extends Component {
   state = {
     selected: [],
   };
+  thisEl;
+  listEl;
+
+  componentDidMount() {
+    window.addEventListener("click", this.documentClickHandler);
+    const thisEl = ReactDOM.findDOMNode(this);
+    this.listEl = thisEl.getElementsByClassName('bx-verse-list-content')[0];
+  }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log('componentDidUpdate: ', prevProps, prevState, snapshot)
@@ -41,18 +50,18 @@ class VerseList extends Component {
 
   renderToolbarButtons() {
     const allSelected = (this.state.selected.length === this.props.verses.length);
+    const group1 = _.get(this.props.toolbar, 'select') || _.get(this.props.toolbar, 'invert');
+    const group2 = _.get(this.props.toolbar, 'remove') || _.get(this.props.toolbar, 'copy') || _.get(this.props.toolbar, 'paste');
+    const group3 = _.get(this.props.toolbar, 'fullscreen') || _.get(this.props.toolbar, 'closeFullscreen');
     return [
       (_.get(this.props.toolbar, 'select')
         ? <Button key="select" action={() => (allSelected ? this.deselectAll() : this.selectAll())}
           icon={allSelected ? 'deselectAll' : 'selectAll'} title={allSelected ? '__Deselect all' : '__Select all'}/> : null
       ),
-      (_.get(this.props.toolbar, 'deselect')
-        ? <Button key="deselect" action={() => this.deselectAll()} icon="deselectAll" title="__Deselect all"/> : null
-      ),
       (_.get(this.props.toolbar, 'invert')
         ? <Button key="invert" action={() => this.invertSelection()} icon="invert" title="__Invert selection"/> : null
       ),
-      (<div key="separator" className="bx-toolbar-separator"></div>),
+      (group1 && group2 ? <div key="separator" className="bx-toolbar-separator"></div> : null),
       (_.get(this.props.toolbar, 'remove')
         ? <Button key="remove" action={() => this.props.toolbar.remove(this.state.selected)} icon="trash" title="__Remove selected"/> : null
       ),
@@ -62,7 +71,22 @@ class VerseList extends Component {
       (_.get(this.props.toolbar, 'paste')
         ? <Button key="paste" action={() => this.props.toolbar.paste()} icon="paste" title="__Paste"/> : null
       ),
+      (group1 || group2 ? <div key="separator2" className="bx-toolbar-separator"></div> : null),
+      (_.get(this.props.toolbar, 'fullscreen')
+        ? <Button key="fullscreen" action={() => this.props.toolbar.fullscreen()} icon="fullscreen" title="__Maximize"/> : null
+      ),
+      (_.get(this.props.toolbar, 'closeFullscreen')
+        ? <Button key="closeFullscreen" action={() => this.props.toolbar.closeFullscreen()} icon="closeFullscreen" title="__Unmaximize"/> : null
+      ),
+      (((group1 || group2 || group3) && _.get(this.props.toolbar, 'text')) ? <div key="separator3" className="bx-toolbar-separator"></div> : null),
+      (_.get(this.props.toolbar, 'text')
+        ? <div key="text" className="bx-toolbar-text">{_.get(this.props.toolbar, 'text')}</div> : null
+      )
     ];
+  }
+
+  renderTulbarButton(id) {
+
   }
 
   isSelected(verse) {
@@ -85,6 +109,13 @@ class VerseList extends Component {
   invertSelection() {
     this.setState({selected: _.filter(this.props.verses, v => !this.isSelected(v))});
   }
+
+  // enterFullscreenMode() {
+  //   console.log('enterFullscreenMode: ', this.listEl)
+  //   if (this.listEl.requestFullscreen) {
+  //     this.listEl.requestFullscreen();
+  //   }
+  // }
 
   render() {
     return (

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-// import { Box, Button, TextInput } from 'proton-native';
 import * as _ from 'lodash';
 import classNames from 'classnames';
+
+// const electron = require('electron');
 
 import * as Actions from '../../actions/file';
 import VerseList from '../verse_list/VerseList';
@@ -16,7 +17,7 @@ import './index.css';
 
 const Box = props => (
   <div  {..._.omit(props, 'vertical')} style={{
-    display: 'flex',
+    display: props.hidden ? 'none' : 'flex',
     flexDirection: (props.vertical === false ? 'row' : 'column')
   }}>
     { props.children }
@@ -40,6 +41,14 @@ class Display extends Component {
       />
     );
   }
+
+  // componentDidUpdate(prevProps, prevState, snapshot) {
+  //   console.log('componentDidUpdate: ', prevProps, prevState, snapshot)
+  //   if (this.props.fullScreen) {
+  //     // const browserWindow = electron.remote.getCurrentWindow();
+  //     // browserWindow.setFullScreen(true);
+  //   }
+  // }
 
   renderSplitter(pos) {
     const label = (pos === 'left' ? this.props.toolbarHidden : !this.props.searchbarHidden)
@@ -81,18 +90,40 @@ class Display extends Component {
 
   getToolbar(list) {
     if (!list) return null;
+    if (this.props.fullScreen) {
+      return {
+        closeFullscreen: () => this.props.toggleFullscreenAction(),
+        text: (list.config.name || list.config.descriptor)
+      }
+    }
     return {
       select: true,
       invert: true,
       remove: verses => this.props.removeVersesAction(list.id, verses),
       copy: verses => this.props.copyVersesAction(verses),
       paste: list.id === 'search' ? null : () => this.props.pasteVersesAction(list.id),
+      fullscreen: list.id !== 'search' ? () => this.props.toggleFullscreenAction() : null,
     };
   }
 
-  render() {
+  renderFullScreenMode() {
+    if (!this.props.fullScreen) return null;
+    const currentList = this.props.lists.find(l => l.id === this.props.selectedTab);
     return (
-      <Box vertical={false} className={`${this.props.className} bx-layout`}>
+      <div className="bx-tabs-content" key="fullscreen">
+        <VerseList
+          descriptor={currentList.config.descriptor}
+          verses={currentList.verses}
+          toolbar={this.getToolbar(currentList)}
+          showHeader={!!_.get(currentList, 'config.params.customized')}
+        />
+      </div>
+    )
+  }
+
+  render() {
+    return [
+      <Box key="layout" vertical={false} className={`${this.props.className} bx-layout`} hidden={this.props.fullScreen}>
         <div className="bx-section bx-fixed-size">
           { this.renderModuleList() }
         </div>
@@ -142,7 +173,6 @@ class Display extends Component {
                       toolbar={this.getToolbar(l)}
                       showHeader={!!_.get(l, 'config.params.customized')}
                     />
-                    <hr/>
                   </div>
                 ))
               }
@@ -153,8 +183,9 @@ class Display extends Component {
         <div className="bx-section bx-fixed-size bx-search-section">
           { this.renderSearch() }
         </div>
-      </Box>
-    );
+      </Box>,
+      this.renderFullScreenMode()
+    ];
   }
 }
 
@@ -178,6 +209,7 @@ function mapStateToProps(state, props) {
     lists,
     tabs: _.filter(lists, l => (l.config.type === 'tab')),
     selectedTab: state.config.selectedTab,
+    fullScreen: state.fullScreen,
   };
 }
 

@@ -4,6 +4,8 @@
 - strong numbers
 - greek&hebrew
 
+± fullscreen
+- zoom
 - verse actions (show context, ...)
 - module manager
 - chapter navigation

@@ -265,6 +265,10 @@ export const selectTabListAction = listId => ({
   listId
 });
 
+export const toggleFullscreenAction = () => ({
+  type: 'TOGGLE_FULLSCREEN',
+});
+
 export const tempAction = (verse) => {
   return function (dispatch, getState) {
     console.log('tempAction:', verse);

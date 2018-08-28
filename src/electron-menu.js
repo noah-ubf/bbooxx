@@ -56,6 +56,10 @@ module.exports = {
               if (focusedWindow != null) mainWindow.webContents.send('toggle-search');
             }
           },
+          {
+            label: 'Toggle Fullscreen',
+            role: 'togglefullscreen'
+          }
         ],
       },
     ];

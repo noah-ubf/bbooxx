@@ -334,6 +334,7 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'REMOVE_VERSES': {
+      if (!action.verses || action.verses.length ===0) return state;
       const verses = _.chain(state.lists)
         .find(l => l.id === action.listId)
         .get('verses')
@@ -368,7 +369,7 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'ADD_TAB_LIST': {
-      const newId = _.uniqueId();
+      const newId = uniqueId(state);
       return {
         ...state,
         config: {
@@ -463,6 +464,13 @@ const fileReducer = (state = defaultState, action) => {
       };
     }
 
+    case 'TOGGLE_FULLSCREEN': {
+      return {
+        ...state,
+        fullScreen: !state.fullScreen,
+      };
+    }
+
     default:
       return state;
   }
@@ -478,7 +486,7 @@ function selectChapter(state, chapter) {
     || _.find(state.config.lists, l => (l.type === 'tab' && !_.get(l, 'params.customized') && _.get(l, 'descriptor', '') === ''));
   const isNewList = !targetList;
   targetList = targetList  || {
-      id: _.uniqueId(),
+      id: uniqueId(state),
       type: 'tab',
       descriptor: chapter.getDescriptor(),
     };
@@ -500,4 +508,13 @@ function selectChapter(state, chapter) {
     selectedChapter: chapter,
     lists
   };
+}
+
+function uniqueId(state) {
+  const ids = _.chain(state.lists)
+    .filter(l => !_.isNaN(+l.id))
+    .map(l => +l.id)
+    .value();
+  const maxId = Math.max(...ids);
+  return (maxId + 1).toString();
 }
