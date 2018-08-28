@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 const descrRE = /^(\(([^)]+)\))?(([^.]+)\.)?(\d+)?(:(\d+)(-(\d+))?)?$/;
 export const parseDescriptor = descr => {
   if (!descr) return [];
-  const parts = descr.split(';');
+  const parts = descr.replace(/,/g, ';:').split(';');
   let moduleDescr = '';
   let bookDescr = '';
   let chapterDescr = '';
@@ -15,7 +15,7 @@ export const parseDescriptor = descr => {
     if (info[5]) chapterDescr = info[5];
     const v1 = info[7];
     const v2 = info[9];
-    const verses = _.isUndefined(v1) ? null : (_.isUndefined(v2) ? [v1] : [v1, v2]);
+    const verses = _.isUndefined(v1) ? null : (_.isUndefined(v2) ? [+v1] : [+v1, +v2]);
     if (!moduleDescr || !bookDescr || !chapterDescr) return null;
     return {
       module: moduleDescr,
@@ -27,7 +27,7 @@ export const parseDescriptor = descr => {
 }
 
 export const getDescriptorFromList = (verses) => {
-  return verses.map(v => v.getDescriptor()).join(';');
+  return compactDescriptor(verses.map(v => v.getDescriptor()).join(';'));
 }
 
 export const getListFromDescriptor = (li, modulesDict) => {
@@ -59,8 +59,46 @@ export const getListFromDescriptor = (li, modulesDict) => {
   }
 }
 
-export const compactDescriptor = (descriptor, modulesDict) => {
+export function compactDescriptor(descriptor) {
+  const list = parseDescriptor(descriptor);
+  let res = [];
 
+  let module = null;
+  let book = null;
+  let chapter = null;
+
+  list.forEach(o => {
+    const r = res[res.length - 1];
+    if (res.length > 0
+      && module === o.module 
+      && book === o.book 
+      && chapter === o.chapter 
+      && ((r.verses[1] || r.verses[0]) + 1 === o.verses[0])) {
+      r.verses = [r.verses[0], (o.verses[1] || o.verses[0])]
+    } else {
+      res.push({
+        ...o,
+        module: (r && module === o.module) ? '' : o.module,
+        book: (r && module === o.module && book === o.book) ? '' : o.book,
+        chapter: (r && module === o.module && book === o.book && chapter === o.chapter) ? '' : o.chapter,
+      });
+    }
+
+    module = o.module;
+    book = o.book;
+    chapter = o.chapter;
+  });
+
+  const ret = res.map(o => {
+    let module = o.module ? `(${o.module})` : '';
+    let book = o.book ? `${o.book}` : '';
+    let chapter = o.chapter ? `.${o.chapter}` : '';
+    let verses = (o.verses && o.verses.join('-')) || '';
+    if (verses) verses = `:${verses}`;
+    return `${module}${book}${chapter}${verses}`;
+  }).join(';').replace(/;:/g, ',');
+
+  return ret;
 }
 
 export const BIBLE_BOOKS = {
