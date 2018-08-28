@@ -41,6 +41,10 @@ export default class BibleQuoteModule {
     return this.config.Bible === 'Y';
   }
 
+  hasStrongNumbers() {
+    return this.config.StrongNumbers === 'Y';
+  }
+
   isRightToLeft() {
     return this.config.Lefttoright === 'N';
   }

@@ -42,6 +42,14 @@ export default class Verse {
     return this.params.module;
   }
 
+  getBook() {
+    return this.params.book;
+  }
+
+  getChapter() {
+    return this.params.chapter;
+  }
+
   getNum() {
     return +this.params.num;
   }
@@ -60,16 +68,18 @@ export default class Verse {
   parseLexems() {
     const parser = new DOMParser();
     const htmlDoc = parser.parseFromString(this.text, "text/html");
-    let nodes = [...htmlDoc.childNodes[0].childNodes[1].childNodes];
+    let nodes = [..._.get(htmlDoc, 'childNodes[0].childNodes[1].childNodes', [])];
     // console.log('NODES[0]: ', nodes)
 
     let plainTree = [];
+    let lexems = [];
+
     const convNodes = nodes => _.compact(nodes.map(n => {
       // console.log('===>', n, n.nodeName)
       if (n.nodeName === "#comment") {
         return null;
       } else if (n.nodeName === '#text') {
-        return {t: 'text', text: n.textContent.trim()};
+        return {t: 'text', text: n.textContent};
       } else if (n.nodeName !== 'IMG' && n.innerHTML === '') {
         return null;
       } else {
@@ -86,34 +96,45 @@ export default class Verse {
 
     const walkTree = (nodes, parent = {open: '', close: ''}) => {
       nodes.forEach(node => {
-        if (!node) {
-          // skip
-        } else if (node.t === 'text') {
+        if (!node) return;
+        let open = node.open || '';
+        let close = node.close || '';
+        if (node.close === '</P>') {
+          if (parent.close ==='') {
+            open = '';
+            close = '';
+          }
+          if (plainTree.length > 0) {
+            plainTree = [...plainTree, { text: ' ', open, close }];
+          }
+        }
+        if (node.t === 'text') {
           plainTree = parent.open ? [
             ...plainTree,
             {
               text: node.text,
-              open: parent && parent.open,
-              close: parent && parent.close,
+              open: `${parent.open}${open}`,
+              close: `${close}${parent.close}`,
             }
           ] : [
             ...plainTree,
-            ..._.chain(node.text).split(' ').compact().map(s => ({
+            ..._.chain(node.text).split(/\b/).map(s => ({
               text: s,
-              open: parent && parent.open,
-              close: parent && parent.close,
+              open: `${parent.open}${open}`,
+              close: `${close}${parent.close}`,
+              isStrong: !!(this.getModule().hasStrongNumbers() && s.match(/^(H|G)?\d+$/i)),
             }))
           ];
         } else if (node.children.length === 0) {
           plainTree = [...plainTree, {
             text: node.text,
-            open: `${parent.open}${node.open}`,
-            close: `${node.close}${parent.close}`,
+            open: `${parent.open}${open}`,
+            close: `${close}${parent.close}`,
           }];
         } else {
           walkTree(node.children, {
-            open: `${parent.open}${node.open}`,
-            close: `${node.close}${parent.close}`,
+            open: `${parent.open}${open}`,
+            close: `${close}${parent.close}`,
           });
         }
       });
@@ -123,18 +144,29 @@ export default class Verse {
     if (nodes.length === 1 && nodes[0].t === 'P') nodes = nodes[0].children;
     walkTree(nodes);
     
-    if (this.params.module.isBible() && plainTree[0] && plainTree[0].text.match(/^[0-9]+$/)) {
+    if (this.params.module.isBible() && plainTree[0] && plainTree[0].text.trim().match(/^[0-9]+$/)) {
       this.numText = plainTree[0].text;
       plainTree = plainTree.slice(1); // TODO groupped verses, like in Turkish
     }
-    // console.log('NODES[1]: ', nodes, plainTree);
-    // console.log('NODES[2]: ', JSON.stringify(nodes), JSON.stringify(plainTree));
 
-    if (this.params.module.config.StrongNumbers === 'Y') {
-      // TODO 
-    }
+    let space = false;
+    plainTree.forEach(n => {
+      if (n.text.trim() === '' && (!n.open || n.open.length < 10)/* TODO: a better way for detecting media? */) {
+        space = true;
+      } else if (n.isStrong && lexems.length > 0) {
+        let s = n.text;
+        if (s.match(/^\d+$/i)) s = (this.getBook().isNT() ? 'G' : 'H') + s;
+        lexems[lexems.length - 1].strongs.push(s) // TODO: check other formats!!!
+        space = false;
+      } else {
+        if (n.text[0] === ' ') space = true;
+        lexems.push({open: n.open, close: n.close, text: n.text.trim(), space, strongs: []});
+        if (n.text[n.text.length - 1] === ' ') space = true;
+        else space = false;
+      }
+    });
 
-    this.lexems = plainTree;
+    this.lexems = lexems;
   }
 
   getText() {
@@ -158,7 +190,6 @@ export default class Verse {
   }
 
   matches(words, options) {
-    // console.log('matches: ', words, options, this)
     const myWords =  this.getWords(options.caseSensitive);
     return options.fuzzy ? this.containsFuzzy(words, myWords) : this.contains(words, myWords);
   }

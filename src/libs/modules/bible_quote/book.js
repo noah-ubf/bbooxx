@@ -4,6 +4,7 @@ const electron = window.require('electron');
 const fs = electron.remote.require('fs');
 
 import Chapter from './chapter';
+import { BIBLE_BOOKS } from '../descriptor';
 
 
 export default class Book {
@@ -14,18 +15,42 @@ export default class Book {
   chLines = [];
   vLines = [];
   loaded = false;
+  shortNames = [];
+  bibleParams = {
+    name: '',
+    OT: false,
+    NT: false,
+    Ap: false,
+    section: ''
+  };
 
   constructor(params) {
     this.params = params;
     this.module = this.params.module;
+    this.shortNames = _.chain(this.params).get('ShortName').split(' ').value() || [];
     const firstVal = this.params.ChapterZero === 'Y' ? 0 : 1;
-    const lastVal = +this.params.ChapterQty;
+    const lastVal = +this.params.ChapterQty + firstVal - 1;
     this.chapters = _.range(firstVal, lastVal + 1).map(i => new Chapter({
       module: this.module,
       book: this,
       num: i,
       name: `${i}`,
     }));
+    if (this.getModule().isBible()) {
+      this.shortNames.some(name => {
+        if (!BIBLE_BOOKS[name]) return false;
+        this.bibleParams = {
+          ...this.bibleParams,
+          ...BIBLE_BOOKS[name],
+          name
+        };
+        return true;
+      });
+    }
+  }
+
+  getModule() {
+    return this.module;
   }
 
   getDescriptor() {
@@ -64,7 +89,7 @@ export default class Book {
   }
 
   getShortName() {
-    let name = _.chain(this.params).get('ShortName').split(' ').first().value();
+    let name = _.first(this.shortNames);
     if (_.isUndefined(name)) name = this.getNum();
     else name = name.replace(/\.$/, '');
     return name;
@@ -107,23 +132,36 @@ export default class Book {
     return lines.map(s => {
       // s = s.replace(regexp, '');
       s = s.replace(regexpBR, '');
-      s = s.replace(/^src="/, '  src="');
-      s = s.split(' src="').map((ss, i) => {
+      s = s.replace(/^src=/i, '  src=');
+      s = s.split(/ src=/i).map((ss, i) => {
         if (i === 0 ) return ss;
-        const index = ss.indexOf('"');
-        const fname = decodeURI(ss.substr(0, index)).replace('\\', '/');
-        const rest = ss.substr(index);
-        const fullPath = `${this.module.path}${fname}`;
-        try {
-          const data = fs.readFileSync(fullPath);
-          const dataUrl = data.toString('base64');
-          return `data:image/gif;base64,${dataUrl}${rest}`
-        } catch (e) {
+        let index;
+        let uri;
+        let rest;
+        if (ss[0] === '"') {
+          ss = ss.substr(1);
+          index = ss.indexOf('"');
+          uri = ss.substr(0, index);
+          rest = ss.substr(index + 1);
+        } else {
+          index = ss.indexOf('>');
+          uri = ss.substr(0, index);
+          rest = ss.substr(index);
         }
-        return ss;
-      }).join(' src="');
+        const fname = decodeURI(uri).replace('\\', '/');
+        let data = this.readFile(fname) || this.readFile(fname.toLowerCase()) || this.readFile(fname.toUpperCase());
+        if (!data) return ss;
+        const dataUrl = data.toString('base64');
+        return `"data:image/gif;base64,${dataUrl}"${rest}`
+      }).join(' src=');
       return s;
     })
+  }
+
+  readFile(fname) {
+    try {
+      return fs.readFileSync(`${this.module.path}${fname}`);
+    } catch (e) { return null; }
   }
 
   _getChapterVerses(chapter) {
@@ -150,4 +188,12 @@ export default class Book {
 
     searchNext();
   }
+
+  getStandardName() {
+    
+  }
+
+  isOT() { return this.bibleParams.OT; }
+
+  isNT() { return this.bibleParams.NT; }
 }

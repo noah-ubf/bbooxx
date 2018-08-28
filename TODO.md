@@ -1,0 +1,13 @@
+- "go_..." links;
+- better parsing (???)
+- move splitters
+- i18n
+- greek&hebrew
+- chapter navigation
+- verse actions (show context, ...)
+- search modules by book names also
+- name tab lists
+- strong numbers
+- module manager
+- autoselect zero chapter
+- dont select verse if mouse moved between down and up

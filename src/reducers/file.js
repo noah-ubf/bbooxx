@@ -480,7 +480,7 @@ function selectChapter(state, chapter) {
   targetList = targetList  || {
       id: _.uniqueId(),
       type: 'tab',
-      descriptor: '',
+      descriptor: chapter.getDescriptor(),
     };
   const listConfigs = isNewList
     ? [ ...state.config.lists, targetList ]

@@ -83,7 +83,6 @@ class Display extends Component {
     if (!list) return null;
     return {
       select: true,
-      deselect: true,
       invert: true,
       remove: verses => this.props.removeVersesAction(list.id, verses),
       copy: verses => this.props.copyVersesAction(verses),

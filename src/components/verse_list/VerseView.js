@@ -30,7 +30,7 @@ class VerseView extends Component {
         />
       );
     } else {
-      const composed = lexems.map(l => `${l.open}${l.text}${l.close}`).join(' ');
+      const composed = lexems.map(l => `${l.space?' ':''}${l.open}${l.text}${l.close}`).join('');
       return (
         <div
           dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}

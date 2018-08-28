@@ -20,7 +20,7 @@ class VerseList extends Component {
   }
 
   renderHeader() {
-    if (this.props.showHeader === false) return null;
+    if (this.props.showHeader === false || (!this.props.title && !this.props.subtitle)) return null;
     return (
       <div className="bx-verse-list-header">
         <h1>{ this.props.title }</h1>
@@ -40,9 +40,11 @@ class VerseList extends Component {
   }
 
   renderToolbarButtons() {
+    const allSelected = (this.state.selected.length === this.props.verses.length);
     return [
       (_.get(this.props.toolbar, 'select')
-        ? <Button key="select" action={() => this.selectAll()} icon="selectAll" title="__Select all"/> : null
+        ? <Button key="select" action={() => (allSelected ? this.deselectAll() : this.selectAll())}
+          icon={allSelected ? 'deselectAll' : 'selectAll'} title={allSelected ? '__Deselect all' : '__Select all'}/> : null
       ),
       (_.get(this.props.toolbar, 'deselect')
         ? <Button key="deselect" action={() => this.deselectAll()} icon="deselectAll" title="__Deselect all"/> : null
