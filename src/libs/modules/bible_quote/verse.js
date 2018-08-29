@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 
 import levenshtein from '../../levenshtein';
+import { convertFontToUtf8 } from './font_convert';
 
 export default class Verse {
   params = null;
@@ -8,12 +9,13 @@ export default class Verse {
   numText = null;
   header = null;
   lexems = [];
+  strongsCount = null;
 
   constructor(params=null) {
     if (!_.isNull(params)) {
       this.params = params;
       this.text = this.params.lines ? this.params.lines.join('\n') : '';
-      this.parseLexems();
+      this.lexems = this.parseLexems(this.text);
     }
   }
 
@@ -27,6 +29,7 @@ export default class Verse {
     this.numText = verse.numText;
     this.header = verse.header;
     this.lexems = verse.lexems;
+    this.strongsCount = verse.strongsCount;
     return this;
   }
 
@@ -54,20 +57,28 @@ export default class Verse {
     return +this.params.num;
   }
 
+  hasStrongs() {
+    if (_.isNull(this.strongsCount)) {
+      this.strongsCount = 0;
+      _.forEach(this.lexems, l => (this.strongsCount += _.get(l, 'strongs.length', 0)));
+    }
+    return (this.strongsCount > 0);
+  }
+
   getHeader() {
     if (_.isNull(this.header)) {
       const book = this.params.book.getShortName();
       const chapter = this.params.chapter.getNum();
       const verses = this.getNum(); // TODO: can be several verses in one text block, like in Turkish bible
-      this.header = book[book.length-1] === '.' ? `${book}${chapter}:${verses}` : `${book}.${chapter}:${verses}`;
+      this.header = book[book.length - 1] === '.' ? `${book}${chapter}:${verses}` : `${book}.${chapter}:${verses}`;
     }
 
     return this.header;
   }
 
-  parseLexems() {
+  parseLexems(text) {
     const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(this.text, "text/html");
+    const htmlDoc = parser.parseFromString(text, "text/html");
     let nodes = [..._.get(htmlDoc, 'childNodes[0].childNodes[1].childNodes', [])];
     // console.log('NODES[0]: ', nodes)
 
@@ -82,6 +93,14 @@ export default class Verse {
         return {t: 'text', text: n.textContent};
       } else if (n.nodeName !== 'IMG' && n.innerHTML === '') {
         return null;
+      } else if(n.nodeName === 'FONT' && n.face.match(/^(Heb|Grk)/)) {
+        return {
+          t: 'text',
+          text: convertFontToUtf8(n.face, n.outerText),
+          open: '',
+          close: '',
+          children: convNodes([...n.childNodes])
+        };
       } else {
         return {
           t: n.nodeName,
@@ -123,7 +142,7 @@ export default class Verse {
               open: `${parent.open}${open}`,
               close: `${close}${parent.close}`,
               isStrong: !!(this.getModule().hasStrongNumbers() && s.match(/^(H|G)?\d+$/i)),
-            }))
+            })).value()
           ];
         } else if (node.children.length === 0) {
           plainTree = [...plainTree, {
@@ -159,14 +178,21 @@ export default class Verse {
         lexems[lexems.length - 1].strongs.push(s) // TODO: check other formats!!!
         space = false;
       } else {
+        let t = n.text.trim();
+        let strongs = [];
         if (n.text[0] === ' ') space = true;
-        lexems.push({open: n.open, close: n.close, text: n.text.trim(), space, strongs: []});
+        const res = /^(.*)((H|G)\d+)(\s*)$/.exec(t);
+        if (res && res[2]) {
+          t = res[1];
+          strongs.push(res[2]);
+        }
+        lexems.push({open: n.open, close: n.close, text: t, space, strongs});
         if (n.text[n.text.length - 1] === ' ') space = true;
         else space = false;
       }
     });
 
-    this.lexems = lexems;
+    return lexems;
   }
 
   getText() {

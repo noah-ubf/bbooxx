@@ -168,4 +168,11 @@ export const BIBLE_BOOKS = {
   'Philemon':       {OT: false, NT: true, Ap: false, section: ''},
   'Hebrews':        {OT: false, NT: true, Ap: false, section: ''},
   'Revelation':     {OT: false, NT: true, Ap: false, section: ''},
+  '1Mak':           {OT: false, NT: false, Ap: true, section: ''},
+  '2Mak':           {OT: false, NT: false, Ap: true, section: ''},
+  '3Mak':           {OT: false, NT: false, Ap: true, section: ''},
+  'Bar':            {OT: false, NT: false, Ap: true, section: ''},
+  '2Ez':            {OT: false, NT: false, Ap: true, section: ''},
+  '3Ez':            {OT: false, NT: false, Ap: true, section: ''},
+  'Judith':         {OT: false, NT: false, Ap: true, section: ''},
 }

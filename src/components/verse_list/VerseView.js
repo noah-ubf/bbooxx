@@ -21,6 +21,14 @@ class VerseView extends Component {
     );
   }
 
+  showStrongNumber(e, num) {
+    if (this.props.displayStrong) {
+      e.stopPropagation();
+      this.props.displayStrong(num);
+    }
+    // alert(num);
+  }
+
   renderContent(lexems) {
     if (lexems.length === 0) {
       return (
@@ -30,16 +38,35 @@ class VerseView extends Component {
         />
       );
     } else {
-      const composed = lexems.map(l => `${l.space?' ':''}${l.open}${l.text}${l.close}`).join('');
       return (
         <div
           dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
           title={this.props.verse.getHeader()}
         >
           { this.renderVerseNum() }
-          <span dangerouslySetInnerHTML={{__html: composed}} />
+          {
+            lexems.map((l, i) => (
+              <span key={i}>
+                <span dangerouslySetInnerHTML={{__html: `${l.space?' ':''}${l.open}${l.text}${l.close}`}} />
+                { (this.props.showStrongs && l.strongs && l.strongs.length > 0) 
+                  ? l.strongs.map((s, i) => (
+                    <span className="bx-strong-number-link" key={i} onClick={(e) => this.showStrongNumber(e, s)}>{s}</span>
+                  )) : null }
+              </span>
+            ))
+          }
         </div>
       );
+      // const composed = lexems.map(l => `${l.space?' ':''}${l.open}${l.text}${l.close}`).join('');
+      // return (
+      //   <div
+      //     dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
+      //     title={this.props.verse.getHeader()}
+      //   >
+      //     { this.renderVerseNum() }
+      //     <span dangerouslySetInnerHTML={{__html: composed}} />
+      //   </div>
+      // );
     }
   }
 

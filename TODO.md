@@ -1,10 +1,13 @@
 + compact descriptor
-- name tab lists
 - "go_..." links;
 - strong numbers
 - greek&hebrew
+- name tab lists
+- parallel view
 
 ± fullscreen
+- toggle verse numbers
+- group verses in list (header/footer of the group)
 - zoom
 - verse actions (show context, ...)
 - module manager
@@ -19,4 +22,5 @@
 
 - UI components (tabs, toolbars, ...)
 
+- async file reading
 - other module types (TBD)
