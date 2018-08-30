@@ -2,52 +2,8 @@ import * as _ from 'lodash';
 import { getListFromDescriptor, getDescriptorFromList } from '../libs/modules/descriptor';
 
 
-const defaultState = {
-  config: {
-    modules: {},
-    selectedModule: null,
-    selectedBook: null,
-    selectedChapter: null,
-    toolbarHidden: false,
-    searchbarHidden: false,
-    searchHistory: [],
-    window: {
-      x: null,
-      y: null,
-      width: null,
-      height: null,
-      maximized: false,
-      minimized: false,
-      fullscreen: false,
-    },
-    lists: [
-      // {
-      //   id: '',
-      //   type: '',
-      //   params: {},
-      //   descriptor: '',
-      // }
-    ],
-    selectedTab: null,
-  },
-  modules: [],
-  books: [],
-  selectedModule: null,
-  selectedBook: null,
-  selectedChapter: null,
-  lists: [
-    // {
-    //   id: '',
-    //   verses: [],
-    // }
-  ],
-  searchModule: null,
-  searchText: '',
-  searchResult: [],
-  searchStop: false,
-  searchInProgress: false,
-  buffer: [],
-};
+import defaultState from './default';
+import BQStrongs from '../libs/modules/bible_quote/strongs';
 
 
 const fileReducer = (state = defaultState, action) => {
@@ -72,17 +28,23 @@ const fileReducer = (state = defaultState, action) => {
 
     case 'ADD_MODULES': {
       const modules = _.filter(action.modules, m => (!state.config.modules[m.getShortName()]));
-      const configs = _.chain(modules).map(m => ([m.getShortName(), m.getFileName()])).fromPairs().value();
+      const strongs = _.filter(action.strongs, m => (!state.config.strongs[m.getName()]));
+      const dictionaries = _.filter(action.dictionaries, m => (!state.config.dictionaries[m.getPath()]));
+      const mconfigs = _.chain(modules).map(m => ([m.getShortName(), m.getFileName()])).fromPairs().value();
+      const sconfigs = _.chain(strongs).map(m => ([m.getName(), m.getPath()])).fromPairs().value();
+      const dconfigs = _.chain(dictionaries).map(m => ([m.getName(), m.getPath()])).fromPairs().value();
+
       return {
         ...state,
         config: {
           ...state.config,
-          modules: {
-            ...state.config.modules,
-            ...configs,
-          },
+          modules: { ...state.config.modules, ...mconfigs },
+          strongs: { ...state.config.strongs, ...sconfigs },
+          dictionaries: { ...state.config.dictionaries, ...dconfigs },
         },
-        modules: [ ...state.modules, ...action.modules ]
+        modules: [ ...state.modules, ...action.modules ],
+        strongs: [ ...state.strongs, ...action.strongs ],
+        dictionaries: [ ...state.dictionaries, ...action.dictionaries ],
       };
     }
 
@@ -96,6 +58,7 @@ const fileReducer = (state = defaultState, action) => {
       const books = selectedModule ? selectedModule.getBooks() : [];
       const selectedBook = selectedModule ? selectedModule.getBookByShortName(config.selectedBook) : null;
       const selectedChapter = selectedBook ? selectedBook.getChapterByNum(config.selectedChapter) : null;
+      const strongs = _.chain(config.strongs).values().map(path => new BQStrongs(path)).value();
 
       let lists = config.lists ? [...config.lists] : [];
       let tabs = config.tabs ? [...config.tabs] : [];
@@ -129,9 +92,12 @@ const fileReducer = (state = defaultState, action) => {
         : _.find(lists, t => (t.type === 'tab')).id;
 
       return {
+        ...defaultState,
+
         ...state,
-        config: {...action.config, lists, tabs, selectedTab},
+        config: {...defaultState.config, ...action.config, lists, tabs, selectedTab},
         modules: action.modules,
+        strongs,
         modulesDict,
         books,
         selectedModule,
@@ -139,7 +105,7 @@ const fileReducer = (state = defaultState, action) => {
         selectedChapter,
         toolbarHidden: config.toolbarHidden,
         searchbarHidden: config.searchbarHidden,
-        lists: lists.map(li => ({id: li.id, verses: getListFromDescriptor(li, modulesDict)}))
+        lists: lists.map(li => ({id: li.id, verses: getListFromDescriptor(li, modulesDict)})),
       };
     }
     /*
@@ -160,25 +126,7 @@ const fileReducer = (state = defaultState, action) => {
       }
     */
     case 'SELECT_MODULE': {
-      const books = action.module.getBooks();
-      if (state.selectedModule === action.module) {
-        if (state.books.length) {
-          return { ...state, books: [] };
-        }
-        return { ...state, books };
-      }
-      const chapters = books.length === 1 ? books[0].getChapters() : [];
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          selectedModule: action.module.getShortName(),
-        },
-        selectedModule: action.module,
-        selectedBook: books.length === 1 ? books[0] : null,
-        selectedChapter: chapters.length === 1 ? chapters[0] : null,
-        books
-      };
+      return selectModule(state, action.module);
     }
 
     case 'REMOVE_MODULE': {
@@ -235,30 +183,14 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'SELECT_BOOK': {
-      if (action.book.getChapters().length === 1) {
-        return selectChapter({
-          ...state,
-          config: {
-            ...state.config,
-            selectedBook: action.book.getShortName(),
-            selectedChapter: action.book.getShortName(),
-          },
-          selectedBook: action.book
-        }, action.book.getChapters()[0]);
-      }
-
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          selectedBook: action.book.getShortName(),
-        },
-        selectedBook: action.book
-      };
+      let stateUpd = selectModule(state, action.book.getModule(), false);
+      return selectBook(stateUpd, action.book);
     }
 
     case 'SELECT_CHAPTER': {
-      return selectChapter(state, action.chapter);
+      let stateUpd = selectModule(state, action.chapter.getModule(), false);
+      stateUpd = selectBook(stateUpd, action.chapter.getBook());
+      return selectChapter(stateUpd, action.chapter);
     }
 
     case 'TOGGLE_TOOLBAR': {
@@ -471,6 +403,15 @@ const fileReducer = (state = defaultState, action) => {
       };
     }
 
+    case 'DISPLAY_STRONG_NUMBER': {
+      if (state.strongNumber === action.num) return state;
+      return {
+        ...state,
+        strongNumber: action.num,
+        strongText: getStrongText(state.strongs, action.num),
+      };
+    }
+
     default:
       return state;
   }
@@ -478,6 +419,53 @@ const fileReducer = (state = defaultState, action) => {
 
 export default fileReducer;
 
+
+function selectModule(state, module, toggle=true) {
+  const books = module.getBooks();
+  if (state.selectedModule === module && toggle) {
+    if (state.books.length) {
+      return { ...state, books: [] };
+    }
+    return { ...state, books };
+  }
+
+  const chapters = books.length === 1 ? books[0].getChapters() : [];
+
+  return {
+    ...state,
+    config: {
+      ...state.config,
+      selectedModule: module.getShortName(),
+    },
+    selectedModule: module,
+    selectedBook: books.length === 1 ? books[0] : null,
+    selectedChapter: chapters.length === 1 ? chapters[0] : null,
+    books
+  };
+}
+
+function selectBook(state, book) {
+  if (book.getChapters().length === 1) {
+    return selectChapter({
+      ...state,
+      config: {
+        ...state.config,
+        selectedBook: book.getShortName(),
+        selectedChapter: book.getShortName(),
+      },
+      selectedBook: book
+    }, book.getChapters()[0]);
+  }
+
+  return {
+    ...state,
+    config: {
+      ...state.config,
+      selectedBook: book.getShortName(),
+    },
+    selectedBook: book
+  };
+}
 
 function selectChapter(state, chapter) {
   const verses = chapter.getVerses();
@@ -517,4 +505,15 @@ function uniqueId(state) {
     .value();
   const maxId = Math.max(...ids);
   return (maxId + 1).toString();
+}
+
+function getStrongText(strongs, num) {
+  if (_.isNull(num)) return null;
+  for(let i = 0; i < strongs.length; i++) {
+    let text = strongs[i].get(num);
+    if (text) {
+      return text;
+    }
+  }
+  return null;
 }

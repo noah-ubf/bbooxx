@@ -25,6 +25,14 @@ export default class Chapter {
     return this.params.name;
   }
 
+  getModule() {
+    return this.params.module;
+  }
+
+  getBook() {
+    return this.params.book;
+  }
+
   getText() {
     if (_.isNull(this.text)) this.text = this.params.book._getChapterText(this);
     return this.text;

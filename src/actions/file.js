@@ -8,6 +8,7 @@ const app = remote.app;
 const dialog = remote.dialog;
 
 import bqconfig from '../libs/bqconfig';
+import BQStrongs from '../libs/modules/bible_quote/strongs';
 
 const setWindowParams = (cfg) => {
   if (!cfg) return;
@@ -149,22 +150,35 @@ export const readModuleAction = filename => {
 
 export const scanDirectoryAction = () => {
   return function (dispatch, getState) {
-    // let dirname = '/Users/ozaikin/Software/BibleQuote';
     dialog.showOpenDialog({
       properties: ['openDirectory'],
     }, dirnames => {
       if (!dirnames) return;
       const dirname = dirnames[0];
       if (!dirname) return;
-      const modules = _.chain(walkDir(dirname)).map(filename => {
+      let modules = [];
+      let strongs = [];
+      let dictionaries = [];
+      _.chain(walkDir(dirname)).forEach(filename => {
         const text = fs.readFileSync(filename);
         const path = filename.substring(0, filename.lastIndexOf("/") + 1)
-        return bqconfig(text, path, filename);
+        if (!text || text.toString().trim() === '') {
+          if (fs.existsSync(`${path}hebrew.idx`)) {
+            strongs.push(new BQStrongs(`${path}hebrew.idx`));
+          }
+          if (fs.existsSync(`${path}greek.idx`)) {
+            strongs.push(new BQStrongs(`${path}greek.idx`));
+          }
+        } else {
+          modules.push(bqconfig(text, path, filename));
+        }
       }).compact().value();
 
       dispatch({
         type: 'ADD_MODULES',
-        modules
+        modules,
+        strongs,
+        dictionaries,
       });
     })
   };
@@ -268,6 +282,11 @@ export const selectTabListAction = listId => ({
 export const toggleFullscreenAction = () => ({
   type: 'TOGGLE_FULLSCREEN',
 });
+
+export const displayStrongNumberAction = num => ({
+  type: 'DISPLAY_STRONG_NUMBER',
+  num,
+})
 
 export const tempAction = (verse) => {
   return function (dispatch, getState) {

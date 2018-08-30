@@ -32,6 +32,7 @@ export default props => {
   const classes = classNames({
     "bx-button": true,
     "bx-button-round": props.round,
+    "bx-button-highlighted": props.highlighted,
   });
 
   const renderContent = () => {

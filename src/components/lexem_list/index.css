@@ -1,0 +1,33 @@
+.bx-t-size--3 { font-size: 70%; }
+.bx-t-size--2 { font-size: 80%; }
+.bx-t-size--1 { font-size: 90%; }
+.bx-t-size-2 { font-size: 110%; }
+.bx-t-size-3 { font-size: 120%; }
+.bx-t-size-4 { font-size: 130%; }
+.bx-t-size-5 { font-size: 140%; }
+.bx-t-size-6 { font-size: 150%; }
+.bx-t-size-7 { font-size: 160%; }
+
+.bx-t-link {
+  cursor: pointer;
+  color: #6666ff;
+  text-decoration: none;
+}
+.bx-t-link:hover {
+  color: #0000dd;
+  text-shadow: 1 1 1 #3333ff;
+}
+
+.bx-t-strong {
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 75%;
+  color: #7f7fff;
+}
+.bx-t-strong:hover {
+  color: #00007f;
+  text-shadow: 1 1 1 #3333ff;
+}
+
+.bx-t-bold { font-weight: bold; }
+.bx-t-italic{ font-style: italic; }

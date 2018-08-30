@@ -9,6 +9,7 @@ import Button from '../button/Button';
 class VerseList extends Component {
   state = {
     selected: [],
+    showStrongs: false,
   };
   thisEl;
   listEl;
@@ -20,7 +21,7 @@ class VerseList extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log('componentDidUpdate: ', prevProps, prevState, snapshot)
+    // console.log('componentDidUpdate: ', prevProps, prevState, snapshot)
     if (prevProps.verses !== this.props.verses) {
       this.setState({
         selected: _.filter(this.props.verses, v => (this.state.selected.indexOf(v) !== -1)),
@@ -72,11 +73,15 @@ class VerseList extends Component {
         ? <Button key="paste" action={() => this.props.toolbar.paste()} icon="paste" title="__Paste"/> : null
       ),
       (group1 || group2 ? <div key="separator2" className="bx-toolbar-separator"></div> : null),
+      ((_.get(this.props.toolbar, 'strongs') && this.props.verses.some(v => v.hasStrongs()))
+        ? <Button key="strongs" action={() => this.toggleStrongs()} icon="hash" title="__Toggle Strongs"
+            highlighted={this.state.showStrongs} /> : null
+      ),
       (_.get(this.props.toolbar, 'fullscreen')
         ? <Button key="fullscreen" action={() => this.props.toolbar.fullscreen()} icon="fullscreen" title="__Maximize"/> : null
       ),
       (_.get(this.props.toolbar, 'closeFullscreen')
-        ? <Button key="closeFullscreen" action={() => this.props.toolbar.closeFullscreen()} icon="closeFullscreen" title="__Unmaximize"/> : null
+        ? <Button key="closeFullscreen" action={() => this.props.toolbar.closeFullscreen()} icon="closeFullscreen" title="__Unmaximize" highlighted={true}/> : null
       ),
       (((group1 || group2 || group3) && _.get(this.props.toolbar, 'text')) ? <div key="separator3" className="bx-toolbar-separator"></div> : null),
       (_.get(this.props.toolbar, 'text')
@@ -96,6 +101,10 @@ class VerseList extends Component {
   toggleSelect(verse) {
     if (this.isSelected(verse)) this.setState({selected: _.filter(this.state.selected, v => (v !== verse))});
     else this.setState({selected: [...this.state.selected, verse]})
+  }
+
+  toggleStrongs() {
+    this.setState({showStrongs: !this.state.showStrongs});
   }
 
   selectAll() {
@@ -131,6 +140,8 @@ class VerseList extends Component {
                 onClick={() => this.toggleSelect(v)}
                 showHeader={this.props.showHeader}
                 selected={this.isSelected(v)}
+                showStrongs={this.state.showStrongs}
+                displayStrong={this.props.displayStrong}
               />
             ))
           }

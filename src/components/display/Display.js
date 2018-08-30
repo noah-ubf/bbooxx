@@ -10,6 +10,7 @@ import * as Actions from '../../actions/file';
 import VerseList from '../verse_list/VerseList';
 import SearchForm from '../search_form/SearchForm';
 import ModuleList from '../module_list/ModuleList';
+import StrongNumbers from '../strong_numbers/StrongNumbers';
 import Button from '../button/Button';
 
 import './index.css';
@@ -102,8 +103,14 @@ class Display extends Component {
       remove: verses => this.props.removeVersesAction(list.id, verses),
       copy: verses => this.props.copyVersesAction(verses),
       paste: list.id === 'search' ? null : () => this.props.pasteVersesAction(list.id),
+      strongs: list.id !== 'search' ? (num) => this.props.showStrongsAction(num) : null,
       fullscreen: list.id !== 'search' ? () => this.props.toggleFullscreenAction() : null,
     };
+  }
+
+  renderStrongs() {
+    if (!this.props.strongNumber) return null;
+    return (<StrongNumbers num={this.props.strongNumber} />);
   }
 
   renderFullScreenMode() {
@@ -172,7 +179,9 @@ class Display extends Component {
                       verses={l.verses}
                       toolbar={this.getToolbar(l)}
                       showHeader={!!_.get(l, 'config.params.customized')}
+                      displayStrong={num => this.props.displayStrongNumberAction(num)}
                     />
+                    { this.renderStrongs() }
                   </div>
                 ))
               }
@@ -210,6 +219,7 @@ function mapStateToProps(state, props) {
     tabs: _.filter(lists, l => (l.config.type === 'tab')),
     selectedTab: state.config.selectedTab,
     fullScreen: state.fullScreen,
+    strongNumber: state.strongNumber,
   };
 }
 
