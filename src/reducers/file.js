@@ -510,7 +510,6 @@ function uniqueId(state) {
 function getStrongText(strongs, num) {
   if (_.isNull(num)) return null;
   for(let i = 0; i < strongs.length; i++) {
-    console.log('--->', strongs[i])
     let text = strongs[i].get(num);
     if (text) {
       return text;

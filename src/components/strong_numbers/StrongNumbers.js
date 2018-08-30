@@ -5,11 +5,7 @@ import * as _ from 'lodash';
 
 import Button from '../button/Button';
 import * as Actions from '../../actions/file';
-// import VerseList from '../verse_list/VerseList';
-// import SearchForm from '../search_form/SearchForm';
-// import ModuleList from '../module_list/ModuleList';
-// import StrongNumbers from '../strong_numbers/StrongNumbers';
-// import Button from '../button/Button';
+import LexemList from '../lexem_list/LexemList';
 
 import './index.css';
 
@@ -27,16 +23,23 @@ class StrongNumbers extends Component {
   render() {
     return (
       <div className="bx-strongs-section">
-      <div className="bx-strongs-close">
-        <Button
-          action={() => this.props.displayStrongNumberAction(null)}
-          icon="remove"
-          title="__Close Strongs"
-          round={true}
-        />
-      </div>
+        <div className="bx-strongs-close">
+          <Button
+            action={() => this.props.displayStrongNumberAction(null)}
+            icon="remove"
+            title="__Close Strongs"
+            round={true}
+          />
+        </div>
+        <div>{ this.props.name }</div>
         <div>{ this.props.num }</div>
-        <div dangerouslySetInnerHTML={{__html: this.props.content || '__Strong number is not found in your dictionaries' }} />
+        {
+          (_.get(this.props.lexems.length, 0) === 0)
+          ? <div dangerouslySetInnerHTML={{__html: this.props.content || '__Strong number is not found in your dictionaries' }} />
+          : <LexemList
+             lexems={this.props.lexems}
+            />
+        }
       </div>
     );
   }
@@ -46,7 +49,8 @@ class StrongNumbers extends Component {
 function mapStateToProps(state, props) {
   return {
     num: state.strongNumber,
-    content: state.strongText,
+    name: _.get(state.strongText, 'name') || '',
+    lexems: _.get(state.strongText, 'lexems') || [],
   };
 }
 

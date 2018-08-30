@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
+import * as _ from 'lodash';
+
+import LexemList from '../lexem_list/LexemList';
 
 import "./index.css"
 
@@ -21,53 +24,32 @@ class VerseView extends Component {
     );
   }
 
-  showStrongNumber(e, num) {
+  displayStrong(num) {
     if (this.props.displayStrong) {
-      e.stopPropagation();
+      const kind = this.props.verse.getBook().isOT() ? 'H' : 'G';
+      num = (num.match(/^(H|G)/i) ? num : `${kind}${num}`);
       this.props.displayStrong(num);
     }
-    // alert(num);
+  }
+
+  fireLink(href) {
+    alert('Supposed to go to ' + href);
   }
 
   renderContent(lexems) {
-    if (lexems.length === 0) {
-      return (
-        <div
-          dangerouslySetInnerHTML={{__html: this.props.verse.getText()}}
-          title={this.props.verse.getHeader()}
+    return (
+      <div
+        dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
+        title={this.props.verse.getHeader()}
+      >
+        { this.renderVerseNum() }
+        <LexemList
+          lexems={lexems}
+          fireLink={ href => this.fireLink(href) }
+          displayStrong={ this.props.showStrongs && this.props.verse.hasStrongs() ? (num => this.displayStrong(num)) : null }
         />
-      );
-    } else {
-      return (
-        <div
-          dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
-          title={this.props.verse.getHeader()}
-        >
-          { this.renderVerseNum() }
-          {
-            lexems.map((l, i) => (
-              <span key={i}>
-                <span dangerouslySetInnerHTML={{__html: `${l.space?' ':''}${l.open}${l.text}${l.close}`}} />
-                { (this.props.showStrongs && l.strongs && l.strongs.length > 0) 
-                  ? l.strongs.map((s, i) => (
-                    <span className="bx-strong-number-link" key={i} onClick={(e) => this.showStrongNumber(e, s)}>{s}</span>
-                  )) : null }
-              </span>
-            ))
-          }
-        </div>
-      );
-      // const composed = lexems.map(l => `${l.space?' ':''}${l.open}${l.text}${l.close}`).join('');
-      // return (
-      //   <div
-      //     dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
-      //     title={this.props.verse.getHeader()}
-      //   >
-      //     { this.renderVerseNum() }
-      //     <span dangerouslySetInnerHTML={{__html: composed}} />
-      //   </div>
-      // );
-    }
+      </div>
+    );
   }
 
   render() {

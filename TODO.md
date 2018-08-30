@@ -1,15 +1,15 @@
 + compact descriptor
+± strong numbers
+± greek&hebrew
 - "go_..." links;
-- strong numbers
-- greek&hebrew
 - name tab lists
 - parallel view
 
 ± fullscreen
-- toggle verse numbers
 - group verses in list (header/footer of the group)
 - zoom
 - verse actions (show context, ...)
+- verse ordering
 - module manager
 - chapter navigation
 - i18n
@@ -18,7 +18,8 @@
 - autoselect zero chapter
 - module info
 - move splitters
-- better parsing (???)
+± better parsing (???)
+- toggle verse numbers
 
 - UI components (tabs, toolbars, ...)
 

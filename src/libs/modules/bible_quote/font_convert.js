@@ -42,12 +42,16 @@ const HEBREW = {
 
 export function convertFontToUtf8(fontName, text) {
   if(!fontName) return text;
-  console.log('convertFontToUtf8: ', fontName, text);
+  // console.log('convertFontToUtf8: ', fontName, text);
   let table = null;
-  if (fontName.match(/^grk/i)) table = GREEK;
+  if (fontName.match(/^(grk|graeca)/i)) table = GREEK;
   if (fontName.match(/^heb/i)) table = HEBREW;
   if (!table) return text;
   const res = text.split('').map(c => (table[c] || c)).join('');
-  console.log('--------- ', res);
+  // console.log('--------- ', res);
   return res;
+}
+
+export function convertToUtf8(text, fontName) {
+  return convertFontToUtf8(fontName, text);
 }

@@ -41,3 +41,11 @@ body {
   border-radius: 10px;
   line-height: 20px;
 }
+
+.bx-button-highlighted {
+  box-shadow: inset 1px 1px 30px #7f7fff;
+}
+
+.bx-verse img {
+  max-width: 100%;
+}

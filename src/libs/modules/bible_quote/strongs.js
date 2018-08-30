@@ -3,6 +3,8 @@ import iconv from 'iconv-lite';
 const electron = window.require('electron');
 const fs = electron.remote.require('fs');
 
+import parseLexems from './lexem_parser';
+
 
 export default class BibleQuoteStrongNumbers {
   config = {};
@@ -27,10 +29,10 @@ export default class BibleQuoteStrongNumbers {
     index = index.split('\n');
     this.name = index[0];
     for(let i = 1; i < index.length; i+=2) {
-      const num = index[i];
-      let start = +index[i+1];
-      let end = (i+3 < index.length)? +index[i+3] : -1;
-      const key = this.kind + (+num);
+      const num = parseInt(index[i], 10);
+      let start = parseInt(index[i+1], 10);
+      let end = (i + 3 < index.length)? parseInt(index[i+3], 10) : -1;
+      const key = this.kind + num;
       this.index[key] = [start, end];
     }
     this.loaded = true;
@@ -67,13 +69,18 @@ export default class BibleQuoteStrongNumbers {
     let kind = num[0];
     if (kind !== this.kind) return null;
     this.load();
-    const key = kind + num.replace(/^[^0-9]0*/, '');
+    const key = kind + (num.replace(/^[^0-9]0*/, '') || 0);
     if (!this.index[key]) return null;
     const text = this.readFile(this.textPath);
     //TODO:  fs.readSync(fd, buffer, offset, length, position)
     if (!text) return null;
     let start = this.index[key][0];
     let end = this.index[key][1];
-    return text.substring(start, end);
+    const article = text.substring(start, end);
+    const lexems = parseLexems(article, { hasStrongs: true });
+    return {
+      name: this.getName(),
+      lexems,
+    };
   }
 }
