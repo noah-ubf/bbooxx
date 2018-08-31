@@ -113,21 +113,6 @@ export const writeConfigAction = () => {
   };
 };
 
-export const setWindowHandlersAction = () => {
-  return function (dispatch, getState) {
-    const win = remote.getCurrentWindow();
-    win.on('resize', e => updateWindowConfig(dispatch));
-    win.on('move', e => updateWindowConfig(dispatch));
-    win.on('maximize', e => updateWindowConfig(dispatch));
-    win.on('unmaximize', e => updateWindowConfig(dispatch));
-    win.on('minimize', e => updateWindowConfig(dispatch));
-    win.on('restore', e => updateWindowConfig(dispatch));
-    win.on('enter-full-screen', e => updateWindowConfig(dispatch));
-    win.on('leave-full-screen', e => updateWindowConfig(dispatch));
-    win.on('close', e => writeConfigAction()(dispatch, getState));
-  };
-};
-
 export const readModuleAction = filename => {
   return function (dispatch, getState) {
     dialog.showOpenDialog({
@@ -288,11 +273,27 @@ export const displayStrongNumberAction = num => ({
   num,
 })
 
-export const tempAction = (verse) => {
+export const zoomInAction = () => ({
+  type: 'ZOOM_IN',
+})
+export const zoomOutAction = () => ({
+  type: 'ZOOM_OUT',
+})
+export const toggleSizeAction = () => ({
+  type: 'TOGGLE_UI_SIZE',
+});
+
+export const setWindowHandlersAction = () => {
   return function (dispatch, getState) {
-    console.log('tempAction:', verse);
-    if (!verse) return;
-    verse.parseLexems();
-    console.log('LEXEMS:', verse.lexems);
+    const win = remote.getCurrentWindow();
+    win.on('resize', e => updateWindowConfig(dispatch));
+    win.on('move', e => updateWindowConfig(dispatch));
+    win.on('maximize', e => updateWindowConfig(dispatch));
+    win.on('unmaximize', e => updateWindowConfig(dispatch));
+    win.on('minimize', e => updateWindowConfig(dispatch));
+    win.on('restore', e => updateWindowConfig(dispatch));
+    win.on('enter-full-screen', e => updateWindowConfig(dispatch));
+    win.on('leave-full-screen', e => updateWindowConfig(dispatch));
+    win.on('close', e => writeConfigAction()(dispatch, getState));
   };
 };

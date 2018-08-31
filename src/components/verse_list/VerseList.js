@@ -51,41 +51,50 @@ class VerseList extends Component {
 
   renderToolbarButtons() {
     const allSelected = (this.state.selected.length === this.props.verses.length);
-    const group1 = _.get(this.props.toolbar, 'select') || _.get(this.props.toolbar, 'invert');
-    const group2 = _.get(this.props.toolbar, 'remove') || _.get(this.props.toolbar, 'copy') || _.get(this.props.toolbar, 'paste');
-    const group3 = _.get(this.props.toolbar, 'fullscreen') || _.get(this.props.toolbar, 'closeFullscreen');
+    const tools = this.props.toolbar || {};
+    const group1 = tools.select || tools.invert;
+    const group2 = tools.remove || tools.copy || tools.paste;
+    const group3 = tools.fullscreen || tools.closeFullscreen;
     return [
-      (_.get(this.props.toolbar, 'select')
+      (tools.select
         ? <Button key="select" action={() => (allSelected ? this.deselectAll() : this.selectAll())}
           icon={allSelected ? 'deselectAll' : 'selectAll'} title={allSelected ? '__Deselect all' : '__Select all'}/> : null
       ),
-      (_.get(this.props.toolbar, 'invert')
+      (tools.invert
         ? <Button key="invert" action={() => this.invertSelection()} icon="invert" title="__Invert selection"/> : null
       ),
       (group1 && group2 ? <div key="separator" className="bx-toolbar-separator"></div> : null),
-      (_.get(this.props.toolbar, 'remove')
-        ? <Button key="remove" action={() => this.props.toolbar.remove(this.state.selected)} icon="trash" title="__Remove selected"/> : null
+      (tools.remove
+        ? <Button key="remove" action={() => tools.remove(this.state.selected)} icon="trash" title="__Remove selected"/> : null
       ),
-      (_.get(this.props.toolbar, 'copy')
-        ? <Button key="copy" action={() => this.props.toolbar.copy(this.state.selected)} icon="copy" title="__Copy"/> : null
+      (tools.copy
+        ? <Button key="copy" action={() => tools.copy(this.state.selected)} icon="copy" title="__Copy"/> : null
       ),
-      (_.get(this.props.toolbar, 'paste')
-        ? <Button key="paste" action={() => this.props.toolbar.paste()} icon="paste" title="__Paste"/> : null
+      (tools.paste
+        ? <Button key="paste" action={() => tools.paste()} icon="paste" title="__Paste"/> : null
       ),
       (group1 || group2 ? <div key="separator2" className="bx-toolbar-separator"></div> : null),
-      ((_.get(this.props.toolbar, 'strongs') && this.props.verses.some(v => v.hasStrongs()))
+      (tools.strongs && this.props.verses.some(v => v.hasStrongs())
         ? <Button key="strongs" action={() => this.toggleStrongs()} icon="hash" title="__Toggle Strongs"
             highlighted={this.state.showStrongs} /> : null
       ),
-      (_.get(this.props.toolbar, 'fullscreen')
-        ? <Button key="fullscreen" action={() => this.props.toolbar.fullscreen()} icon="fullscreen" title="__Maximize"/> : null
+      // zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,
+      // zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
+      (tools.zoomIn
+        ? <Button key="zoomIn" action={() => tools.zoomIn()} icon="zoomIn" title="__Zoom in"/> : null
       ),
-      (_.get(this.props.toolbar, 'closeFullscreen')
-        ? <Button key="closeFullscreen" action={() => this.props.toolbar.closeFullscreen()} icon="closeFullscreen" title="__Unmaximize" highlighted={true}/> : null
+      (tools.zoomOut
+        ? <Button key="zoomOut" action={() => tools.zoomOut()} icon="zoomOut" title="__Zoom out"/> : null
       ),
-      (((group1 || group2 || group3) && _.get(this.props.toolbar, 'text')) ? <div key="separator3" className="bx-toolbar-separator"></div> : null),
-      (_.get(this.props.toolbar, 'text')
-        ? <div key="text" className="bx-toolbar-text">{_.get(this.props.toolbar, 'text')}</div> : null
+      (tools.fullscreen
+        ? <Button key="fullscreen" action={() => tools.fullscreen()} icon="fullscreen" title="__Maximize"/> : null
+      ),
+      (tools.closeFullscreen
+        ? <Button key="closeFullscreen" action={() => tools.closeFullscreen()} icon="closeFullscreen" title="__Unmaximize" highlighted={true}/> : null
+      ),
+      (((group1 || group2 || group3) && tools.text) ? <div key="separator3" className="bx-toolbar-separator"></div> : null),
+      (tools.text
+        ? <div key="text" className="bx-toolbar-text">{ tools.text }</div> : null
       )
     ];
   }
@@ -127,11 +136,12 @@ class VerseList extends Component {
   // }
 
   render() {
+    const fontSize = (this.props.fontSize || 20) + 'px';
     return (
       <div className="bx-verselist">
         { this.renderHeader() }
         { this.renderTools() }
-        <div className="bx-verse-list-content">
+        <div className="bx-verse-list-content" style={{fontSize}}>
           {
             _.map(this.props.verses, (v, i) => (
               <VerseView

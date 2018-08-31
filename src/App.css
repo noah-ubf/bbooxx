@@ -23,7 +23,7 @@ html, body, #root {
 .App-header {
   background-color: #222;
   height: 150px;
-  padding: 20px;
+  padding: 1em;
   color: white;
 }
 
@@ -37,7 +37,7 @@ html, body, #root {
 }
 
 .bx-menu {
-  height: 30px;
+  height: 1.5em;
   flex-shrink: 0;
   display: flex;
   flex-direction: row;
@@ -47,11 +47,11 @@ html, body, #root {
 
 .bx-menu a {
   border: solid 1px #bbbbbb;
-  border-radius: 3px;
+  border-radius: 0.25em;
   cursor: pointer;
   display: inline-block;
-  margin: 0 5px;
-  padding: 0 5px;
+  margin: 0 0.25em;
+  padding: 0 0.25em;
 }
 
 .bx-menu a:hover {

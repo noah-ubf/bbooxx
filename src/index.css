@@ -1,7 +1,8 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: Arial, sans-serif;
+  font-size: 1em;
 }
 
 @font-face {
@@ -23,27 +24,36 @@ body {
 
 .bx-button {
   cursor: pointer;
-  display: inline-block;
-  font-size: 16px;
-  width: 30px;
-  height: 30px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+  width: 2rem;
+  height: 2rem;
   text-align: center;
-  line-height: 30px;
+  line-height: 2rem;
+  color: #333333;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;  
 }
 
 .bx-button:hover {
   background: #f0f0ff;
+  color: #006600;
 }
 
 .bx-button.bx-button-round {
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  line-height: 20px;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.75rem;
 }
 
 .bx-button-highlighted {
-  box-shadow: inset 1px 1px 30px #7f7fff;
+  box-shadow: inset 1px 1px 1.5rem #7f7fff;
 }
 
 .bx-verse img {

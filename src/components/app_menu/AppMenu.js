@@ -13,20 +13,24 @@ class AppMenu extends Component {
   }
 
   setAppMenu() {
-    ipcRenderer.on('read-module', (event) => {
+    ipcRenderer.on('bx-read-module', (event) => {
       this.props.readModuleAction();
     });
 
-    ipcRenderer.on('scan-directory', (event) => {
+    ipcRenderer.on('bx-scan-directory', (event) => {
       this.props.scanDirectoryAction();
     });
 
-    ipcRenderer.on('toggle-module-list', (event) => {
+    ipcRenderer.on('bx-toggle-module-list', (event) => {
       this.props.toggleToolbarAction('left');
     });
 
-    ipcRenderer.on('toggle-search', (event) => {
+    ipcRenderer.on('bx-toggle-search', (event) => {
       this.props.toggleToolbarAction('right');
+    });
+
+    ipcRenderer.on('bx-toggle-ui-size', (event) => {
+      this.props.toggleSizeAction();
     });
 
     // ipcRenderer.on('show-about', (event) => {

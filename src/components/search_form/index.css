@@ -4,9 +4,9 @@
   align-items: stretch;
   justify-content: stretch;
   flex-shrink: 0;
-  margin: 10px 10px 20px;
+  margin: 0.5rem 0.5rem 1rem;
   position: relative;
-  min-width: 300px;
+  min-width: 15rem;
 }
 
 .bx-search-form-input-block {
@@ -20,19 +20,19 @@
 }
 
 .bx-search-form-input {
-  font-size: 120%;
-  height: 36px;
+  font-size: 1.2rem;
+  height: 1.8rem;
   flex-grow: 100;
   flex-shrink: 100;
-  padding-right: 40px;
+  padding-right: 2rem;
 }
 
 .bx-search-form-history-button {
   border: solid 1px #7f7f7f;
-  font-size: 120%;
-  height: 40px;
-  margin-left: 5px;
-  width: 40px;
+  font-size: 1.2rem;
+  height: 2rem;
+  margin-left: 0.25rem;
+  width: 2rem;
 }
 
 .bx-search-form-history-button:hover {
@@ -48,11 +48,17 @@
   border: solid 1px #7f7f7f;
   position: absolute;
   width: 100%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;  
 }
 
 .bx-search-form-history-item {
   cursor: pointer;
-  padding: 5px;
+  padding: 0.25rem;
 }
 
 .bx-search-form-history-item:hover {
@@ -62,16 +68,25 @@
 .bx-search-form-options {
   display: flex;
   flex-direction: column;
+  padding: 0.75rem 0.25rem;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;  
 }
 
 .bx-search-form-options label {
-  padding: 5px;
+  padding: 0.25rem;
 }
 
 .bx-search-form-submit {
   position: absolute;
-  right: 35px;
-  width: 35px;
+  right: 2.25rem;
+  top: 0.35rem;
+  width: 2rem;
+  text-align: right;
 }
 
 .bx-search-form-blocker {

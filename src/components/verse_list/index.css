@@ -11,8 +11,8 @@
 .bx-verse {
   margin: 1px;
   background: #f2f2ff;
-  padding: 10px 5px;
-  line-height: 140%;
+  padding: 0.25em 0.5em;
+  line-height: 1.4em;
 }
 
 .bx-verse:hover {
@@ -21,7 +21,7 @@
 
 .bx-verse-header {
   font-weight: bold;
-  font-size: 90%;
+  font-size: 0.9em;
 }
 
 .bx-verse img {
@@ -34,26 +34,32 @@
 
 .bx-verse-num {
   font-weight: bold;
-  margin-right: 10px;
+  margin-right: 0.5em;
 }
 
 .bx-verse-list-toolbar {
-  margin: 10px;
+  margin: 0.5em;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   flex-shrink: 0;
   flex-grow: 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .bx-verse-list-toolbar>* {
-  margin-right: 5px;
+  margin-right: 0.25em;
 }
 
 .bx-toolbar-separator {
   display: block;
   width: 1px;
-  height: 30px;
+  height: 2em;
   background: #7f7f7f;
 }
 
@@ -61,7 +67,7 @@
   flex-grow: 100;
   flex-shrink: 100;
   overflow-y: auto;
-  padding: 0 10px 10px;
+  padding: 0 0.5em 0.5em;
 }
 
 .bx-verse-list-content:-webkit-full-screen {
@@ -73,5 +79,5 @@
   display: flex;
   overflow: hidden;
   align-items: center;
-  margin-left: 20px;
+  margin-left: 1em;
 }

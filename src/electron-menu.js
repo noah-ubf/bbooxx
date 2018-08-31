@@ -27,14 +27,14 @@ module.exports = {
             label: 'Add Module',
             accelerator: 'CmdOrCtrl+M',
             click: (item, focusedWindow) => {
-              if (focusedWindow != null) mainWindow.webContents.send('read-module');
+              if (focusedWindow != null) mainWindow.webContents.send('bx-read-module');
             }
           },
           {
             label: 'Scan Dirertory',
             accelerator: 'CmdOrCtrl+D',
             click: (item, focusedWindow) => {
-              if (focusedWindow != null) mainWindow.webContents.send('scan-directory');
+              if (focusedWindow != null) mainWindow.webContents.send('bx-scan-directory');
             }
           },
         ],
@@ -46,14 +46,21 @@ module.exports = {
             label: 'Toggle ModuleList',
             // accelerator: 'CmdOrCtrl+M',
             click: (item, focusedWindow) => {
-              if (focusedWindow != null) mainWindow.webContents.send('toggle-module-list');
+              if (focusedWindow != null) mainWindow.webContents.send('bx-toggle-module-list');
             }
           },
           {
             label: 'Toggle Search',
             // accelerator: 'CmdOrCtrl+D',
             click: (item, focusedWindow) => {
-              if (focusedWindow != null) mainWindow.webContents.send('toggle-search');
+              if (focusedWindow != null) mainWindow.webContents.send('bx-toggle-search');
+            }
+          },
+          {
+            label: 'Toggle Interface Size',
+            // accelerator: 'CmdOrCtrl+D',
+            click: (item, focusedWindow) => {
+              if (focusedWindow != null) mainWindow.webContents.send('bx-toggle-ui-size');
             }
           },
           {

@@ -72,19 +72,21 @@ class Display extends Component {
     const verses = _.get(this.props.searchResult, 'verses', []);
     const descriptor = this.props.searchModule && this.props.searchModule.getDescriptor(); // TODO: get it from store
     return (
-      <div className="bx-searchlist">
-        <SearchForm
-          searchText={this.props.searchText}
-          search={(searchText, options) => this.props.searchTextAction(searchText, this.props.selectedModule, options)}
-          history={this.props.searchHistory}
-        />
-        <VerseList
-          descriptor={descriptor}
-          verses={verses}
-          showHeader={true}
-          toolbar={this.getToolbar(this.props.searchResult)}
-          subtitle={verses.length > 0 ? `__Found: ${verses.length}`: null}
-        />
+      <div className="bx-section bx-fixed-size bx-search-section">
+        <div className="bx-searchlist">
+          <SearchForm
+            searchText={this.props.searchText}
+            search={(searchText, options) => this.props.searchTextAction(searchText, this.props.selectedModule, options)}
+            history={this.props.searchHistory}
+          />
+          <VerseList
+            descriptor={descriptor}
+            verses={verses}
+            showHeader={true}
+            toolbar={verses.length > 0 ? this.getToolbar(this.props.searchResult) : null}
+            subtitle={verses.length > 0 ? `__Found: ${verses.length}`: null}
+          />
+        </div>
       </div>
     );
   }
@@ -94,7 +96,9 @@ class Display extends Component {
     if (this.props.fullScreen) {
       return {
         closeFullscreen: () => this.props.toggleFullscreenAction(),
-        text: (list.config.name || list.config.descriptor)
+        text: (list.config.name || list.config.descriptor),
+        zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,
+        zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
       }
     }
     return {
@@ -104,13 +108,20 @@ class Display extends Component {
       copy: verses => this.props.copyVersesAction(verses),
       paste: list.id === 'search' ? null : () => this.props.pasteVersesAction(list.id),
       strongs: list.id !== 'search' ? (num) => this.props.showStrongsAction(num) : null,
+      zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,
+      zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
       fullscreen: list.id !== 'search' ? () => this.props.toggleFullscreenAction() : null,
     };
   }
 
   renderStrongs() {
     if (!this.props.strongNumber) return null;
-    return (<StrongNumbers num={this.props.strongNumber} />);
+    return (
+      <StrongNumbers
+        num={this.props.strongNumber}
+        fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
+      />
+    );
   }
 
   renderFullScreenMode() {
@@ -123,12 +134,18 @@ class Display extends Component {
           verses={currentList.verses}
           toolbar={this.getToolbar(currentList)}
           showHeader={!!_.get(currentList, 'config.params.customized')}
+          fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
         />
       </div>
     )
   }
 
   render() {
+    const body = document.getElementsByTagName("BODY")[0];
+    const fontSizeUI = (this.props.windowFontSize || 20) + 'px';
+    console.log('fontSizeUI = ', fontSizeUI)
+    _.set(body.parentNode, 'style.fontSize', fontSizeUI);
+
     return [
       <Box key="layout" vertical={false} className={`${this.props.className} bx-layout`} hidden={this.props.fullScreen}>
         <div className="bx-section bx-fixed-size">
@@ -180,6 +197,7 @@ class Display extends Component {
                       toolbar={this.getToolbar(l)}
                       showHeader={!!_.get(l, 'config.params.customized')}
                       displayStrong={num => this.props.displayStrongNumberAction(num)}
+                      fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
                     />
                     { this.renderStrongs() }
                   </div>
@@ -189,9 +207,7 @@ class Display extends Component {
           </div>
         </div>
         { this.renderSplitter('right') }
-        <div className="bx-section bx-fixed-size bx-search-section">
-          { this.renderSearch() }
-        </div>
+        { this.renderSearch() }
       </Box>,
       this.renderFullScreenMode()
     ];
@@ -220,6 +236,9 @@ function mapStateToProps(state, props) {
     selectedTab: state.config.selectedTab,
     fullScreen: state.fullScreen,
     strongNumber: state.strongNumber,
+    fontSize: state.config.fontSize || 20,
+    fontSizeFullscreen: state.config.fontSizeFullscreen || 40,
+    windowFontSize: _.get(state, 'config.window.fontSize') || 20,
   };
 }
 

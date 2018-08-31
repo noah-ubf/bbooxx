@@ -403,6 +403,46 @@ const fileReducer = (state = defaultState, action) => {
       };
     }
 
+    case 'ZOOM_IN': {
+      let size = (state.fullScreen ? state.config.fontSizeFullscreen : state.config.fontSize) || 20;
+      if (size < 80) size += 2;
+      let sizeConfig = (state.fullScreen ? {fontSizeFullscreen: size} : {fontSize: size});
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          ...sizeConfig,
+        }
+      };
+    }
+
+    case 'ZOOM_OUT': {
+      let size = (state.fullScreen ? state.config.fontSizeFullscreen : state.config.fontSize) || 20;
+      if (size > 6) size -= 2;
+      let sizeConfig = (state.fullScreen ? {fontSizeFullscreen: size} : {fontSize: size});
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          ...sizeConfig,
+        }
+      };
+    }
+
+    case 'TOGGLE_UI_SIZE': {
+      let fontSize = _.get(state, 'config.window.fontSize', 16) > 16 ? 16 : 24;
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          window: {
+            ...state.config.window,
+            fontSize,
+          },
+        }
+      };
+    }
+
     case 'DISPLAY_STRONG_NUMBER': {
       if (state.strongNumber === action.num) return state;
       return {

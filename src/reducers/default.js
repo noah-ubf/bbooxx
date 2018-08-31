@@ -15,6 +15,7 @@ export default {
       maximized: false,
       minimized: false,
       fullscreen: false,
+      fontSize: 20,
     },
     lists: [
       // {
@@ -27,6 +28,8 @@ export default {
     strongs: [],
     dictionaries: [],
     selectedTab: null,
+    fontSize: 20,
+    fontSizeFullscreen: 44,
   },
   modules: [],
   books: [],

@@ -6,7 +6,7 @@
 
 .bx-section {
   border: solid 1px #7f7f7f;
-  border-radius: 5px;
+  border-radius: 0.25rem;
   flex-grow: 50;
   flex-shrink: 50;
   display: flex;
@@ -25,7 +25,7 @@
   background-color: #eeeeee;
   cursor: pointer;
   margin: 1px;
-  padding: 5px;
+  padding: 0.25rem;
   display: flex;
   align-items: center;
   flex-shrink: 0;
@@ -42,7 +42,7 @@
 
 .bx-vsplitter {
   background: #ccccf7;
-  width: 10px;
+  width: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,9 +50,9 @@
 }
 
 .bx-vsplitter .bx-splitter-icon {
-  font-size: 8px;
+  font-size: 0.4rem;
   color: #7f7ff7;
-  padding: 3px;
+  padding: 0.25rem;
   text-align: center;
 }
 
@@ -65,7 +65,7 @@
   flex-direction: column;
   align-items: stretch;
   justify-content: stretch;
-  max-width: 400px;
+  max-width: 400vw;
 }
 
 /* tabs: */
@@ -82,6 +82,7 @@
   display: flex;
   flex-direction: row;
   justify-content: stretch;
+  align-items: center;
   flex-grow: 0;
   flex-shrink: 0;
   border-bottom: solid 1px #7f7f7f;
@@ -111,9 +112,15 @@
   justify-content: stretch;
   margin: 0 1px 0 0;
   max-width: 100%;
-  min-width: 120px;
-  padding: 5px 25px 5px 5px;
+  min-width: 5rem;
+  padding: 0.25rem 1.25rem 0.25rem 0.25rem;
   position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;  
 }
 
 .bx-tabs-bar-tab.selected {
@@ -127,6 +134,7 @@
 .bx-tabs-bar-tab-name {
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.5rem;
 }
 
 .bx-tabs-bar-actions {
@@ -161,6 +169,7 @@
 
 .bx-tabs-bar-tab-close {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 0.25rem;
+  right: 0.25rem;
+  text-align: right;
 }

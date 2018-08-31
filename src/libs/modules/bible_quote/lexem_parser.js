@@ -123,7 +123,7 @@ export default function parseLexems(text, options) {
           contentStarted = true;
           processStringContent(n.textContent, mode)
         }
-      } else if (options.hasVerseNumber && !contentStarted && (!n.outerText || n.outerText.match(/^\s*\d*\s*$/))) {
+      } else if (options.hasVerseNumber && !contentStarted && (!n.outerText || n.outerText.match(/^\s*[\d.> -]*\s*$/))) {
         // console.log('=====>', n, n.outerText, n.outerText && n.outerText.match(/^\s*\d*\s*$/))
         if (n.outerText) verseNum += n.outerText;
         return null;

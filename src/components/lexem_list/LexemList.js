@@ -81,7 +81,6 @@ class LexemList extends Component {
         cont = true;
         let text = l.space ? ` ${l.text}` : l.text;
         const color = _.get(l, 'mode.color', null);
-        const size = _.get(l, 'mode.size');
         return <span key={i} style={color ? {color: color} : {}} className={classNames(classes)}>{ text }</span>;
       }
 

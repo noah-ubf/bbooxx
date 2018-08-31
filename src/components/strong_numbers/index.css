@@ -3,7 +3,7 @@
   min-height: 25vh;
   overflow-y: auto;
   border: solid 1px #7f7f7f;
-  border-radius: 5px;
+  border-radius: 0.25em;
   display: flex;
   flex-direction: column;
   flex-grow: 0;
@@ -14,13 +14,19 @@
   display: flex;
   flex-direction: row;
   background: #ccccff;
-  padding: 5px;
+  padding: 0.25rem;
   justify-content: stretch;
   align-items: stretch;
   flex-shrink: 0;
   flex-grow: 0;
   white-space: nowrap;
   overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;  
 }
 
 .bx-strongs-dict-name {
@@ -28,23 +34,25 @@
   flex-shrink: 100;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 1rem;
 }
 
 .bx-strongs-close {
   flex-grow: 0;
   flex-shrink: 0;
-  width: 40px;
+  width: 2rem;
   text-align: right;
 }
 
 .bx-strongs-toolbar {
-  padding: 5px;
+  padding: 0.25rem;
+  font-size: 1rem;
 }
 
 .bx-strongs-content {
   flex-grow: 100;
-  padding: 10px;
+  padding: 0.5em;
   overflow-y: auto;
-  margin-bottom: 5px;
-  line-height: 140%;
+  margin-bottom: 0.25em;
+  line-height: 1.4em;
 }
