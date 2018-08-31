@@ -33,6 +33,10 @@ class LexemList extends Component {
       if (_.get(l, 'mode.italic')) classes[`bx-t-italic`] = true;
 
       if (l.t === 'block' || l.t === '/block') {
+        if (br) {
+          br = 0;
+          return (<br key={i}/>);
+        }
         br = cont;
         return null;
       }
@@ -64,14 +68,25 @@ class LexemList extends Component {
         return ( <a key={i} name={l.name} /> );
       }
 
-      if (l.t === 'dir' && l.dir === 'rtl') { return "\u200F" }
-      if (l.t === '/dir' && l.dir === 'rtl') { return "\u200E"; }
+      if (l.t === 'dir' && l.dir === 'rtl') {
+        cont = true;
+        return "\u200F";
+      }
+      if (l.t === '/dir' && l.dir === 'rtl') {
+        cont = true;
+        return "\u200E";
+      }
 
       if (l.t === 'text') {
-        return l.space ? ` ${l.text}` : l.text;
+        cont = true;
+        let text = l.space ? ` ${l.text}` : l.text;
+        const color = _.get(l, 'mode.color', null);
+        const size = _.get(l, 'mode.size');
+        return <span key={i} style={color ? {color: color} : {}} className={classNames(classes)}>{ text }</span>;
       }
 
       if (l.t === 'strong') {
+        cont = true;
         return (
           this.props.displayStrong
           ? <span key={i} className="bx-t-strong" onClick={(e) => this.displayStrong(e, text)}>{ text }</span>
@@ -79,7 +94,10 @@ class LexemList extends Component {
         );
       }
 
-      if (text.trim() === '') return <span key={i} className="separator"> { text } </span>;
+      if (text.trim() === '') {
+        cont = true;
+        return <span key={i} className="separator"> { text } </span>;
+      }
 
       const ret = (
         <span key={i} className={classNames(classes)} style={{color: _.get(l, 'mode.color')}}>

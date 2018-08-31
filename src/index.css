@@ -49,3 +49,7 @@ body {
 .bx-verse img {
   max-width: 100%;
 }
+
+br {
+  line-height: 2em;
+}
