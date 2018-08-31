@@ -22,24 +22,33 @@ class StrongNumbers extends Component {
 
   render() {
     return (
-      <div className="bx-strongs-section">
-        <div className="bx-strongs-close">
-          <Button
-            action={() => this.props.displayStrongNumberAction(null)}
-            icon="remove"
-            title="__Close Strongs"
-            round={true}
-          />
-        </div>
-        <div>{ this.props.name }</div>
-        <div>{ this.props.num }</div>
-        {
-          (_.get(this.props.lexems.length, 0) === 0)
-          ? <div dangerouslySetInnerHTML={{__html: this.props.content || '__Strong number is not found in your dictionaries' }} />
-          : <LexemList
-             lexems={this.props.lexems}
+      <div className="bx-strongs-section" dir="ltr">
+        <div className="bx-strongs-header">
+          <div className="bx-strongs-dict-name" title={this.props.name}>{ this.props.name }</div>
+          <div className="bx-strongs-close">
+            <Button
+              action={() => this.props.displayStrongNumberAction(null)}
+              icon="remove"
+              title="__Close Strongs"
+              round={true}
             />
-        }
+          </div>
+        </div>
+        <div className="bx-strongs-toolbar">{ this.props.num }</div>
+        <div className="bx-strongs-content">
+          {
+            (_.get(this.props.lexems.length, 0) === 0)
+            ? <div dangerouslySetInnerHTML={{__html: this.props.content || '__Strong number is not found in your dictionaries' }} />
+            : <LexemList
+                lexems={this.props.lexems}
+                displayStrong={num => {
+                  // TODO: move it to strongs convertor:
+                  num = ((num[0] === '0') ? 'H' : 'G') + parseInt(num, 10);
+                  this.props.displayStrongNumberAction(num);
+                }}
+              />
+          }
+        </div>
       </div>
     );
   }

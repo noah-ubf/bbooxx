@@ -32,13 +32,15 @@ export default function parseLexems(text, options) {
   const processStringContent = (str, mode) => {
     // console.log('processStringContent: ', str, mode)
     const text = convertToUtf8(str, mode.font);
+    const rtl = mode.font && mode.font.match(/^Heb/i);
+    if (rtl) plainTree.push({t: 'dir', dir: 'rtl' });
     _.chain(text).split(/\s/)
       .map((s, i) => {
         let rere = /^([^ !.,;:'"?]*)([ !.,;:'"?]+)$/.exec(s);// Авд.1:1 - XXXX! doesn't work
         // console.log(s, rere)
         if (rere) {
           return [
-            {text: rere[1], space: (i > 0)},
+            {text: rere[1], space: (i > 0),},
             {text: rere[2]},
           ];
         }
@@ -64,6 +66,7 @@ export default function parseLexems(text, options) {
         }
       })
       .value();
+    if (rtl) plainTree.push({t: '/dir', dir: 'rtl' });
   }
 
   const processNodeContent = (node, mode) => {

@@ -64,6 +64,13 @@ class LexemList extends Component {
         return ( <a key={i} name={l.name} /> );
       }
 
+      if (l.t === 'dir' && l.dir === 'rtl') { return "\u200F" }
+      if (l.t === '/dir' && l.dir === 'rtl') { return "\u200E"; }
+
+      if (l.t === 'text') {
+        return l.space ? ` ${l.text}` : l.text;
+      }
+
       if (l.t === 'strong') {
         return (
           this.props.displayStrong

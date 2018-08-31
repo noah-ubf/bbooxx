@@ -6,10 +6,11 @@
 - parallel view
 
 ± fullscreen
-- group verses in list (header/footer of the group)
 - zoom
+- improve seach speed
 - verse actions (show context, ...)
 - verse ordering
+- group verses in list (header/footer of the group)
 - module manager
 - chapter navigation
 - i18n

@@ -1,11 +1,50 @@
 .bx-strongs-section {
-  max-height: 50%;
+  max-height: 50vh;
+  min-height: 25vh;
   overflow-y: auto;
-  padding: 5px;
   border: solid 1px #7f7f7f;
   border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.bx-strongs-header {
+  display: flex;
+  flex-direction: row;
+  background: #ccccff;
+  padding: 5px;
+  justify-content: stretch;
+  align-items: stretch;
+  flex-shrink: 0;
+  flex-grow: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.bx-strongs-dict-name {
+  flex-grow: 90;
+  flex-shrink: 100;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bx-strongs-close {
-  float: right;
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 40px;
+  text-align: right;
+}
+
+.bx-strongs-toolbar {
+  padding: 5px;
+}
+
+.bx-strongs-content {
+  flex-grow: 100;
+  padding: 10px;
+  overflow-y: auto;
+  margin-bottom: 5px;
+  line-height: 140%;
 }

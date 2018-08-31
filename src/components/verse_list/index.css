@@ -11,13 +11,12 @@
 .bx-verse {
   margin: 1px;
   background: #f2f2ff;
-  padding: 5px;
+  padding: 10px 5px;
+  line-height: 140%;
 }
 
 .bx-verse:hover {
-  margin: 1px;
   background: #f5f5ff;
-  padding: 5px;
 }
 
 .bx-verse-header {
