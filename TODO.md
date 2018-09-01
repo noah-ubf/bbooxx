@@ -1,28 +1,35 @@
 + compact descriptor
-± strong numbers
-± greek&hebrew
-- "go_..." links;
++ strong numbers
++ greek&hebrew
++ zoom
+
+------------------------------------------------------------
+
+± fullscreen
+± improve seach speed (now >5m searching whole Bible for 'Jesus' on MacBook Pro)
+± better parsing (???)
+
+------------------------------------------------------------
+
+- "go ..." links;
 - name tab lists
 - parallel view
 
-± fullscreen
-- zoom
-- improve seach speed
 - verse actions (show context, ...)
 - verse ordering
 - group verses in list (header/footer of the group)
-- module manager
 - chapter navigation
 - i18n
-- search modules by book names also
-- dont select verse if mouse moved between down and up
 - autoselect zero chapter
-- module info
 - move splitters
-± better parsing (???)
+- context menu
+- module info
+- dont select verse if mouse moved between down and up
+- search modules by book names also
 - toggle verse numbers
+- module manager
 
-- UI components (tabs, toolbars, ...)
+- UI components (tabs, toolbars, modals)
 
 - async file reading
 - other module types (TBD)

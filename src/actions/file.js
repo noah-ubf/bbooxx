@@ -206,6 +206,7 @@ export const searchTextAction = (searchText, module, options) => {
   return function (dispatch, getState) {
     if(!searchText || getState().searchInProgress) return;
     if (options.selectedBookOnly) options = {...options, book: getState().selectedBook};
+    window.SEARCH_BREAK = false;
 
     dispatch ({
       type: 'SEARCH_START',
@@ -216,22 +217,29 @@ export const searchTextAction = (searchText, module, options) => {
       module.search(
         searchText,
         options,
-        (verses) => dispatch ({
+        (verses, path='') => dispatch ({
           type: 'SEARCH_PORTION',
           verses,
+          path,
         }),
-        (verses) => dispatch ({
+        () => dispatch ({
           type: 'SEARCH_DONE',
         }),
-        () => getState().searchStop,
+        () => window.SEARCH_BREAK,
+        // () => getState().searchStop, // <--- incorrect work of getState() when asynchronous
       );
     }, 10);
   }
 }
 
-export const searchStopAction = () => ({
-  type: 'SEARCH_BREAK',
-});
+export const searchStopAction = () => {
+  return function (dispatch, getState) {
+    window.SEARCH_BREAK = true;
+    return {
+      type: 'SEARCH_BREAK',
+    };
+  } 
+};
 
 export const copyVersesAction = verses => ({
   type: 'COPY_VERSES',

@@ -92,13 +92,53 @@
 .bx-search-form-blocker {
   position: absolute;
   top: 0;
-  bottom: 0;
+  /*bottom: 0;*/
   left: 0;
   right: 0;
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.9);
+  border: solid 1px #7f7f7f;
+  border-radius: 0.25rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 2;
+}
+
+.bx-search-form-blocker-label {
+  font-size: 1.5rem;
+  padding: 1rem;
+}
+.bx-search-form-blocker-path {
+  font-size: 0.6rem;
+  padding: 0.25rem;
+}
+.bx-search-form-blocker-count {
+  font-size: 1rem;
+  padding: 0.25rem;
+}
+.bx-search-form-blocker-count span {
+  font-weight: bold;
+}
+.bx-search-form-blocker-stop {
+  font-size: 1em;
+  padding: 1rem;
+}
+.bx-search-form-blocker-stop button {
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 2rem;
+  border: solid 1px #7f7f7f;
+  background: #ffffff;
+}
+.bx-search-form-blocker-stop button:hover {
+  background: #f0f0ff;
+}
+.bx-search-form-blocker-stop button span {
+  color: red;
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  line-height: 2rem;
 }

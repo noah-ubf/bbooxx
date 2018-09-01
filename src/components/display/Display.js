@@ -26,6 +26,8 @@ const Box = props => (
 )
 
 class Display extends Component {
+  fontSizeUI;
+
   renderModuleList() {
     if (this.props.toolbarHidden) return null;
     return (
@@ -85,6 +87,7 @@ class Display extends Component {
             showHeader={true}
             toolbar={verses.length > 0 ? this.getToolbar(this.props.searchResult) : null}
             subtitle={verses.length > 0 ? `__Found: ${verses.length}`: null}
+            fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
           />
         </div>
       </div>
@@ -143,8 +146,11 @@ class Display extends Component {
   render() {
     const body = document.getElementsByTagName("BODY")[0];
     const fontSizeUI = (this.props.windowFontSize || 20) + 'px';
-    console.log('fontSizeUI = ', fontSizeUI)
-    _.set(body.parentNode, 'style.fontSize', fontSizeUI);
+    if (this.fontSizeUI !== fontSizeUI) {
+      console.log('fontSizeUI = ', fontSizeUI)
+      _.set(body.parentNode, 'style.fontSize', fontSizeUI);
+      this.fontSizeUI = fontSizeUI;
+    }
 
     return [
       <Box key="layout" vertical={false} className={`${this.props.className} bx-layout`} hidden={this.props.fullScreen}>
@@ -218,7 +224,7 @@ class Display extends Component {
 function mapStateToProps(state, props) {
   console.log('STATE: ', state)
   const lists = state.lists.map(l => ({...l, config: _.find(state.config.lists, c => (c.id === l.id))}));
-  const searchResult = _.find(lists, l => (l.id === 'search'));
+
   return {
     modules: state.modules,
     books: state.books,
@@ -229,7 +235,7 @@ function mapStateToProps(state, props) {
     searchbarHidden: state.searchbarHidden,
     searchText: state.searchText,
     searchModule: state.searchModule,
-    searchResult,
+    searchResult: /*state.searchInProgress ? [] : */_.find(lists, l => (l.id === 'search')),
     searchHistory: state.config.searchHistory,
     lists,
     tabs: _.filter(lists, l => (l.config.type === 'tab')),

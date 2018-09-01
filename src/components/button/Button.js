@@ -16,6 +16,7 @@ const ICONS = {
   cut: '\uf190',
   paste: '\uf192',
   addList: '\uf39d',
+  addListBlack: '\uf39c',
   numbers: '\uf3a0',
   hash: '\uf423',
   pin: '\uf930',
@@ -26,6 +27,12 @@ const ICONS = {
   zoomIn: '\uf6ec',
   search: '\uf349',
   down: '\uf72d',
+  cut: '\uf190',
+  todoc: '\uf191',
+  info: '\uf2fd',
+  listBreak: '\uf6d6',
+  paralel: '\uf8de',
+  gear: '\uf8ba',
 };
 
 export default props => {

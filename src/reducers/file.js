@@ -224,12 +224,17 @@ const fileReducer = (state = defaultState, action) => {
           lists: state.config.lists.map(l => ((l.id === 'search') ? {
             ...l, descriptor: `search(${module}):${action.searchText}`
           } : l)),
+          searchHistory: [
+            action.searchText,
+            ...state.config.searchHistory.filter(s => (s !== action.searchText)).slice(0,19),
+          ],
         },
         lists: state.lists.map(l => ((l.id === 'search') ? {
           ...l, verses: []
         } : l)),
         searchModule: state.selectedModule,
         searchText: action.searchText,
+        searchResult: [],
         searchStop: false,
         searchInProgress: true,
       };
@@ -238,9 +243,8 @@ const fileReducer = (state = defaultState, action) => {
     case 'SEARCH_PORTION': {
       return {
         ...state,
-        lists: state.lists.map(l => ((l.id === 'search') ? {
-          ...l, verses: [...l.verses, ...action.verses]
-        } : l)),
+        searchResult: [...state.searchResult, ...action.verses],
+        searchPath: action.path || '',
       };
     }
 
@@ -248,13 +252,14 @@ const fileReducer = (state = defaultState, action) => {
       return {
         ...state,
         searchInProgress: false,
+        lists: state.lists.map(l => ((l.id === 'search') ? { ...l, verses: [...state.searchResult] } : l)),
       };
     }
 
     case 'SEARCH_BREAK': {
       return {
         ...state,
-        searchStop: false,
+        searchStop: true, // actually fails to work
       };
     }
 

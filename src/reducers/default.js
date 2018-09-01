@@ -46,8 +46,10 @@ export default {
   dictionaries: [],
   searchModule: null,
   searchText: '',
+  searchPath: '',
   searchStop: false,
   searchInProgress: false,
+  searchResult: [],
   buffer: [],
   strongNumber: null,
 };

@@ -8,14 +8,28 @@ export default class Verse {
   text = null;
   numText = null;
   header = null;
-  lexems = [];
+  lexems = null;
   strongsCount = null;
   debug = {};
+  words = null;
+  descriptor = null;
 
   constructor(params=null) {
     if (!_.isNull(params)) {
       this.params = params;
       this.text = this.params.lines ? this.params.lines.join('\n') : '';
+      if (params.module.isBible()) {
+        const rere = /^(\D*(<[^>]>)*)*(\d+([.>-]\d+)?)/.exec(this.text);
+        if (rere) this.numText = rere[3];
+        else this.numText = parseInt(this.text.replace(/^\D+/, ''), 10);
+      } else {
+        this.numText = params.num;
+      }
+    }
+  }
+
+  parseLexems() {
+    if (this.lexems === null) {
       this.lexems = parseLexems(this.text, {
         hasStrongs: this.getModule().hasStrongNumbers(),
         hasVerseNumber: this.getModule().isBible(),
@@ -40,11 +54,14 @@ export default class Verse {
   }
 
   getDescriptor() {
-    const module = this.params.module.getShortName();
-    const book = this.params.book.getShortName();
-    const chapter = this.params.chapter.getNum();
-    const verse = this.getNum();
-    return `(${module})${book}.${chapter}:${verse}`;
+    if (_.isNull(this.descriptor)) {
+      const module = this.params.module.getShortName();
+      const book = this.params.book.getShortName();
+      const chapter = this.params.chapter.getNum();
+      const verse = this.getNum();
+      this.descriptor = `(${module})${book}.${chapter}:${verse}`;
+    }
+    return this.descriptor;
   }
 
   getModule() {
@@ -64,6 +81,7 @@ export default class Verse {
   }
 
   hasStrongs() {
+    this.parseLexems();
     if (_.isNull(this.strongsCount)) {
       this.strongsCount = 0;
       _.forEach(this.lexems, l => (this.strongsCount += (l.t === 'strong' ? 1 : 0) ));
@@ -87,19 +105,23 @@ export default class Verse {
   }
 
   getLexems() {
+    this.parseLexems();
     return this.lexems;
   }
 
   getWords(caseSensitive) {
-    return _.chain(this.text.split(' '))
-      .map(w => {
-        if(!caseSensitive) w = w.toLowerCase();
-        w = w.replace(/[,.:;+'"!?()[\]\\\/-]/g, '').trim();
-        return w === '' ? null : w;
-      })
-      .compact()
-      .uniq()
-      .value();
+    if (_.isNull(this.words)) {
+      const text = this.text.replace(/<[^>]*>/, ' ');
+      this.words = _.chain(text.split(/[ ,.:;+'"!?()[\]\\\/-]+/))
+        .map(w => {
+          if(!caseSensitive) w = w.toLowerCase();
+          return w === '' ? null : w;
+        })
+        .compact()
+        .uniq()
+        .value();
+    }
+    return this.words;
   }
 
   matches(words, options) {

@@ -182,7 +182,8 @@ export default class Book {
       if (stopped()) chapters = [];
       if (chapters.length === 0) return done();
       const chapter = chapters.shift();
-      portion(chapter.search(words, options));
+      const descriptor = chapter.getDescriptor();
+      portion(chapter.search(words, options), descriptor);
       setTimeout(() => searchNext(), 0);
     }
 

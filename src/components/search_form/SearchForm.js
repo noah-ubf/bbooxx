@@ -136,10 +136,17 @@ class SearchForm extends Component {
     if (!this.props.searchInProgress) return null;
     return (
       <div className="bx-search-form-blocker">
-        <div>__Search in progress...</div>
+        <div className="bx-search-form-blocker-label">__Search in progress...</div>
+        <div className="bx-search-form-blocker-path">{ this.props.searchPath }</div>
+        <div className="bx-search-form-blocker-count">__Found: <span>{ this.props.foundCount }</span></div>
+        <div className="bx-search-form-blocker-stop">
+          <button onClick={() => this.props.searchStopAction()}>
+            <span class="mdi">{ '\uF0AD' }</span>
+            __Stop search
+          </button>
+        </div>
       </div>
     );
-        // <button onClick={() => this.props.searchStopAction()}>__Stop search</button>
   }
 
   render() {
@@ -177,6 +184,8 @@ function mapStateToProps(state, props) {
     searchInProgress: state.searchInProgress,
     searchText: state.searchText,
     searchHistory: state.config.searchHistory,
+    searchPath: state.searchPath,
+    foundCount: state.searchResult.length,
   };
 }
 

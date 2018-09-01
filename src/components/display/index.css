@@ -58,6 +58,8 @@
 
 .bx-search-section {
   flex-grow: 50;
+  flex-shrink: 70;
+  min-width: 30%;
 }
 
 .bx-searchlist {
