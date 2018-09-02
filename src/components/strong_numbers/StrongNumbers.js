@@ -21,6 +21,7 @@ class StrongNumbers extends Component {
   // }
 
   render() {
+    const fontSize = (this.props.fontSize || 20) + 'px';
     return (
       <div className="bx-strongs-section" dir="ltr">
         <div className="bx-strongs-header">
@@ -35,7 +36,7 @@ class StrongNumbers extends Component {
           </div>
         </div>
         <div className="bx-strongs-toolbar">{ this.props.num }</div>
-        <div className="bx-strongs-content">
+        <div className="bx-strongs-content" style={{fontSize}}>
           {
             (_.get(this.props.lexems.length, 0) === 0)
             ? <div dangerouslySetInnerHTML={{__html: this.props.content || '__Strong number is not found in your dictionaries' }} />
@@ -60,6 +61,7 @@ function mapStateToProps(state, props) {
     num: state.strongNumber,
     name: _.get(state.strongText, 'name') || '',
     lexems: _.get(state.strongText, 'lexems') || [],
+    fontSize: state.config.fontSize || 20,
   };
 }
 
