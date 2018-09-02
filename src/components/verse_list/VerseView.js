@@ -64,7 +64,7 @@ class VerseView extends Component {
         title={this.props.verse.getHeader()}
       >
       { this.renderHeader() }
-      { this.renderContent(lexems) }
+      { this.props.showContent ? this.renderContent(lexems) : null }
       </div>
     );
   }

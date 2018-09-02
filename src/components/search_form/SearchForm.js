@@ -141,7 +141,7 @@ class SearchForm extends Component {
         <div className="bx-search-form-blocker-count">__Found: <span>{ this.props.foundCount }</span></div>
         <div className="bx-search-form-blocker-stop">
           <button onClick={() => this.props.searchStopAction()}>
-            <span class="mdi">{ '\uF0AD' }</span>
+            <span className="mdi">{ '\uF0AD' }</span>
             __Stop search
           </button>
         </div>
@@ -186,6 +186,7 @@ function mapStateToProps(state, props) {
     searchHistory: state.config.searchHistory,
     searchPath: state.searchPath,
     foundCount: state.searchResult.length,
+    history: state.config.searchHistory,
   };
 }
 

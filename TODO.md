@@ -12,7 +12,7 @@
 
 ------------------------------------------------------------
 
-- "go ..." links;
+± "go ..." links;
 - name tab lists
 - parallel view
 
@@ -26,6 +26,7 @@
 - module info
 - dont select verse if mouse moved between down and up
 - search modules by book names also
+- pagination for large verse lists
 - toggle verse numbers
 - module manager
 - about page

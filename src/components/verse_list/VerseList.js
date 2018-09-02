@@ -151,7 +151,7 @@ class VerseList extends Component {
     placeholder.innerHTML = this.dragged.innerHTML;
   }
   dragEnd(e) {
-    if (!this.props.reorder) return;
+    if (!this.props.reorder || !this.dragged) return;
     this.dragged.style.display = 'block';
     placeholder.parentNode.removeChild(placeholder);
     
@@ -159,10 +159,11 @@ class VerseList extends Component {
     var from = Number(this.dragged.dataset.id);
     var to = Number(this.over.dataset.id);
     if(from < to) to--;
+    this.dragged = null;
     this.props.reorder(from, to);
   }
   dragOver(e) {
-    if (!this.props.reorder) return;
+    if (!this.props.reorder || !this.dragged) return;
     e.preventDefault();
     this.dragged.style.display = "none";
     if(e.target.className === 'placeholder') return;
@@ -200,6 +201,7 @@ class VerseList extends Component {
                   showStrongs={this.state.showStrongs}
                   fireLink={this.props.fireLink}
                   displayStrong={this.props.displayStrong}
+                  showContent={true}
                 />
               </div>
             ))

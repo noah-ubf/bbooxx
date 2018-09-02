@@ -7,9 +7,9 @@ import classNames from 'classnames';
 // const electron = require('electron');
 
 import * as Actions from '../../actions/file';
-import VerseList from '../verse_list/VerseList';
+import VerseList from '../verse_list/VerseListWrapper';
 import SearchForm from '../search_form/SearchForm';
-import ModuleList from '../module_list/ModuleList';
+import ModuleList from '../module_list/ModuleListWrapper';
 import StrongNumbers from '../strong_numbers/StrongNumbers';
 import Button from '../button/Button';
 
@@ -30,19 +30,7 @@ class Display extends Component {
 
   renderModuleList() {
     if (this.props.toolbarHidden) return null;
-    return (
-      <ModuleList
-        modules={this.props.modules}
-        books={this.props.books}
-        selectedModule={this.props.selectedModule}
-        selectedBook={this.props.selectedBook}
-        selectedChapter={this.props.selectedChapter}
-        selectModule={module => this.props.selectModuleAction(module)}
-        selectBook={book => this.props.selectBookAction(book)}
-        selectChapter={chapter => this.props.selectChapterAction(chapter)}
-        removeModule={module => this.props.removeModuleAction(module)}
-      />
-    );
+    return <ModuleList />;
   }
 
   // componentDidUpdate(prevProps, prevState, snapshot) {
@@ -69,52 +57,18 @@ class Display extends Component {
   }
 
   renderSearch() {
-    // console.log('SEARCH RESULTS:', this.props.searchResult)
     if (this.props.searchbarHidden) return null;
-    const verses = _.get(this.props.searchResult, 'verses', []);
-    const descriptor = this.props.searchModule && this.props.searchModule.getDescriptor(); // TODO: get it from store
     return (
       <div className="bx-section bx-fixed-size bx-search-section">
         <div className="bx-searchlist">
-          <SearchForm
-            searchText={this.props.searchText}
-            search={(searchText, options) => this.props.searchTextAction(searchText, this.props.selectedModule, options)}
-            history={this.props.searchHistory}
-          />
+          <SearchForm />
           <VerseList
-            descriptor={descriptor}
-            verses={verses}
+            listId="search"
             showHeader={true}
-            toolbar={verses.length > 0 ? this.getToolbar(this.props.searchResult) : null}
-            subtitle={verses.length > 0 ? `__Found: ${verses.length}`: null}
-            fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
           />
         </div>
       </div>
     );
-  }
-
-  getToolbar(list) {
-    if (!list) return null;
-    if (this.props.fullScreen) {
-      return {
-        closeFullscreen: () => this.props.toggleFullscreenAction(),
-        text: (list.config.name || list.config.descriptor),
-        zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,
-        zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
-      }
-    }
-    return {
-      select: true,
-      invert: true,
-      remove: verses => this.props.removeVersesAction(list.id, verses),
-      copy: verses => this.props.copyVersesAction(verses),
-      paste: list.id === 'search' ? null : () => this.props.pasteVersesAction(list.id),
-      strongs: list.id !== 'search' ? (num) => this.props.showStrongsAction(num) : null,
-      zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,
-      zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
-      fullscreen: list.id !== 'search' ? () => this.props.toggleFullscreenAction() : null,
-    };
   }
 
   renderStrongs() {
@@ -129,15 +83,11 @@ class Display extends Component {
 
   renderFullScreenMode() {
     if (!this.props.fullScreen) return null;
-    const currentList = this.props.lists.find(l => l.id === this.props.selectedTab);
     return (
       <div className="bx-tabs-content" key="fullscreen">
         <VerseList
-          descriptor={currentList.config.descriptor}
-          verses={currentList.verses}
-          toolbar={this.getToolbar(currentList)}
-          showHeader={!!_.get(currentList, 'config.params.customized')}
-          fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
+          listId={this.props.selectedTab}
+          fullScreen={true}
         />
       </div>
     )
@@ -195,17 +145,10 @@ class Display extends Component {
             </div>
             <div className="bx-tabs-content">
               {
-                this.props.lists.filter(l => l.config.type === 'tab').map(l => (
+                this.props.tabs.map(l => (
                   <div key={l.id} className={classNames({'bx-tabs-content-item': true, active: this.props.selectedTab === l.id})}>
                     <VerseList
-                      descriptor={l.config.descriptor}
-                      verses={l.verses}
-                      toolbar={this.getToolbar(l)}
-                      showHeader={!!_.get(l, 'config.params.customized')}
-                      displayStrong={num => this.props.displayStrongNumberAction(num)}
-                      fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
-                      reorder={(from, to) => this.props.reorderAction(l.id, from, to)}
-                      fireLink={link => this.props.goChapterAction(link)}
+                      listId={l.id}
                     />
                     { this.renderStrongs() }
                   </div>
@@ -228,18 +171,8 @@ function mapStateToProps(state, props) {
   const lists = state.lists.map(l => ({...l, config: _.find(state.config.lists, c => (c.id === l.id))}));
 
   return {
-    modules: state.modules,
-    books: state.books,
-    selectedModule: state.selectedModule,
-    selectedBook: state.selectedBook,
-    selectedChapter: state.selectedChapter,
     toolbarHidden: state.toolbarHidden,
     searchbarHidden: state.searchbarHidden,
-    searchText: state.searchText,
-    searchModule: state.searchModule,
-    searchResult: /*state.searchInProgress ? [] : */_.find(lists, l => (l.id === 'search')),
-    searchHistory: state.config.searchHistory,
-    lists,
     tabs: _.filter(lists, l => (l.config.type === 'tab')),
     selectedTab: state.config.selectedTab,
     fullScreen: state.fullScreen,
