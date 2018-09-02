@@ -33,6 +33,7 @@ class VerseView extends Component {
   }
 
   fireLink(href) {
+    if (this.props.fireLink) return this.props.fireLink(href);
     alert('Supposed to go to ' + href);
   }
 

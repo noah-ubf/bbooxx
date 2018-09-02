@@ -59,7 +59,7 @@ export default class BibleQuoteModule {
   }
 
   getBookByNum(num) {
-    const res = this.books[num];
+    const res = this.books[num - 1];
     return res;
   }
 

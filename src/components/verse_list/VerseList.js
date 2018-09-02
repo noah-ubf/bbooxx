@@ -198,6 +198,7 @@ class VerseList extends Component {
                   showHeader={this.props.showHeader}
                   selected={this.isSelected(v)}
                   showStrongs={this.state.showStrongs}
+                  fireLink={this.props.fireLink}
                   displayStrong={this.props.displayStrong}
                 />
               </div>

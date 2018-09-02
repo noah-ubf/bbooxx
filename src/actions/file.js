@@ -197,17 +197,29 @@ export const selectChapterAction = chapter => {
   });
 };
 
+const SHORT_NAME_SYNONIMS = {
+  russian: ['rst'],
+  rststrong: ['rsts'],
+}
 export const goChapterAction = link => {
   return function (dispatch, getState) {
-    const parts = link.split(' ');
-    const module = _.find(getState().modules, m => (m.getShortName() === parts[1]));
-    if (!module) return;
-    const book = module.getBookByNum(parts[2]);
+    const parts = link.split(' ').map(s => s.toLowerCase());
+    let bxmodule = _.find(getState().modules, m => {
+      return (m.getShortName().toLowerCase() === parts[1]);
+    });
+    if (!bxmodule) {
+      bxmodule = _.find(getState().modules, m => {
+        return (SHORT_NAME_SYNONIMS[parts[1]].indexOf(m.getShortName().toLowerCase()) !== -1);
+      });
+    }
+    if (!bxmodule) return;
+    const book = bxmodule.getBookByNum(+parts[2]);
     if (!book) return;
-    const chapter = book.getChapterByNum(parts[3]);
-    return ({
+    const chapter = book.getChapterByNum(+parts[3]);
+    dispatch({
       type: 'SELECT_CHAPTER',
       chapter,
+      verse: +parts[4],
     });
   }
 };
