@@ -2,6 +2,7 @@
 + strong numbers
 + greek&hebrew
 + zoom
++ verse ordering
 
 ------------------------------------------------------------
 
@@ -16,7 +17,6 @@
 - parallel view
 
 - verse actions (show context, ...)
-- verse ordering
 - group verses in list (header/footer of the group)
 - chapter navigation
 - i18n
@@ -28,6 +28,7 @@
 - search modules by book names also
 - toggle verse numbers
 - module manager
+- about page
 
 - UI components (tabs, toolbars, modals)
 

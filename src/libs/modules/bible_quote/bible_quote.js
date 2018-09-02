@@ -58,6 +58,11 @@ export default class BibleQuoteModule {
     return res;
   }
 
+  getBookByNum(num) {
+    const res = this.books[num];
+    return res;
+  }
+
   search(searchText, options, portion, done, stopped) {
     const words = _.chain(options.caseSensitive ? searchText : searchText.toLowerCase())
       .split(' ').compact().uniq().value();

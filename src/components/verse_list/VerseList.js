@@ -6,6 +6,10 @@ import VerseView from './VerseView';
 import Button from '../button/Button';
 
 
+let placeholder = document.createElement("div");
+placeholder.className = "placeholder";
+
+
 class VerseList extends Component {
   state = {
     selected: [],
@@ -13,6 +17,8 @@ class VerseList extends Component {
   };
   thisEl;
   listEl;
+  dragged;
+  over;
 
   componentDidMount() {
     window.addEventListener("click", this.documentClickHandler);
@@ -135,26 +141,74 @@ class VerseList extends Component {
   //   }
   // }
 
+  dragStart(e) {
+    if (!this.props.reorder) return;
+    this.dragged = e.currentTarget;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.dragged);
+    placeholder.style.height = this.dragged.offsetHeight + 'px';
+    placeholder.style.opacity = 0.5;
+    placeholder.innerHTML = this.dragged.innerHTML;
+  }
+  dragEnd(e) {
+    if (!this.props.reorder) return;
+    this.dragged.style.display = 'block';
+    placeholder.parentNode.removeChild(placeholder);
+    
+    // update state
+    var from = Number(this.dragged.dataset.id);
+    var to = Number(this.over.dataset.id);
+    if(from < to) to--;
+    this.props.reorder(from, to);
+  }
+  dragOver(e) {
+    if (!this.props.reorder) return;
+    e.preventDefault();
+    this.dragged.style.display = "none";
+    if(e.target.className === 'placeholder') return;
+    let target = e.target || {};
+    while (target && target.className !== 'bx-draggable') {
+      target = target.parentNode;
+    }
+    if (!target) return;
+    this.over = target;
+    target.parentNode.insertBefore(placeholder, target);
+  }
+
   render() {
     const fontSize = (this.props.fontSize || 20) + 'px';
     return (
       <div className="bx-verselist">
         { this.renderHeader() }
         { this.renderTools() }
-        <div className="bx-verse-list-content" style={{fontSize}}>
+        <div className="bx-verse-list-content" style={{fontSize}} onDragOver={this.dragOver.bind(this)}>
           {
             _.map(this.props.verses, (v, i) => (
-              <VerseView
+              <div
                 key={i}
-                verse={v}
-                onClick={() => this.toggleSelect(v)}
-                showHeader={this.props.showHeader}
-                selected={this.isSelected(v)}
-                showStrongs={this.state.showStrongs}
-                displayStrong={this.props.displayStrong}
-              />
+                data-id={i}
+                draggable={!!this.props.reorder}
+                onDragEnd={this.dragEnd.bind(this)}
+                onDragStart={this.dragStart.bind(this)}
+                className="bx-draggable"
+              >
+                <VerseView
+                  verse={v}
+                  onClick={() => this.toggleSelect(v)}
+                  showHeader={this.props.showHeader}
+                  selected={this.isSelected(v)}
+                  showStrongs={this.state.showStrongs}
+                  displayStrong={this.props.displayStrong}
+                />
+              </div>
             ))
           }
+          <div
+            data-id={this.props.verses.length}
+            draggable={!!this.props.reorder}
+            onDragEnd={this.dragEnd.bind(this)}
+            className="bx-draggable"
+          >&nbsp;</div>
         </div>
       </div>
     );
@@ -162,3 +216,13 @@ class VerseList extends Component {
 }
 
 export default VerseList;
+
+
+
+
+// class List extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = {...props};
+//   }
+// }

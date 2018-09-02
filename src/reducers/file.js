@@ -183,14 +183,11 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'SELECT_BOOK': {
-      let stateUpd = selectModule(state, action.book.getModule(), false);
-      return selectBook(stateUpd, action.book);
+      return selectBook(state, action.book);
     }
 
     case 'SELECT_CHAPTER': {
-      let stateUpd = selectModule(state, action.chapter.getModule(), false);
-      stateUpd = selectBook(stateUpd, action.chapter.getBook());
-      return selectChapter(stateUpd, action.chapter);
+      return selectChapter(state, action.chapter);
     }
 
     case 'TOGGLE_TOOLBAR': {
@@ -457,6 +454,42 @@ const fileReducer = (state = defaultState, action) => {
       };
     }
 
+    case 'REORDER_LIST': {
+      if (action.from === action.to) return state;
+      let descriptor = '';
+      const lists = state.lists.map(l => {
+        if (l.id !== action.listId) return l;
+        const verses = [...l.verses];
+        verses.splice(action.to, 0, verses.splice(action.from, 1)[0]);
+        descriptor = getDescriptorFromList(verses);
+        return {
+          ...l,
+          verses,
+        };
+      });
+
+      const listsConfigs = state.config.lists.map(l => {
+        if (l.id !== action.listId) return l;
+        return {
+          ...l,
+          descriptor,
+          params: {
+            ...l.params,
+            customized: true
+          },
+        };
+      });
+
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          lists: listsConfigs,
+        },
+        lists,
+      };
+    }
+
     default:
       return state;
   }
@@ -491,23 +524,17 @@ function selectModule(state, module, toggle=true) {
 
 function selectBook(state, book) {
   if (book.getChapters().length === 1) {
-    return selectChapter({
-      ...state,
-      config: {
-        ...state.config,
-        selectedBook: book.getShortName(),
-        selectedChapter: book.getShortName(),
-      },
-      selectedBook: book
-    }, book.getChapters()[0]);
+    return selectChapter(state, book.getChapters()[0]);
   }
 
   return {
     ...state,
     config: {
       ...state.config,
+      selectedModule: book.getModule().getShortName(),
       selectedBook: book.getShortName(),
     },
+    selectedModule: book.getModule(),
     selectedBook: book
   };
 }
@@ -535,9 +562,13 @@ function selectChapter(state, chapter) {
     config: {
       ...state.config,
       lists: listConfigs,
+      selectedModule: chapter.getModule().getShortName(),
+      selectedBook: chapter.getBook().getShortName(),
       selectedChapter: chapter.getNum(),
       selectedTab: targetList.id,
     },
+    selectedModule: chapter.getModule(),
+    selectedBook: chapter.getBook(),
     selectedChapter: chapter,
     lists
   };

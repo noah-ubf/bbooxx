@@ -27,7 +27,6 @@ const ICONS = {
   zoomIn: '\uf6ec',
   search: '\uf349',
   down: '\uf72d',
-  cut: '\uf190',
   todoc: '\uf191',
   info: '\uf2fd',
   listBreak: '\uf6d6',

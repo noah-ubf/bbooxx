@@ -204,6 +204,8 @@ class Display extends Component {
                       showHeader={!!_.get(l, 'config.params.customized')}
                       displayStrong={num => this.props.displayStrongNumberAction(num)}
                       fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
+                      reorder={(from, to) => this.props.reorderAction(l.id, from, to)}
+                      fireLink={link => this.props.goChapterAction(link)}
                     />
                     { this.renderStrongs() }
                   </div>

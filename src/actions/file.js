@@ -197,6 +197,21 @@ export const selectChapterAction = chapter => {
   });
 };
 
+export const goChapterAction = link => {
+  return function (dispatch, getState) {
+    const parts = link.split(' ');
+    const module = _.find(getState().modules, m => (m.getShortName() === parts[1]));
+    if (!module) return;
+    const book = module.getBookByNum(parts[2]);
+    if (!book) return;
+    const chapter = book.getChapterByNum(parts[3]);
+    return ({
+      type: 'SELECT_CHAPTER',
+      chapter,
+    });
+  }
+};
+
 export const toggleToolbarAction = (position) => ({
   type: position === 'left' ? 'TOGGLE_TOOLBAR' : 'TOGGLE_SEARCHBAR',
 });
@@ -289,6 +304,13 @@ export const zoomOutAction = () => ({
 })
 export const toggleSizeAction = () => ({
   type: 'TOGGLE_UI_SIZE',
+});
+
+export const reorderAction = (id, from, to) => ({
+  type: 'REORDER_LIST',
+  listId: id,
+  from,
+  to,
 });
 
 export const setWindowHandlersAction = () => {
