@@ -74,7 +74,10 @@ class VerseList extends Component {
         ? <Button key="remove" action={() => tools.remove(this.state.selected)} icon="trash" title="__Remove selected"/> : null
       ),
       (tools.copy
-        ? <Button key="copy" action={() => tools.copy(this.state.selected)} icon="copy" title="__Copy"/> : null
+        ? <Button
+          key="copy"
+          action={() => tools.copy(this.state.selected.length > 0 ? this.state.selected : this.props.verses)}
+          icon="copy" title="__Copy"/> : null
       ),
       (tools.paste
         ? <Button key="paste" action={() => tools.paste()} icon="paste" title="__Paste"/> : null
@@ -84,8 +87,6 @@ class VerseList extends Component {
         ? <Button key="strongs" action={() => this.toggleStrongs()} icon="hash" title="__Toggle Strongs"
             highlighted={this.state.showStrongs} /> : null
       ),
-      // zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,
-      // zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
       (tools.zoomIn
         ? <Button key="zoomIn" action={() => tools.zoomIn()} icon="zoomIn" title="__Zoom in"/> : null
       ),

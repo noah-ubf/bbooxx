@@ -10,9 +10,14 @@ import "./index.css"
 class VerseView extends Component {
   renderHeader() {
     if (!this.props.showHeader) return null;
+    const module = this.props.verse.getModule().getShortName();
+    const bookNum = this.props.verse.getBook().getNum();
+    const chapter = this.props.verse.getChapter().getNum();
+    const verse = this.props.verse.getNum();
+    const href = `go ${module} ${bookNum} ${chapter} ${verse}`;
     return (
       <div className="bx-verse-header">
-        { this.props.verse.getHeader() }
+        <span onClick={e => this.fireLink(href)}>{ this.props.verse.getHeader() }</span>
       </div>
     );
   }

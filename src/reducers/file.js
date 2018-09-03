@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import { getListFromDescriptor, getDescriptorFromList } from '../libs/modules/descriptor';
+const electron = window.require('electron');
+const { clipboard } = electron;
 
 
 import defaultState from './default';
@@ -293,6 +295,14 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'COPY_VERSES': {
+      const descriptor = getDescriptorFromList(action.verses);
+      const text = action.text || '';
+      console.log(descriptor)
+      console.log('FORMATS:', clipboard.availableFormats('selection'))
+      // clipboard.writeHTML(`<p>${descriptor}</p>`, 'selection');
+      clipboard.writeText(`<${descriptor}>\n${text}`, 'selection');
+      // console.log('CLIPBOARD', clipboard.readHTML('selection'))
+      console.log('CLIPBOARD', clipboard.readText('selection'))
       return {
         ...state,
         buffer: action.verses,

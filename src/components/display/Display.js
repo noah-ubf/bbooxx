@@ -153,6 +153,7 @@ class Display extends Component {
   }
 
   render() {
+    console.log('\nDisplay.render\n\n')
     if (!this.props.configLoaded) return this.renderSplash();
     const body = document.getElementsByTagName("BODY")[0];
     const fontSizeUI = (this.props.windowFontSize || 20) + 'px';

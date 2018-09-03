@@ -88,6 +88,10 @@ export default class Book {
     return this.params.FullName;
   }
 
+  getNum() {
+    return this.params.num;
+  }
+
   getShortName() {
     let name = _.first(this.shortNames);
     if (_.isUndefined(name)) name = this.getNum();

@@ -17,10 +17,12 @@
 - name tab lists
 - parallel view
 
+- chapter navigation
+- tame the scrolling
+- i18n
+- export texts
 - verse actions (show context, ...)
 - group verses in list (header/footer of the group)
-- chapter navigation
-- i18n
 - autoselect zero chapter
 - context menu
 - module info

@@ -22,6 +22,7 @@
 .bx-verse-header {
   font-weight: bold;
   font-size: 0.9em;
+  cursor: pointer;
 }
 
 .bx-verse img {

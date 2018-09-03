@@ -12,11 +12,12 @@ export default class BibleQuoteModule {
     this.config = config;
     this.path = path;
     this.filename = filename;
-    this.books = config.books.map(book => new Book({
+    this.books = config.books.map((book, i) => new Book({
       ...book,
       module: this,
       path: `${path}${book.PathName}`,
       ChapterZero: this.config.ChapterZero,
+      num: i + 1,
     }));
   }
 
