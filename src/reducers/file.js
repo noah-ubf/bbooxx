@@ -96,6 +96,7 @@ const fileReducer = (state = defaultState, action) => {
 
         ...state,
         config: {...defaultState.config, ...action.config, lists, tabs, selectedTab},
+        configLoaded: true,
         modules: action.modules,
         strongs,
         modulesDict,
@@ -209,6 +210,37 @@ const fileReducer = (state = defaultState, action) => {
           searchbarHidden: !state.searchbarHidden
         },
         searchbarHidden: !state.searchbarHidden
+      };
+    }
+
+    case 'SECTION_SIZE_CHANGE': {
+      let config = {};
+      switch(action.section) {
+        case 'modules': {
+          config.modulesWidth = action.size;
+          break;
+        }
+        case 'search': {
+          config.searchWidth = action.size;
+          break;
+        }
+        case 'strongs': {
+          config.strongsMaxHeight = action.size;
+          break;
+        }
+        default: {
+          return state;
+        }
+      }
+      return {
+        ...state,
+        config: {
+          ...state.config,
+          window: {
+            ...state.config.window,
+            ...config,
+          }
+        }
       };
     }
 

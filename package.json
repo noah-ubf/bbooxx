@@ -19,6 +19,7 @@
     "react-dom": "^16.1.1",
     "react-intl": "2.3.0",
     "react-redux": "latest",
+    "react-splitter-layout": "^3.0.1",
     "redux": "latest",
     "redux-thunk": "latest"
   },

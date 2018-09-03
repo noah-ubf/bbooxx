@@ -16,6 +16,8 @@ export default {
       minimized: false,
       fullscreen: false,
       fontSize: 20,
+      moduleListWidth: 300,
+      searchWidth: 300,
     },
     lists: [
       // {
@@ -31,6 +33,7 @@ export default {
     fontSize: 20,
     fontSizeFullscreen: 44,
   },
+  configLoaded: false,
   modules: [],
   books: [],
   selectedModule: null,

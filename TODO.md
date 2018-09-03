@@ -3,16 +3,17 @@
 + greek&hebrew
 + zoom
 + verse ordering
++ move splitters
 
 ------------------------------------------------------------
 
 ± fullscreen
 ± improve seach speed (now >5m searching whole Bible for 'Jesus' on MacBook Pro)
 ± better parsing (???)
+± "go ..." links;
 
 ------------------------------------------------------------
 
-± "go ..." links;
 - name tab lists
 - parallel view
 
@@ -21,7 +22,6 @@
 - chapter navigation
 - i18n
 - autoselect zero chapter
-- move splitters
 - context menu
 - module info
 - dont select verse if mouse moved between down and up

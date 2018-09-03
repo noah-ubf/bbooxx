@@ -1,13 +1,9 @@
 .bx-strongs-section {
-  max-height: 50vh;
-  min-height: 25vh;
   overflow-y: auto;
-  border: solid 1px #7f7f7f;
-  border-radius: 0.25em;
   display: flex;
   flex-direction: column;
-  flex-grow: 0;
-  flex-shrink: 0;
+  flex-grow: 100;
+  flex-shrink: 100;
 }
 
 .bx-strongs-header {

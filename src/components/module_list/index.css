@@ -1,5 +1,4 @@
 .bx-modulelist {
-  width: 19rem;
   max-width: 100%;
   flex-shrink: 100;
   flex-grow: 100;
@@ -79,6 +78,7 @@
   flex-shrink: 100;
   flex-grow: 100;
   padding: 0px 0.2rem 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .bx-chapter-link {

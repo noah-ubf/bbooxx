@@ -68,6 +68,7 @@
   flex-shrink: 100;
   overflow-y: auto;
   padding: 0 0.5em 0.5em;
+  margin-bottom: 0.5rem;
 }
 
 .bx-verse-list-content:-webkit-full-screen {

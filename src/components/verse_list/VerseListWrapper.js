@@ -57,7 +57,7 @@ class VerseListWrapper extends Component {
       descriptor={ _.get(this.props.list, 'config.descriptor') }
       verses={ _.get(this.props.list, 'verses', []) }
       toolbar={this.getToolbar()}
-      showHeader={!!_.get(this.props.list, 'config.params.customized')}
+      showHeader={this.props.showHeader || !!_.get(this.props.list, 'config.params.customized')}
       displayStrong={num => this.props.displayStrongNumberAction(num)}
       fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
       reorder={(from, to) => this.props.reorderAction(this.props.listId, from, to)}

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as _ from 'lodash';
 import classNames from 'classnames';
-
+import SplitterLayout from 'react-splitter-layout';
 // const electron = require('electron');
 
 import * as Actions from '../../actions/file';
@@ -30,7 +30,11 @@ class Display extends Component {
 
   renderModuleList() {
     if (this.props.toolbarHidden) return null;
-    return <ModuleList />;
+    return (
+      <div className="bx-section">
+        <ModuleList />
+      </div>
+    );
   }
 
   // componentDidUpdate(prevProps, prevState, snapshot) {
@@ -41,15 +45,15 @@ class Display extends Component {
   //   }
   // }
 
-  renderSplitter(pos) {
-    const label = (pos === 'left' ? this.props.toolbarHidden : !this.props.searchbarHidden)
-      ? '> > >' : '< < <';
-    return (
-      <div className="bx-vsplitter" onClick={() => this.props.toggleToolbarAction(pos)}>
-        <div className="bx-splitter-icon">{ label }</div>
-      </div>
-    );
-  }
+  // renderSplitter(pos) {
+  //   const label = (pos === 'left' ? this.props.toolbarHidden : !this.props.searchbarHidden)
+  //     ? '> > >' : '< < <';
+  //   return (
+  //     <div className="bx-vsplitter" onClick={() => this.props.toggleToolbarAction(pos)}>
+  //       <div className="bx-splitter-icon">{ label }</div>
+  //     </div>
+  //   );
+  // }
 
   componentDidMount() {
     this.props.readConfigAction();
@@ -59,7 +63,7 @@ class Display extends Component {
   renderSearch() {
     if (this.props.searchbarHidden) return null;
     return (
-      <div className="bx-section bx-fixed-size bx-search-section">
+      <div className="bx-section bx-search-section">
         <div className="bx-searchlist">
           <SearchForm />
           <VerseList
@@ -93,7 +97,63 @@ class Display extends Component {
     )
   }
 
+  renderTabs() {
+    return (
+      <div className="bx-tabs">
+        <div className="bx-tabs-bar">
+          <div className="bx-tabs-bar-tabs">
+            {
+              this.props.tabs.map(l => (
+                <div
+                  key={l.id}
+                  onClick={() => this.props.selectTabListAction(l.id)}
+                  className={classNames({'bx-tabs-bar-tab': true, selected: this.props.selectedTab === l.id})}
+                >
+                  <div className="bx-tabs-bar-tab-name">
+                    {_.get(l, 'config.params.customized') ? '*' : ''}
+                    {l.name || l.config.descriptor || '__Empty'}
+                  </div>
+                  <div className="bx-tabs-bar-tab-close" onClick={() => this.props.selectTabListAction(l.id)}>
+                    {
+                      this.props.tabs.length > 1 ? (
+                        <Button
+                          action={() => this.props.removeTabListAction(l.id)}
+                          icon="remove"
+                          title="__Close Tab"
+                          round={true}
+                        />
+                      ) : null
+                    }
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          <div className="bx-tabs-bar-actions">
+            <Button action={() => this.props.addTabListAction()} icon="addList" title="__New Tab"/>
+          </div>
+        </div>
+        <div className="bx-tabs-content">
+          {
+            this.props.tabs.map(l => (
+              <div key={l.id} className={classNames({'bx-tabs-content-item': true, active: this.props.selectedTab === l.id})}>
+                <VerseList
+                  listId={l.id}
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    );
+  }
+
+  renderSplash() {
+    return 'Loading...'; //TODO
+  }
+
   render() {
+    if (!this.props.configLoaded) return this.renderSplash();
     const body = document.getElementsByTagName("BODY")[0];
     const fontSizeUI = (this.props.windowFontSize || 20) + 'px';
     if (this.fontSizeUI !== fontSizeUI) {
@@ -104,61 +164,38 @@ class Display extends Component {
 
     return [
       <Box key="layout" vertical={false} className={`${this.props.className} bx-layout`} hidden={this.props.fullScreen}>
-        <div className="bx-section bx-fixed-size">
+        <SplitterLayout
+          customClassName="bx-splitter-layout"
+          primaryIndex={1}
+          primaryMinSize={400}
+          secondaryMinSize={200}
+          secondaryInitialSize={this.props.modulesWidth || 300}
+          onSecondaryPaneSizeChange={w => this.props.saveSectionWidthAction('modules', w)}
+        >
           { this.renderModuleList() }
-        </div>
-        { this.renderSplitter('left') }
-        <div className="bx-section">
-          <div className="bx-tabs">
-            <div className="bx-tabs-bar">
-              <div className="bx-tabs-bar-tabs">
-                {
-                  this.props.tabs.map(l => (
-                    <div
-                      key={l.id}
-                      onClick={() => this.props.selectTabListAction(l.id)}
-                      className={classNames({'bx-tabs-bar-tab': true, selected: this.props.selectedTab === l.id})}
-                    >
-                      <div className="bx-tabs-bar-tab-name">
-                        {_.get(l, 'config.params.customized') ? '*' : ''}
-                        {l.name || l.config.descriptor || '__Empty'}
-                      </div>
-                      <div className="bx-tabs-bar-tab-close" onClick={() => this.props.selectTabListAction(l.id)}>
-                        {
-                          this.props.tabs.length > 1 ? (
-                            <Button
-                              action={() => this.props.removeTabListAction(l.id)}
-                              icon="remove"
-                              title="__Close Tab"
-                              round={true}
-                            />
-                          ) : null
-                        }
-                      </div>
-                    </div>
-                  ))
-                }
-              </div>
-              <div className="bx-tabs-bar-actions">
-                <Button action={() => this.props.addTabListAction()} icon="addList" title="__New Tab"/>
-              </div>
+          <SplitterLayout
+            primaryIndex={0}
+            primaryMinSize={200}
+            secondaryMinSize={200}
+            secondaryInitialSize={this.props.searchWidth || 300}
+            onSecondaryPaneSizeChange={w => this.props.saveSectionWidthAction('search', w)}
+          >
+            <div className="bx-section">
+              <SplitterLayout
+                vertical={true}
+                primaryIndex={0}
+                primaryMinSize={400}
+                secondaryMinSize={200}
+                secondaryMaxSize={this.props.strongsMaxHeight || 300}
+                onSecondaryPaneSizeChange={h => this.props.saveSectionWidthAction('strongs', h)}
+              >
+                { this.renderTabs() }
+                { this.renderStrongs() }
+              </SplitterLayout>
             </div>
-            <div className="bx-tabs-content">
-              {
-                this.props.tabs.map(l => (
-                  <div key={l.id} className={classNames({'bx-tabs-content-item': true, active: this.props.selectedTab === l.id})}>
-                    <VerseList
-                      listId={l.id}
-                    />
-                    { this.renderStrongs() }
-                  </div>
-                ))
-              }
-            </div>
-          </div>
-        </div>
-        { this.renderSplitter('right') }
-        { this.renderSearch() }
+            { this.renderSearch() }
+          </SplitterLayout>
+        </SplitterLayout>
       </Box>,
       this.renderFullScreenMode()
     ];
@@ -171,6 +208,7 @@ function mapStateToProps(state, props) {
   const lists = state.lists.map(l => ({...l, config: _.find(state.config.lists, c => (c.id === l.id))}));
 
   return {
+    configLoaded: state.configLoaded,
     toolbarHidden: state.toolbarHidden,
     searchbarHidden: state.searchbarHidden,
     tabs: _.filter(lists, l => (l.config.type === 'tab')),
@@ -180,6 +218,9 @@ function mapStateToProps(state, props) {
     fontSize: state.config.fontSize || 20,
     fontSizeFullscreen: state.config.fontSizeFullscreen || 40,
     windowFontSize: _.get(state, 'config.window.fontSize') || 20,
+    modulesWidth: _.get(state, 'config.window.modulesWidth', 300),
+    searchWidth: _.get(state, 'config.window.searchWidth', 300),
+    strongsMaxHeight: _.get(state, 'config.window.strongsMaxHeight', 300),
   };
 }
 

@@ -325,6 +325,12 @@ export const reorderAction = (id, from, to) => ({
   to,
 });
 
+export const saveSectionWidthAction = (section, size) => ({
+  type: 'SECTION_SIZE_CHANGE',
+  section,
+  size,
+});
+
 export const setWindowHandlersAction = () => {
   return function (dispatch, getState) {
     const win = remote.getCurrentWindow();
