@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as _ from 'lodash';
+import {FormattedMessage} from "react-intl";
 
 import Button from '../button/Button';
 import * as Actions from '../../actions/file';
@@ -27,19 +28,23 @@ class StrongNumbers extends Component {
         <div className="bx-strongs-header">
           <div className="bx-strongs-dict-name" title={this.props.name}>{ this.props.name }</div>
           <div className="bx-strongs-close">
-            <Button
-              action={() => this.props.displayStrongNumberAction(null)}
-              icon="remove"
-              title="__Close Strongs"
-              round={true}
-            />
+            <FormattedMessage id="strongs.close">
+            {
+              titleTranslated => <Button
+                  action={() => this.props.displayStrongNumberAction(null)}
+                  icon="remove"
+                  title={titleTranslated}
+                  round={true}
+                />
+            }
+            </FormattedMessage>
           </div>
         </div>
         <div className="bx-strongs-toolbar">{ this.props.num }</div>
         <div className="bx-strongs-content" style={{fontSize}}>
           {
-            (_.get(this.props.lexems.length, 0) === 0)
-            ? <div dangerouslySetInnerHTML={{__html: this.props.content || '__Strong number is not found in your dictionaries' }} />
+            (_.get(this.props, 'lexems.length', 0) === 0)
+            ? <FormattedMessage id="strongs.notFound" />
             : <LexemList
                 lexems={this.props.lexems}
                 displayStrong={num => {

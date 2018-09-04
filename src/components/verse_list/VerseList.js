@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from "react-dom";
 import * as _ from 'lodash';
+import {FormattedMessage} from "react-intl";
 
 import VerseView from './VerseView';
 import Button from '../button/Button';
@@ -77,6 +78,16 @@ class VerseList extends Component {
     );
   }
 
+  renderButton(icon, title, action, params) {
+    return (
+      <FormattedMessage id={title} key={title}>
+      {
+        titleTranslated => <Button action={action} icon={icon} title={titleTranslated} {...params}/>
+      }
+      </FormattedMessage>
+    );
+  }
+
   renderToolbarButtons() {
     const allSelected = (this.state.selected.length === this.props.verses.length);
     const tools = this.props.toolbar || {};
@@ -85,41 +96,49 @@ class VerseList extends Component {
     const group3 = tools.fullscreen || tools.closeFullscreen;
     return [
       (tools.select
-        ? <Button key="select" action={() => (allSelected ? this.deselectAll() : this.selectAll())}
-          icon={allSelected ? 'deselectAll' : 'selectAll'} title={allSelected ? '__Deselect all' : '__Select all'}/> : null
+        ? this.renderButton(
+          allSelected ? 'deselectAll' : 'selectAll',
+          allSelected ? 'toolbar.deselectAll' : 'toolbar.selectAll',
+          () => (allSelected ? this.deselectAll() : this.selectAll()))
+        : null
       ),
       (tools.invert
-        ? <Button key="invert" action={() => this.invertSelection()} icon="invert" title="__Invert selection"/> : null
+        ? this.renderButton('invert', 'toolbar.invertSelection', () => this.invertSelection())
+        : null
       ),
       (group1 && group2 ? <div key="separator" className="bx-toolbar-separator"></div> : null),
       (tools.remove
-        ? <Button key="remove" action={() => tools.remove(this.state.selected)} icon="trash" title="__Remove selected"/> : null
+        ? this.renderButton('trash', 'toolbar.removeSelected', () => tools.remove(this.state.selected))
+        : null
       ),
       (tools.copy
-        ? <Button
-          key="copy"
-          action={() => tools.copy(this.state.selected.length > 0 ? this.state.selected : this.props.verses)}
-          icon="copy" title="__Copy"/> : null
+        ? this.renderButton('copy', 'toolbar.copy', () => this.copy())
+        : null
       ),
       (tools.paste
-        ? <Button key="paste" action={() => tools.paste()} icon="paste" title="__Paste"/> : null
+        ? this.renderButton('paste', 'toolbar.paste', () => tools.paste())
+        : null
       ),
       (group1 || group2 ? <div key="separator2" className="bx-toolbar-separator"></div> : null),
       (tools.strongs && this.props.verses.some(v => v.hasStrongs())
-        ? <Button key="strongs" action={() => this.toggleStrongs()} icon="hash" title="__Toggle Strongs"
-            highlighted={this.state.showStrongs} /> : null
+        ? this.renderButton('hash', 'toolbar.strongs', () => this.toggleStrongs(), {highlighted: this.state.showStrongs})
+        : null
       ),
       (tools.zoomIn
-        ? <Button key="zoomIn" action={() => tools.zoomIn()} icon="zoomIn" title="__Zoom in"/> : null
+        ? this.renderButton('zoomIn', 'toolbar.zoomIn', () => tools.zoomIn())
+        : null
       ),
       (tools.zoomOut
-        ? <Button key="zoomOut" action={() => tools.zoomOut()} icon="zoomOut" title="__Zoom out"/> : null
+        ? this.renderButton('zoomOut', 'toolbar.zoomOut', () => tools.zoomOut())
+        : null
       ),
       (tools.fullscreen
-        ? <Button key="fullscreen" action={() => tools.fullscreen()} icon="fullscreen" title="__Maximize"/> : null
+        ? this.renderButton('fullscreen', 'toolbar.fullscreen', () => tools.fullscreen())
+        : null
       ),
       (tools.closeFullscreen
-        ? <Button key="closeFullscreen" action={() => tools.closeFullscreen()} icon="closeFullscreen" title="__Unmaximize" highlighted={true}/> : null
+        ? this.renderButton('closeFullscreen', 'toolbar.closeFullscreen', () => tools.closeFullscreen())
+        : null
       ),
       (((group1 || group2 || group3) && tools.text) ? <div key="separator3" className="bx-toolbar-separator"></div> : null),
       (tools.text
@@ -128,8 +147,9 @@ class VerseList extends Component {
     ];
   }
 
-  renderTulbarButton(id) {
-
+  copy() {
+    const tools = this.props.toolbar || {};
+    return tools.copy(this.state.selected.length > 0 ? this.state.selected : this.props.verses);
   }
 
   isSelected(verse) {

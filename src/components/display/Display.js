@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as _ from 'lodash';
 import classNames from 'classnames';
+import LangContainer from "../../libs/i18n/i18n";
 import SplitterLayout from 'react-splitter-layout';
 // const electron = require('electron');
+import {FormattedMessage} from "react-intl";
 
 import * as Actions from '../../actions/file';
 import VerseList from '../verse_list/VerseListWrapper';
@@ -27,6 +29,9 @@ const Box = props => (
 
 class Display extends Component {
   fontSizeUI;
+  state = {
+
+  }
 
   renderModuleList() {
     if (this.props.toolbarHidden) return null;
@@ -111,17 +116,21 @@ class Display extends Component {
                 >
                   <div className="bx-tabs-bar-tab-name">
                     {_.get(l, 'config.params.customized') ? '*' : ''}
-                    {l.name || l.config.descriptor || '__Empty'}
+                    {l.name || l.config.descriptor || <FormattedMessage id="tabs.empty" />}
                   </div>
                   <div className="bx-tabs-bar-tab-close" onClick={() => this.props.selectTabListAction(l.id)}>
                     {
                       this.props.tabs.length > 1 ? (
-                        <Button
-                          action={() => this.props.removeTabListAction(l.id)}
-                          icon="remove"
-                          title="__Close Tab"
-                          round={true}
-                        />
+                        <FormattedMessage id="tabs.close">
+                        {
+                          titleTranslated => <Button
+                              action={() => this.props.removeTabListAction(l.id)}
+                              icon="remove"
+                              title={titleTranslated}
+                              round={true}
+                            />
+                        }
+                        </FormattedMessage>
                       ) : null
                     }
                   </div>
@@ -130,7 +139,11 @@ class Display extends Component {
             }
           </div>
           <div className="bx-tabs-bar-actions">
-            <Button action={() => this.props.addTabListAction()} icon="addList" title="__New Tab"/>
+            <FormattedMessage id="tabs.new">
+            {
+              titleTranslated => <Button action={() => this.props.addTabListAction()} icon="addList" title={titleTranslated}/>
+            }
+            </FormattedMessage>
           </div>
         </div>
         <div className="bx-tabs-content">
@@ -149,57 +162,63 @@ class Display extends Component {
   }
 
   renderSplash() {
-    return 'Loading...'; //TODO
+    return <LangContainer locale="en">
+      <FormattedMessage id="splash.loading" />
+    </LangContainer>; //TODO
   }
 
   render() {
-    console.log('\nDisplay.render\n\n')
     if (!this.props.configLoaded) return this.renderSplash();
     const body = document.getElementsByTagName("BODY")[0];
     const fontSizeUI = (this.props.windowFontSize || 20) + 'px';
     if (this.fontSizeUI !== fontSizeUI) {
-      console.log('fontSizeUI = ', fontSizeUI)
       _.set(body.parentNode, 'style.fontSize', fontSizeUI);
       this.fontSizeUI = fontSizeUI;
     }
 
-    return [
-      <Box key="layout" vertical={false} className={`${this.props.className} bx-layout`} hidden={this.props.fullScreen}>
-        <SplitterLayout
-          customClassName="bx-splitter-layout"
-          primaryIndex={1}
-          primaryMinSize={400}
-          secondaryMinSize={200}
-          secondaryInitialSize={this.props.modulesWidth || 300}
-          onSecondaryPaneSizeChange={w => this.props.saveSectionWidthAction('modules', w)}
-        >
-          { this.renderModuleList() }
-          <SplitterLayout
-            primaryIndex={0}
-            primaryMinSize={200}
-            secondaryMinSize={200}
-            secondaryInitialSize={this.props.searchWidth || 300}
-            onSecondaryPaneSizeChange={w => this.props.saveSectionWidthAction('search', w)}
-          >
-            <div className="bx-section">
+    return (
+      <LangContainer locale="en">
+      {
+        [
+          <Box key="layout" vertical={false} className={`${this.props.className} bx-layout`} hidden={this.props.fullScreen}>
+            <SplitterLayout
+              customClassName="bx-splitter-layout"
+              primaryIndex={1}
+              primaryMinSize={400}
+              secondaryMinSize={200}
+              secondaryInitialSize={this.props.modulesWidth || 300}
+              onSecondaryPaneSizeChange={w => this.props.saveSectionWidthAction('modules', w)}
+            >
+              { this.renderModuleList() }
               <SplitterLayout
-                vertical={true}
                 primaryIndex={0}
-                primaryMinSize={400}
+                primaryMinSize={200}
                 secondaryMinSize={200}
-                secondaryMaxSize={this.props.strongsMaxHeight || 300}
-                onSecondaryPaneSizeChange={h => this.props.saveSectionWidthAction('strongs', h)}
+                secondaryInitialSize={this.props.searchWidth || 300}
+                onSecondaryPaneSizeChange={w => this.props.saveSectionWidthAction('search', w)}
               >
-                { this.renderTabs() }
-                { this.renderStrongs() }
+                <div className="bx-section">
+                  <SplitterLayout
+                    vertical={true}
+                    primaryIndex={0}
+                    primaryMinSize={400}
+                    secondaryMinSize={200}
+                    secondaryMaxSize={this.props.strongsMaxHeight || 300}
+                    onSecondaryPaneSizeChange={h => this.props.saveSectionWidthAction('strongs', h)}
+                  >
+                    { this.renderTabs() }
+                    { this.renderStrongs() }
+                  </SplitterLayout>
+                </div>
+                { this.renderSearch() }
               </SplitterLayout>
-            </div>
-            { this.renderSearch() }
-          </SplitterLayout>
-        </SplitterLayout>
-      </Box>,
-      this.renderFullScreenMode()
-    ];
+            </SplitterLayout>
+          </Box>,
+          this.renderFullScreenMode()
+        ]
+      }
+      </LangContainer>
+    );
   }
 }
 

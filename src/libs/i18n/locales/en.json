@@ -1,0 +1,41 @@
+{
+  "locale": "en",
+  "key": "en",
+  "messages": {
+    "locale.en": "en",
+
+    "splash.loading": "Loading...",
+
+    "tabs.empty": "Empty",
+    "tabs.new": "New tab",
+    "tabs.close": "Close tab",
+
+    "modules.remove": "Remove module",
+    "modules.search": "Search modules",
+    "modules.clear": "Clear filter",
+
+    "search.fuzzy": "Fuzzy search",
+    "search.caseSensitive": "Case sensitive",
+    "search.selectedBook": "Selected Book only",
+    "search.inProgress": "Search in progress...",
+    "search.found": "Found",
+    "search.stop": "Stop search",
+    "search.start": "Search",
+    "search.history": "Search History",
+
+    "strongs.close": "Close Strongs",
+    "strongs.notFound": "Strong number is not found in your dictionaries",
+
+    "toolbar.selectAll": "Select all",
+    "toolbar.deselectAll": "Deselect all",
+    "toolbar.invertSelection": "Invert selection",
+    "toolbar.removeSelected": "Remove selected",
+    "toolbar.copy": "Copy",
+    "toolbar.paste": "Paste",
+    "toolbar.strongs": "Toggle Strongs",
+    "toolbar.zoomIn": "Zoom in",
+    "toolbar.zoomOut": "Zoom out",
+    "toolbar.fullscreen": "Maximize",
+    "toolbar.closeFullscreen": "Unmaximize"
+  }
+}

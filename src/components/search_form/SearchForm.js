@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ReactDOM from "react-dom";
 import * as _ from 'lodash';
+import {FormattedMessage} from "react-intl";
 
 import * as Actions from '../../actions/file';
 import Button from '../button/Button';
@@ -118,15 +119,15 @@ class SearchForm extends Component {
       <div className="bx-search-form-options">
         <label>
           <input className="bx-search-form-fuzzy" type="checkbox" value={this.state.fuzzy} />
-          <span>__Fuzzy search</span>
+          <span><FormattedMessage id="search.fuzzy" /></span>
         </label>
         <label>
           <input className="bx-search-form-case" type="checkbox" value={this.state.caseSensitive} />
-          <span>__Case sensitive</span>
+          <span><FormattedMessage id="search.caseSensitive" /></span>
         </label>
         <label>
           <input className="bx-search-form-book" type="checkbox" value={this.state.selectedBookOnly} />
-          <span>__Selected Book only</span>
+          <span><FormattedMessage id="search.selectedBook" /></span>
         </label>
       </div>
     );
@@ -136,13 +137,13 @@ class SearchForm extends Component {
     if (!this.props.searchInProgress) return null;
     return (
       <div className="bx-search-form-blocker">
-        <div className="bx-search-form-blocker-label">__Search in progress...</div>
+        <div className="bx-search-form-blocker-label"><FormattedMessage id="search.inProgress" /></div>
         <div className="bx-search-form-blocker-path">{ this.props.searchPath }</div>
-        <div className="bx-search-form-blocker-count">__Found: <span>{ this.props.foundCount }</span></div>
+        <div className="bx-search-form-blocker-count"><FormattedMessage id="search.found" />: <span>{ this.props.foundCount }</span></div>
         <div className="bx-search-form-blocker-stop">
           <button onClick={() => this.props.searchStopAction()}>
             <span className="mdi">{ '\uF0AD' }</span>
-            __Stop search
+            <FormattedMessage id="search.stop" />
           </button>
         </div>
       </div>
@@ -162,9 +163,17 @@ class SearchForm extends Component {
             value={this.state.searchText}
           />
           <div className="bx-search-form-submit">
-            <Button action={() => this.search()} icon="search" title="__Search" round={true}/>
+            <FormattedMessage id="search.start" >
+            {
+              title => <Button action={() => this.search()} icon="search" title={title} round={true}/>
+            }
+            </FormattedMessage>
           </div>
-          <Button action={() => this.toggleHistory()} icon="down" title="__Search History"/>
+          <FormattedMessage id="search.history" >
+          {
+            title => <Button action={() => this.toggleHistory()} icon="down" title={title}/>
+          }
+          </FormattedMessage>
         </div>
         <div className="bx-search-form-history-block">
         { this.renderHistory() }

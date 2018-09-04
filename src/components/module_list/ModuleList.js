@@ -1,19 +1,11 @@
 import React, { Component } from 'react';
 import * as _ from 'lodash';
+import {FormattedMessage} from "react-intl";
 
 import Button from '../button/Button';
 
 import './index.css';
 
-
-const Box = props => (
-  <div  {..._.omit(props, 'vertical')} style={{
-    display: 'flex',
-    flexDirection: 'row',
-  }}>
-    { props.children }
-  </div>
-)
 
 const Item = props => (
   <div {...props} className={(props.className || '') + " bx-list-element"}>
@@ -45,12 +37,16 @@ class ModuleList extends Component {
       <div key={i} ref={i}>
         <Item className={selected ? 'selected': ''} onClick={() => this.props.selectModule(module)}>
           <div className="bx-module-remove">
-            <Button
-              action={e => this.props.removeModule(module)}
-              icon="trash"
-              title="__Remove module"
-              round={true}
-            />
+            <FormattedMessage id="modules.remove">
+            {
+              titleTranslated => <Button
+                action={e => this.props.removeModule(module)}
+                icon="trash"
+                title={titleTranslated}
+                round={true}
+              />
+            }
+            </FormattedMessage>
           </div>
           { module.getName() }
         </Item>
@@ -111,20 +107,28 @@ class ModuleList extends Component {
     return (
       <div className="bx-modulelist">
         <div className="bx-modulelist-search">
-          <input
-            className="bx-modulelist-search-input"
-            onChange={e => this.searchHandler(e)} value={this.state.searchText}
-            placeholder="__Search modules"
-          />
+          <FormattedMessage id="modules.search">
+          {
+            titleTranslated => <input
+              className="bx-modulelist-search-input"
+              onChange={e => this.searchHandler(e)} value={this.state.searchText}
+              placeholder={titleTranslated}
+            />
+          }
+          </FormattedMessage>
           <div className="bx-modulelist-search-clear">
             {
               this.state.searchText ? (
-                <Button
-                  action={() => this.searchHandler()}
-                  icon="remove"
-                  title="__Clear filter"
-                  round={true}
-                />
+                <FormattedMessage id="modules.clear">
+                {
+                  titleTranslated => <Button
+                    action={() => this.searchHandler()}
+                    icon="remove"
+                    title={titleTranslated}
+                    round={true}
+                  />
+                }
+                </FormattedMessage>
                 ) : null
             }
           </div>
@@ -133,7 +137,7 @@ class ModuleList extends Component {
           {
             _.chain(this.props.modules)
             .map((module, i) => {
-              if (module.getName().toLowerCase().indexOf(searchText) === -1) return <div ref={i}/>;
+              if (module.getName().toLowerCase().indexOf(searchText) === -1) return <div key={i} ref={i}/>;
               return this.renderModule(module, i)
             })
             .compact()

@@ -45,7 +45,6 @@ class VerseView extends Component {
   }
 
   renderContent(lexems) {
-    console.log('this.domRef=', this.domRef);
     return (
       <div
         dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}

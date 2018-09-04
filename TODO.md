@@ -11,6 +11,8 @@
 ± improve seach speed (now >5m searching whole Bible for 'Jesus' on MacBook Pro)
 ± better parsing (???)
 ± "go ..." links;
+± tame the scrolling
+± i18n (only EN is done)
 
 ------------------------------------------------------------
 
@@ -18,10 +20,8 @@
 - parallel view
 
 - chapter navigation
-- tame the scrolling
-- i18n
-- export texts
 - verse actions (show context, ...)
+- export texts
 - group verses in list (header/footer of the group)
 - autoselect zero chapter
 - context menu

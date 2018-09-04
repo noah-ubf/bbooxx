@@ -77,7 +77,7 @@ function mapStateToProps(state, props) {
   let selectedVerse = null;
   if (list.id === state.config.selectedTab) {
     selectedVerse = _.find(list.verses, v => (v.getNum() === state.selectedVerse));
-    console.log('STATE***: ', state, props, selectedVerse)
+    // console.log('STATE***: ', state, props, selectedVerse)
   }
 
   return {
