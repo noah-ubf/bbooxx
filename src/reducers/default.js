@@ -39,6 +39,7 @@ export default {
   selectedModule: null,
   selectedBook: null,
   selectedChapter: null,
+  selectedVerse: null,
   lists: [
     // {
     //   id: '',

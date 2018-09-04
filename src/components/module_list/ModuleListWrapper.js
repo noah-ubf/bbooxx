@@ -24,7 +24,7 @@ class ModuleListWrapper extends Component {
         selectedChapter={this.props.selectedChapter}
         selectModule={module => this.props.selectModuleAction(module)}
         selectBook={book => this.props.selectBookAction(book)}
-        selectChapter={chapter => this.props.selectChapterAction(chapter)}
+        selectChapter={(chapter, verse=null) => this.props.selectChapterAction(chapter, verse)}
         removeModule={module => this.props.removeModuleAction(module)}
       />
     );

@@ -9,7 +9,7 @@ import './index.css';
 const Box = props => (
   <div  {..._.omit(props, 'vertical')} style={{
     display: 'flex',
-    flexDirection: (props.vertical === false ? 'row' : 'column')
+    flexDirection: 'row',
   }}>
     { props.children }
   </div>
@@ -27,12 +27,23 @@ class ModuleList extends Component {
     searchText: '',
   };
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.selectedModule !== this.props.selectedModule) {
+      setTimeout(() => {
+        const i = this.props.modules.indexOf(this.props.selectedModule);
+        if (i !== -1) {
+          this.refs[i].scrollIntoView({block: 'center', behavior: 'smooth'});
+        }
+      }, 100);
+    }
+  }
+
   renderModule(module, i) {
     if (!module) return null;
     const selected = (module === this.props.selectedModule);
     return (
-      <Box key={i} vertical={true}>
-        <Item className={selected ? 'selected': ''}onClick={() => this.props.selectModule(module)}>
+      <div key={i} ref={i}>
+        <Item className={selected ? 'selected': ''} onClick={() => this.props.selectModule(module)}>
           <div className="bx-module-remove">
             <Button
               action={e => this.props.removeModule(module)}
@@ -46,16 +57,16 @@ class ModuleList extends Component {
         {
           this.props.selectedModule === module
           ? (
-            <Box vertical={true} className="bx-booklist">
+            <div className="bx-booklist">
             {
               _.chain(this.props.books).map((book, i) => this.renderBook(book, i))
               .compact()
               .value()
             }
-            </Box>
+            </div>
           ) : null
         }
-      </Box>
+      </div>
     );
   }
 
@@ -63,12 +74,12 @@ class ModuleList extends Component {
     if (!book) return null;
     const selected = (book === this.props.selectedBook);
     return (
-      <Box key={i}>
+      <div key={i}>
         <Item className={selected ? 'selected' : null} onClick={() => this.props.selectBook(book)}>
           { book.getName() }
         </Item>
         { this.renderChapters(book) }
-      </Box>
+      </div>
     );
   }
 
@@ -121,8 +132,10 @@ class ModuleList extends Component {
         <div className="bx-modulelist-content">
           {
             _.chain(this.props.modules)
-            .filter(m => (m.getName().toLowerCase().indexOf(searchText) !== -1))
-            .map((module, i) => this.renderModule(module, i))
+            .map((module, i) => {
+              if (module.getName().toLowerCase().indexOf(searchText) === -1) return <div ref={i}/>;
+              return this.renderModule(module, i)
+            })
             .compact()
             .value()
           }

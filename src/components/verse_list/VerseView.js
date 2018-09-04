@@ -17,7 +17,9 @@ class VerseView extends Component {
     const href = `go ${module} ${bookNum} ${chapter} ${verse}`;
     return (
       <div className="bx-verse-header">
-        <span onClick={e => this.fireLink(href)}>{ this.props.verse.getHeader() }</span>
+        <span onClick={e => {e.stopPropagation(); this.fireLink(href);}}>
+          { this.props.verse.getHeader() }
+        </span>
       </div>
     );
   }
@@ -43,6 +45,7 @@ class VerseView extends Component {
   }
 
   renderContent(lexems) {
+    console.log('this.domRef=', this.domRef);
     return (
       <div
         dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
@@ -64,7 +67,7 @@ class VerseView extends Component {
     if (this.props.verse.getNum() === 0) return null;
     return (
       <div
-        className={classNames({"bx-verse" : true, "selected": this.props.selected})}
+        className={classNames({"bx-verse" : true, "selected": this.props.selected, 'bx-highlighted': this.props.highlighted})}
         onClick={e => this.props.onClick(e)}
         title={this.props.verse.getHeader()}
       >

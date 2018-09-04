@@ -190,7 +190,7 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'SELECT_CHAPTER': {
-      return selectChapter(state, action.chapter);
+      return selectChapter(state, action.chapter, action.verse);
     }
 
     case 'TOGGLE_TOOLBAR': {
@@ -368,6 +368,7 @@ const fileReducer = (state = defaultState, action) => {
             verses: action.verses || [],
           },
         ],
+        selectedVerse: null,
       };
     }
 
@@ -388,6 +389,7 @@ const fileReducer = (state = defaultState, action) => {
         lists: [
           ..._.filter(state.lists, l => l.id !==action.listId),
         ],
+        selectedVerse: null,
       };
     }
 
@@ -437,6 +439,7 @@ const fileReducer = (state = defaultState, action) => {
           ...state.config,
           selectedTab: action.listId || _.chain(state.config.lists).find(l => (l.type === 'tab')).get('id').value()
         },
+        selectedVerse: null,
       };
     }
 
@@ -560,6 +563,7 @@ function selectModule(state, module, toggle=true) {
     selectedModule: module,
     selectedBook: books.length === 1 ? books[0] : null,
     selectedChapter: chapters.length === 1 ? chapters[0] : null,
+    selectedVerse: null,
     books
   };
 }
@@ -577,11 +581,12 @@ function selectBook(state, book) {
       selectedBook: book.getShortName(),
     },
     selectedModule: book.getModule(),
-    selectedBook: book
+    selectedBook: book,
+    selectedVerse: null,
   };
 }
 
-function selectChapter(state, chapter) {
+function selectChapter(state, chapter, verse) {
   const verses = chapter.getVerses();
   const descriptor = chapter.getDescriptor();
   let targetList = _.find(state.config.lists, l => (l.id === state.config.selectedTab && !_.get(l, 'params.customized')))
@@ -612,6 +617,8 @@ function selectChapter(state, chapter) {
     selectedModule: chapter.getModule(),
     selectedBook: chapter.getBook(),
     selectedChapter: chapter,
+    selectedVerse: verse,
+    books: chapter.getModule().getBooks(),
     lists
   };
 }

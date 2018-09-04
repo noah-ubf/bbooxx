@@ -48,6 +48,10 @@ export default class Chapter {
     this.verses = this.params.book._getChapterVerses(this).map((lines, num) => new Verse({...config, lines, num}));
   }
 
+  getVerseByNum(num) {
+    return _.find(this.verses, v => (v.getNum() === num));
+  }
+
   getVerses(v1=null, v2=null) {
     this.parse();
     if (_.isNull(v1)) return this.verses.map(v => v.getNewInstance()).filter(v => (v.getNum() > 0));

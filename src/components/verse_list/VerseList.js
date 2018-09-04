@@ -14,16 +14,34 @@ class VerseList extends Component {
   state = {
     selected: [],
     showStrongs: false,
+    highlighted: null,
   };
   thisEl;
   listEl;
   dragged;
   over;
+  highlightTimeout = null;
+
+  setHighlighted(highlighted) {
+    this.setState({ highlighted });
+    let i = this.props.verses.indexOf(highlighted);
+    if (i === -1) i = 0;
+    if (this.refs[i]) {
+      this.refs[i].scrollIntoView({block: 'center', behavior: 'smooth'});
+    }
+    clearTimeout(this.highlightTimeout);
+    this.highlightTimeout = setTimeout(() => {
+      this.setState({highlighted: null});
+    }, 5000);
+  }
 
   componentDidMount() {
     window.addEventListener("click", this.documentClickHandler);
     const thisEl = ReactDOM.findDOMNode(this);
     this.listEl = thisEl.getElementsByClassName('bx-verse-list-content')[0];
+    if (this.props.highlighted) {
+      this.setHighlighted(this.props.highlighted);
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -32,6 +50,10 @@ class VerseList extends Component {
       this.setState({
         selected: _.filter(this.props.verses, v => (this.state.selected.indexOf(v) !== -1)),
       });
+      this.setHighlighted(this.props.highlighted)
+    }
+    if (prevProps.highlighted !== this.props.highlighted) {
+      this.setHighlighted(this.props.highlighted)
     }
   }
 
@@ -188,6 +210,7 @@ class VerseList extends Component {
             _.map(this.props.verses, (v, i) => (
               <div
                 key={i}
+                ref={i}
                 data-id={i}
                 draggable={!!this.props.reorder}
                 onDragEnd={this.dragEnd.bind(this)}
@@ -203,6 +226,7 @@ class VerseList extends Component {
                   fireLink={this.props.fireLink}
                   displayStrong={this.props.displayStrong}
                   showContent={true}
+                  highlighted={this.state.highlighted === v}
                 />
               </div>
             ))

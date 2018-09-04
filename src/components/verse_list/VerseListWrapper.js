@@ -62,6 +62,7 @@ class VerseListWrapper extends Component {
       fontSize={this.props.fullScreen ? this.props.fontSizeFullscreen : this.props.fontSize}
       reorder={(from, to) => this.props.reorderAction(this.props.listId, from, to)}
       fireLink={link => this.props.goChapterAction(link)}
+      highlighted={this.props.selectedVerse}
     />
   }
 }
@@ -73,12 +74,19 @@ function mapStateToProps(state, props) {
     config: _.find(state.config.lists, c => (c.id === props.listId))
   };
 
+  let selectedVerse = null;
+  if (list.id === state.config.selectedTab) {
+    selectedVerse = _.find(list.verses, v => (v.getNum() === state.selectedVerse));
+    console.log('STATE***: ', state, props, selectedVerse)
+  }
+
   return {
     list,
     isSelected: (props.listId === state.selectedTab),
     // fullScreen: state.fullScreen,
     fontSize: state.config.fontSize || 20,
     fontSizeFullscreen: state.config.fontSizeFullscreen || 44,
+    selectedVerse,
   };
 }
 

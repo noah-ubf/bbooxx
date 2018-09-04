@@ -190,10 +190,11 @@ export const selectBookAction = book => {
   });
 };
 
-export const selectChapterAction = chapter => {
+export const selectChapterAction = (chapter, verse=null) => {
   return ({
     type: 'SELECT_CHAPTER',
     chapter,
+    verse,
   });
 };
 

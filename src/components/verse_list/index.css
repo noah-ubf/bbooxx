@@ -13,10 +13,15 @@
   background: #f2f2ff;
   padding: 0.25em 0.5em;
   line-height: 1.4em;
+  transition: background 1s;
 }
 
 .bx-verse:hover {
   background: #f5f5ff;
+}
+
+.bx-verse.bx-highlighted {
+  background: #c0ffc0;
 }
 
 .bx-verse-header {
@@ -30,7 +35,8 @@
 }
 
 .bx-verse.selected, .bx-verse.selected:hover {
-  background: #fffff2;
+  background: #fffff0;
+  box-shadow: inset 0 0 20px rgba(0,63,0,0.2);
 }
 
 .bx-verse-num {
