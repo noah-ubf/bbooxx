@@ -26,6 +26,8 @@
     "strongs.close": "Close Strongs",
     "strongs.notFound": "Strong number is not found in your dictionaries",
 
+    "toolbar.prevChapter": "Previous chapter",
+    "toolbar.nextChapter": "Next chapter",
     "toolbar.selectAll": "Select all",
     "toolbar.deselectAll": "Deselect all",
     "toolbar.invertSelection": "Invert selection",

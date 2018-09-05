@@ -99,6 +99,20 @@ export default class Book {
     return name;
   }
 
+  getPrevBook() {
+    let books = this.getModule().getBooks();
+    let index = books.indexOf(this);
+    if (index === -1 || index === 0) return null;
+    return books[index - 1];
+  }
+
+  getNextBook() {
+    const books = this.getModule().getBooks();
+    const index = books.indexOf(this);
+    if (index === -1 || index === books.length - 1) return null;
+    return books[index + 1];
+  }
+
   getChapters() {
     return this.chapters;
   }
@@ -156,7 +170,7 @@ export default class Book {
         let data = this.readFile(fname) || this.readFile(fname.toLowerCase()) || this.readFile(fname.toUpperCase());
         if (!data) return ss;
         const dataUrl = data.toString('base64');
-        return `"data:image/gif;base64,${dataUrl}"${rest}`
+        return `"data:image/jpeg;base64,${dataUrl}"${rest}`
       }).join(' src=');
       return s;
     })

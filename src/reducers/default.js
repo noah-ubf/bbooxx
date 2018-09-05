@@ -43,6 +43,7 @@ export default {
   lists: [
     // {
     //   id: '',
+    //   chapter: null,
     //   verses: [],
     // }
   ],

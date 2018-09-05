@@ -30,6 +30,19 @@ export const getDescriptorFromList = (verses) => {
   return compactDescriptor(verses.map(v => v.getDescriptor()).join(';'));
 }
 
+export const getChapterFromDescriptor = (li, modulesDict) => {
+  const list = parseDescriptor(compactDescriptor(li.descriptor));
+  if (list.length !== 1) return null;
+  const o = list[0];
+  const module = modulesDict[o.module];
+  if (!module) return null;
+  const book = module.getBookByShortName(o.book);
+  if (!book) return null;
+  const chapter = book.getChapterByNum(o.chapter);
+  if (!chapter) return null;
+  return chapter;
+}
+
 export const getListFromDescriptor = (li, modulesDict) => {
   switch(li.type) {
     case 'search': {

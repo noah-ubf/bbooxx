@@ -21,6 +21,17 @@ class VerseListWrapper extends Component {
         zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
       }
     }
+
+    let prevChapter = null;
+    let nextChapter = null;
+    const chapter = _.get(this.props.list, 'chapter');
+    if (chapter) {
+      const prev = chapter.getPrevChapter();
+      const next = chapter.getNextChapter();
+      if (prev) prevChapter = () => this.props.selectChapterAction(prev);
+      if (next) nextChapter = () => this.props.selectChapterAction(next);
+    }
+
     return {
       select: true,
       invert: true,
@@ -31,6 +42,8 @@ class VerseListWrapper extends Component {
       zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,
       zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
       fullscreen: list.id !== 'search' ? () => this.props.toggleFullscreenAction() : null,
+      prevChapter,
+      nextChapter,
     };
   }
 

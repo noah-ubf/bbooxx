@@ -39,6 +39,7 @@ export default props => {
     "bx-button": true,
     "bx-button-round": props.round,
     "bx-button-highlighted": props.highlighted,
+    "bx-button-disabled": props.disabled,
   });
 
   const renderContent = () => {
@@ -48,7 +49,7 @@ export default props => {
   return (
     <div className={classes} title={props.title} onClick={e => {
       e.stopPropagation();
-      props.action();
+      props.disabled || (props.action && props.action(e));
     }}>
       { renderContent() }
     </div>

@@ -95,6 +95,28 @@ class VerseList extends Component {
     const group2 = tools.remove || tools.copy || tools.paste;
     const group3 = tools.fullscreen || tools.closeFullscreen;
     return [
+      ((tools.prevChapter || tools.nextChapter)
+        ? this.renderButton(
+          'prev',
+          'toolbar.prevChapter',
+          () => (tools.prevChapter && tools.prevChapter()),
+          {
+            disabled: !tools.prevChapter
+          }
+        )
+        : null
+      ),
+      ((tools.prevChapter || tools.nextChapter)
+        ? this.renderButton(
+          'next',
+          'toolbar.nextChapter',
+          () => (tools.nextChapter && tools.nextChapter()),
+          {
+            disabled: !tools.nextChapter
+          }
+        )
+        : null
+      ),
       (tools.select
         ? this.renderButton(
           allSelected ? 'deselectAll' : 'selectAll',

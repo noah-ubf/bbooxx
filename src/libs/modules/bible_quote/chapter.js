@@ -38,6 +38,34 @@ export default class Chapter {
     return this.text;
   }
 
+  getPrevChapter() {
+    let chapters = this.getBook().getChapters();
+    let index = chapters.indexOf(this);
+
+    if (index === 0) {
+      const book = this.getBook().getPrevBook();
+      if (!book) return null;
+      chapters = book.getChapters();
+      index = chapters.length;
+    }
+
+    return chapters[index - 1];
+  }
+
+  getNextChapter() {
+    let chapters = this.getBook().getChapters();
+    let index = chapters.indexOf(this);
+
+    if (index === chapters.length - 1) {
+      const book = this.getBook().getNextBook();
+      if (!book) return null;
+      chapters = book.getChapters();
+      index = -1;
+    }
+
+    return chapters[index + 1];
+  }
+
   parse() {
     if (!_.isNull(this.verses)) return;
     const config = {

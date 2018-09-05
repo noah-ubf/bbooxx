@@ -56,6 +56,11 @@ body {
   box-shadow: inset 1px 1px 1.5rem #7f7fff;
 }
 
+.bx-button.bx-button-disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
 .bx-verse img {
   max-width: 100%;
 }

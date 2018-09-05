@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
-import { getListFromDescriptor, getDescriptorFromList } from '../libs/modules/descriptor';
 const electron = window.require('electron');
 const { clipboard } = electron;
 
 
+import { getListFromDescriptor, getDescriptorFromList, getChapterFromDescriptor }
+  from '../libs/modules/descriptor';
 import defaultState from './default';
 import BQStrongs from '../libs/modules/bible_quote/strongs';
 
@@ -108,7 +109,12 @@ const fileReducer = (state = defaultState, action) => {
         selectedChapter,
         toolbarHidden: config.toolbarHidden,
         searchbarHidden: config.searchbarHidden,
-        lists: lists.map(li => ({id: li.id, verses: getListFromDescriptor(li, modulesDict)})),
+        lists: lists.map(li => ({
+          id: li.id,
+          verses: getListFromDescriptor(li, modulesDict),
+          chapter: _.get(li, 'params.customized')
+            ? null : getChapterFromDescriptor(li, modulesDict),
+        })),
       };
     }
     /*
@@ -321,6 +327,7 @@ const fileReducer = (state = defaultState, action) => {
         return {
           ...l,
           verses,
+          chapter: null,
         };
       });
       const listsConfigs = state.config.lists.map(l => {
@@ -407,6 +414,7 @@ const fileReducer = (state = defaultState, action) => {
         return {
           ...l,
           verses,
+          chapter: null,
         };
       });
 
@@ -510,6 +518,7 @@ const fileReducer = (state = defaultState, action) => {
         return {
           ...l,
           verses,
+          chapter: null,
         };
       });
 
@@ -602,7 +611,7 @@ function selectChapter(state, chapter, verse) {
     : state.config.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, descriptor }));
   const lists = isNewList
     ? [ ...state.lists, { id: targetList.id, verses } ]
-    : state.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, verses }));
+    : state.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, chapter, verses }));
 
   return {
     ...state,
