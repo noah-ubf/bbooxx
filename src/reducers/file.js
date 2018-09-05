@@ -303,12 +303,19 @@ const fileReducer = (state = defaultState, action) => {
     case 'COPY_VERSES': {
       const descriptor = getDescriptorFromList(action.verses);
       const text = action.text || '';
+      const html = action.html || '';
       console.log(descriptor)
       console.log('FORMATS:', clipboard.availableFormats('selection'))
-      // clipboard.writeHTML(`<p>${descriptor}</p>`, 'selection');
-      clipboard.writeText(`<${descriptor}>\n${text}`, 'selection');
-      // console.log('CLIPBOARD', clipboard.readHTML('selection'))
-      console.log('CLIPBOARD', clipboard.readText('selection'))
+      clipboard.write({
+        text: `<BBOOXX:${descriptor}>\n${text}`,
+        html: `<head>
+            <title class="BBOOXX-CLIPBOARD">${descriptor}</title>
+          </head>
+          <body>
+            <header>${descriptor}</header>
+            <article>${html}</article>
+          </body>`,
+      })
       return {
         ...state,
         buffer: action.verses,
@@ -401,13 +408,28 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'PASTE_VERSES': {
-      const verses = [
-        ..._.chain(state.lists)
-          .find(l => l.id === action.listId)
-          .get('verses')
-          .value(),
-        ...state.buffer.map(v => v.getNewInstance()),
-      ];
+      // first we try to use the clipboard:
+      const html = clipboard.readHTML('selection');
+      const text = clipboard.readText('selection');
+      let verses = null;
+
+      if (text || html) {
+        const rere = text && /^<BBOOXX:([^>]+)>$/.exec(text);
+        if (rere) {
+          verses = getListFromDescriptor(rere[1]);
+        }
+        // TODO get descriptor from html when text fails???
+      }
+
+      if (!verses) { // fallback when clipboard fails
+        verses = [
+          ..._.chain(state.lists)
+            .find(l => l.id === action.listId)
+            .get('verses')
+            .value(),
+          ...state.buffer.map(v => v.getNewInstance()),
+        ];
+      }
 
       const lists = state.lists.map(l => {
         if (l.id !== action.listId) return l;

@@ -269,9 +269,11 @@ export const searchStopAction = () => {
   } 
 };
 
-export const copyVersesAction = verses => ({
+export const copyVersesAction = (verses, text, html) => ({
   type: 'COPY_VERSES',
-  verses
+  verses,
+  text,
+  html,
 });
 
 export const removeVersesAction = (listId, verses) => ({

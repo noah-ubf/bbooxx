@@ -33,15 +33,15 @@ class LexemList extends Component {
       if (_.get(l, 'mode.italic')) classes[`bx-t-italic`] = true;
 
       if (l.t === 'block' || l.t === '/block') {
-        if (br) {
-          br = 0;
-          return (<br key={i}/>);
-        }
         br = cont;
         return null;
+      } else if (br) {
+        br = 0;
+        return (<br key={i}/>);
       }
 
       if (l.t === 'linebreak') {
+        if (i === this.props.lexems.length - 1) return null;
         return ( <br key={i} /> );
       }
 

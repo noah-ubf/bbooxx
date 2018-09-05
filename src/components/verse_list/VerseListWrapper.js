@@ -36,7 +36,11 @@ class VerseListWrapper extends Component {
       select: true,
       invert: true,
       remove: verses => this.props.removeVersesAction(list.id, verses),
-      copy: verses => this.props.copyVersesAction(verses),
+      copy: verses => {
+        const text = verses.map(v => v.getText().replace(/<[^>]+>/g, '')).join('\n');
+        const html = verses.map(v => v.getText()).join('\n');
+        return this.props.copyVersesAction(verses, text, html)
+      },
       paste: list.id === 'search' ? null : () => this.props.pasteVersesAction(list.id),
       strongs: list.id !== 'search' ? (num) => this.props.showStrongsAction(num) : null,
       zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,

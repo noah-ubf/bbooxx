@@ -4,15 +4,17 @@
 + zoom
 + verse ordering
 + move splitters
++ chapter navigation
 
 ------------------------------------------------------------
 
+± i18n (only EN is done)
 ± fullscreen
 ± better parsing (???)
 ± "go ..." links;
 ± tame the scrolling
-± i18n (only EN is done)
 ± verse actions (show context, ...)
+± export texts
 
 ------------------------------------------------------------
 
@@ -23,8 +25,6 @@
 - daily devotional
 - external html view
 
-- chapter navigation
-- export texts
 - group verses in list (header/footer of the group)
 - autoselect zero chapter
 - context menu
@@ -39,7 +39,6 @@
 - hotkeys
 
 - UI components (tabs, toolbars, modals)
-
 - async file reading
 
 
