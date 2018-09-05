@@ -463,14 +463,18 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'SELECT_TAB_LIST': {
-      return {
+      const selectedTab = action.listId || _.chain(state.config.lists).find(l => (l.type === 'tab')).get('id').value();
+      const li = _.find(state.lists, l => (l.id === selectedTab));
+      const newState =  {
         ...state,
         config: {
           ...state.config,
-          selectedTab: action.listId || _.chain(state.config.lists).find(l => (l.type === 'tab')).get('id').value()
+          selectedTab,
         },
         selectedVerse: null,
       };
+      if (!_.get(li, 'chapter')) return newState;
+      return selectChapter(newState, li.chapter);
     }
 
     case 'TOGGLE_FULLSCREEN': {

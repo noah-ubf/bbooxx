@@ -24,19 +24,21 @@
 - notes
 - daily devotional
 - external html view
+- cross-references
 
+- when uncustomized tab selected choose its chapter in module list
+- app settings
 - group verses in list (header/footer of the group)
 - autoselect zero chapter
 - context menu
 - module info
 - dont select verse if mouse moved between down and up
 - search modules by book names also
-- pagination for large verse lists
 - toggle verse numbers
 - module manager
 - about page
-- app settings
 - hotkeys
+- pagination for large verse lists
 
 - UI components (tabs, toolbars, modals)
 - async file reading
