@@ -7,6 +7,7 @@ import { getListFromDescriptor, getDescriptorFromList, getChapterFromDescriptor 
   from '../libs/modules/descriptor';
 import defaultState from './default';
 import BQStrongs from '../libs/modules/bible_quote/strongs';
+import ClipboardHelper from './helpers/clipboard';
 
 
 const fileReducer = (state = defaultState, action) => {
@@ -301,61 +302,19 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'COPY_VERSES': {
-      const descriptor = getDescriptorFromList(action.verses);
-      const text = action.text || '';
-      const html = action.html || '';
-      console.log(descriptor)
-      console.log('FORMATS:', clipboard.availableFormats('selection'))
-      clipboard.write({
-        text: `<BBOOXX:${descriptor}>\n${text}`,
-        html: `<head>
-            <title class="BBOOXX-CLIPBOARD">${descriptor}</title>
-          </head>
-          <body>
-            <header>${descriptor}</header>
-            <article>${html}</article>
-          </body>`,
-      })
-      return {
-        ...state,
-        buffer: action.verses,
-      };
+      return ClipboardHelper.copyVerses(state, action.verses, action.text, action.html);
+    }
+
+    case 'CUT_VERSES': {
+      return ClipboardHelper.removeVerses(
+        ClipboardHelper.copyVerses(state, action.verses, action.text, action.html),
+        action.listId,
+        action.verses
+      );
     }
 
     case 'REMOVE_VERSES': {
-      if (!action.verses || action.verses.length ===0) return state;
-      const verses = _.chain(state.lists)
-        .find(l => l.id === action.listId)
-        .get('verses')
-        .filter(v => action.verses.indexOf(v) === -1)
-        .value();
-      const lists = state.lists.map(l => {
-        if (l.id !== action.listId) return l;
-        return {
-          ...l,
-          verses,
-          chapter: null,
-        };
-      });
-      const listsConfigs = state.config.lists.map(l => {
-        if (l.id !== action.listId) return l;
-        return {
-          ...l,
-          descriptor: getDescriptorFromList(verses),
-          params: {
-            ...l.params,
-            customized: true
-          }
-        };
-      });
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          lists: listsConfigs,
-        },
-        lists,
-      };
+      return ClipboardHelper.removeVerses(state, action.listId, action.verses);
     }
 
     case 'ADD_TAB_LIST': {

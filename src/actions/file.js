@@ -276,6 +276,14 @@ export const copyVersesAction = (verses, text, html) => ({
   html,
 });
 
+export const cutVersesAction = (listId, verses, text, html) => ({
+  type: 'CUT_VERSES',
+  listId,
+  verses,
+  text,
+  html,
+});
+
 export const removeVersesAction = (listId, verses) => ({
   type: 'REMOVE_VERSES',
   listId,

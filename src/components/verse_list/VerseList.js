@@ -138,6 +138,10 @@ class VerseList extends Component {
         ? this.renderButton('copy', 'toolbar.copy', () => this.copy())
         : null
       ),
+      (tools.cut
+        ? this.renderButton('cut', 'toolbar.cut', () => this.cut())
+        : null
+      ),
       (tools.paste
         ? this.renderButton('paste', 'toolbar.paste', () => tools.paste())
         : null
@@ -173,6 +177,11 @@ class VerseList extends Component {
   copy() {
     const tools = this.props.toolbar || {};
     return tools.copy(this.state.selected.length > 0 ? this.state.selected : this.props.verses);
+  }
+
+  cut() {
+    const tools = this.props.toolbar || {};
+    return tools.cut(this.state.selected.length > 0 ? this.state.selected : this.props.verses);
   }
 
   isSelected(verse) {
@@ -230,7 +239,6 @@ class VerseList extends Component {
     this.props.reorder(from, to);
     let scrollPos = this.scrollPos;
     setTimeout(() => {
-      const i = ( to > 5 ? to - 5 : 0);
       this.refs.content.scrollTop = scrollPos;
     }, 10);
   }
