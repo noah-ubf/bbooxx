@@ -13,15 +13,19 @@
   background: #f2f2ff;
   padding: 0.25em 0.5em;
   line-height: 1.4em;
-  transition: background 1s;
+  transition: background 0.3s;
 }
 
 .bx-verse:hover {
-  background: #f5f5ff;
+  background: #fffff2;
 }
 
 .bx-verse.bx-highlighted {
   background: #c0ffc0;
+}
+
+.bx-verse-handle {
+  width: 20px;
 }
 
 .bx-verse-header {
@@ -34,9 +38,13 @@
   max-width: 100%;
 }
 
-.bx-verse.selected, .bx-verse.selected:hover {
-  background: #fffff0;
+.bx-verse.selected {
+  background: #ffffff;
   box-shadow: inset 0 0 20px rgba(0,63,0,0.2);
+}
+
+.bx-verse.selected:hover {
+  background: #fffff0;
 }
 
 .bx-verse-num {
@@ -88,4 +96,14 @@
   overflow: hidden;
   align-items: center;
   margin-left: 1em;
+}
+
+.bx-verse-list-chapter {
+  background: #99d5cc;
+  font-weight: bold;
+  font-size: .8em;
+  margin-top: .5em;
+  padding: .5em;
+  border-top-left-radius: .5em;
+  border-top-right-radius: .5em;
 }

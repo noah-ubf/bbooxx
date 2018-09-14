@@ -32,6 +32,10 @@ const ICONS = {
   listBreak: '\uf6d6',
   paralel: '\uf8de',
   gear: '\uf8ba',
+  arrowLeftBlack: '\uf731',
+  arrowLeftWhite: '\uf732',
+  arrowRightBlack: '\uf734',
+  arrowRightWhite: '\uf735',
 };
 
 export default props => {

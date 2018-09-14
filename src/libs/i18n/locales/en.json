@@ -9,6 +9,10 @@
     "tabs.empty": "Empty",
     "tabs.new": "New tab",
     "tabs.close": "Close tab",
+    "tabs.showModuleList": "Show Module List",
+    "tabs.hideModuleList": "Hide Module List",
+    "tabs.showSearch": "Show Search",
+    "tabs.hideSearch": "Hide Search",
 
     "modules.remove": "Remove module",
     "modules.search": "Search modules",

@@ -22,6 +22,7 @@ class VerseList extends Component {
   dragged;
   over;
   highlightTimeout = null;
+  scrollPos = 0;
 
   setHighlighted(highlighted) {
     this.setState({ highlighted });
@@ -215,6 +216,7 @@ class VerseList extends Component {
     placeholder.style.opacity = 0.5;
     placeholder.innerHTML = this.dragged.innerHTML;
   }
+
   dragEnd(e) {
     if (!this.props.reorder || !this.dragged) return;
     this.dragged.style.display = 'block';
@@ -226,7 +228,13 @@ class VerseList extends Component {
     if(from < to) to--;
     this.dragged = null;
     this.props.reorder(from, to);
+    let scrollPos = this.scrollPos;
+    setTimeout(() => {
+      const i = ( to > 5 ? to - 5 : 0);
+      this.refs.content.scrollTop = scrollPos;
+    }, 10);
   }
+
   dragOver(e) {
     if (!this.props.reorder || !this.dragged) return;
     e.preventDefault();
@@ -241,37 +249,56 @@ class VerseList extends Component {
     target.parentNode.insertBefore(placeholder, target);
   }
 
+  rememberScroll(event) {
+    this.scrollPos = this.refs.content.scrollTop;
+  }
+
   render() {
     const fontSize = (this.props.fontSize || 20) + 'px';
+    let chDescriptor = null;
     return (
       <div className="bx-verselist">
         { this.renderHeader() }
         { this.renderTools() }
-        <div className="bx-verse-list-content" style={{fontSize}} onDragOver={this.dragOver.bind(this)}>
+        <div
+          className="bx-verse-list-content"
+          style={{fontSize}}
+          onDragOver={this.dragOver.bind(this)}
+          onScroll={event => this.rememberScroll(event)}
+          ref="content"
+        >
           {
-            _.map(this.props.verses, (v, i) => (
-              <div
-                key={i}
-                ref={i}
-                data-id={i}
-                draggable={!!this.props.reorder}
-                onDragEnd={this.dragEnd.bind(this)}
-                onDragStart={this.dragStart.bind(this)}
-                className="bx-draggable"
-              >
-                <VerseView
-                  verse={v}
-                  onClick={() => this.toggleSelect(v)}
-                  showHeader={this.props.showHeader}
-                  selected={this.isSelected(v)}
-                  showStrongs={this.state.showStrongs}
-                  fireLink={this.props.fireLink}
-                  displayStrong={this.props.displayStrong}
-                  showContent={true}
-                  highlighted={this.state.highlighted === v}
-                />
-              </div>
-            ))
+            _.map(this.props.verses, (v, i) => {
+              const oldDescriptor = chDescriptor;
+              chDescriptor = v.getChapter().getDescriptor();
+              return [
+                oldDescriptor === chDescriptor
+                  ? null
+                  : (<div key={'h' + i} className="bx-verse-list-chapter">{ chDescriptor }</div>),
+
+                <div
+                  key={i}
+                  ref={i}
+                  data-id={i}
+                  draggable={!!this.props.reorder}
+                  onDragEnd={this.dragEnd.bind(this)}
+                  onDragStart={this.dragStart.bind(this)}
+                  className="bx-draggable"
+                >
+                  <VerseView
+                    verse={v}
+                    onClick={() => this.toggleSelect(v)}
+                    showHeader={0&&this.props.showHeader}
+                    selected={this.isSelected(v)}
+                    showStrongs={this.state.showStrongs}
+                    fireLink={this.props.fireLink}
+                    displayStrong={this.props.displayStrong}
+                    showContent={true}
+                    highlighted={this.state.highlighted === v}
+                  />
+                </div>
+              ]
+            })
           }
           <div
             data-id={this.props.verses.length}

@@ -93,12 +93,11 @@ class Display extends Component {
   renderFullScreenMode() {
     if (!this.props.fullScreen) return null;
     return (
-      <div className="bx-tabs-content" key="fullscreen">
         <VerseList
+          key="fullscreen"
           listId={this.props.selectedTab}
           fullScreen={true}
         />
-      </div>
     )
   }
 
@@ -106,6 +105,16 @@ class Display extends Component {
     return (
       <div className="bx-tabs">
         <div className="bx-tabs-bar">
+          <div className="bx-tabs-bar-actions">
+            <FormattedMessage id={this.props.toolbarHidden ? 'tabs.showModuleList' : 'tabs.hideModuleList'}>
+            {
+              titleTranslated => <Button
+                action={() => this.props.toggleToolbarAction('left')}
+                icon={ this.props.toolbarHidden ? 'arrowRightWhite' : 'arrowLeftBlack'}
+                title={titleTranslated}/>
+            }
+            </FormattedMessage>
+          </div>
           <div className="bx-tabs-bar-tabs">
             {
               this.props.tabs.map(l => (
@@ -142,6 +151,14 @@ class Display extends Component {
             <FormattedMessage id="tabs.new">
             {
               titleTranslated => <Button action={() => this.props.addTabListAction()} icon="addList" title={titleTranslated}/>
+            }
+            </FormattedMessage>
+            <FormattedMessage id={this.props.searchbarHidden ? 'tabs.showSearch' : 'tabs.hideSearch'}>
+            {
+              titleTranslated => <Button
+                action={() => this.props.toggleToolbarAction('right')}
+                icon={ this.props.searchbarHidden ? 'arrowLeftWhite' : 'arrowRightBlack'}
+                title={titleTranslated}/>
             }
             </FormattedMessage>
           </div>

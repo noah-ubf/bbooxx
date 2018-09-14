@@ -5,6 +5,7 @@
 + verse ordering
 + move splitters
 + chapter navigation
++ when uncustomized tab selected choose its chapter in module list
 
 ------------------------------------------------------------
 
@@ -25,8 +26,8 @@
 - daily devotional
 - external html view
 - cross-references
+- strongs navigation
 
-- when uncustomized tab selected choose its chapter in module list
 - app settings
 - group verses in list (header/footer of the group)
 - autoselect zero chapter
@@ -37,11 +38,13 @@
 - toggle verse numbers
 - module manager
 - about page
-- hotkeys
+- hotkeys (keyboard navigation)
 - pagination for large verse lists
 
 - UI components (tabs, toolbars, modals)
 - async file reading
+
+- migrate to the latest electron
 
 
 - Drivers for other module types (TBD, needs research), possible candidates:

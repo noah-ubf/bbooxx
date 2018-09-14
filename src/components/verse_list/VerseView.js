@@ -16,11 +16,11 @@ class VerseView extends Component {
     const verse = this.props.verse.getNum();
     const href = `go ${module} ${bookNum} ${chapter} ${verse}`;
     return (
-      <div className="bx-verse-header">
+      <span className="bx-verse-header">
         <span onClick={e => {e.stopPropagation(); this.fireLink(href);}}>
           { this.props.verse.getHeader() }
         </span>
-      </div>
+      </span>
     );
   }
 
@@ -46,7 +46,7 @@ class VerseView extends Component {
 
   renderContent(lexems) {
     return (
-      <div
+      <span
         dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
         title={this.props.verse.getHeader()}
       >
@@ -56,7 +56,7 @@ class VerseView extends Component {
           fireLink={ href => this.fireLink(href) }
           displayStrong={ this.props.showStrongs && this.props.verse.hasStrongs() ? (num => this.displayStrong(num)) : null }
         />
-      </div>
+      </span>
     );
   }
 
