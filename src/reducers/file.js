@@ -1,6 +1,4 @@
 import * as _ from 'lodash';
-const electron = window.require('electron');
-const { clipboard } = electron;
 
 
 import { getListFromDescriptor, getDescriptorFromList, getChapterFromDescriptor }
@@ -8,6 +6,10 @@ import { getListFromDescriptor, getDescriptorFromList, getChapterFromDescriptor 
 import defaultState from './default';
 import BQStrongs from '../libs/modules/bible_quote/strongs';
 import ClipboardHelper from './helpers/clipboard';
+import SearchHelper from './helpers/search';
+import TabHelper from './helpers/tab';
+import ModulesHelper from './helpers/modules';
+import UIHelper from './helpers/ui';
 
 
 const fileReducer = (state = defaultState, action) => {
@@ -136,351 +138,95 @@ const fileReducer = (state = defaultState, action) => {
       }
     */
     case 'SELECT_MODULE': {
-      return selectModule(state, action.module);
+      return ModulesHelper.selectModule(state, action.module);
     }
 
     case 'REMOVE_MODULE': {
-      if (state.selectedModule === action.module) {
-        const config = {
-          ...state.config,
-          selectedModule: null,
-          selectedBook: null,
-          selectedChapter: null,
-        };
-        return {
-          ...state,
-          config,
-          selectedModule: null,
-          selectedBook: null,
-          selectedChapter: null,
-          books: [],
-        };
-      }
-      const config = {
-        ...state.config,
-        modules: _.omit(state.config.modules, action.module.getShortName())
-      };
-      return {
-        ...state,
-        modules: _.filter(state.modules, m => (m !== action.module)),
-        config,
-      };
+      return ModulesHelper.remove(state, action.module);
     }
 
     case 'UPDATE_WINDOW_CONFIG': {
-      const windowConfigs = {
-        maximized: action.config.maximized,
-        minimized: action.config.minimized,
-        fullscreen: action.config.fullscreen,
-      };
-      if (!action.config.maximized && !action.config.minimized && !action.config.fullscreen) {
-        windowConfigs.x = action.config.x;
-        windowConfigs.y = action.config.y;
-        windowConfigs.width = action.config.width;
-        windowConfigs.height = action.config.height;
-      }
-
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          window: {
-            ...state.config.window,
-            ...windowConfigs,
-          }
-        },
-      };
+      return UIHelper.updateWindow(state, action.config);
     }
 
     case 'SELECT_BOOK': {
-      return selectBook(state, action.book);
+      return ModulesHelper.selectBook(state, action.book);
     }
 
     case 'SELECT_CHAPTER': {
-      return selectChapter(state, action.chapter, action.verse);
+      return ModulesHelper.selectChapter(state, action.chapter, action.verse);
     }
 
     case 'TOGGLE_TOOLBAR': {
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          toolbarHidden: !state.toolbarHidden
-        },
-        toolbarHidden: !state.toolbarHidden
-      };
+      return UIHelper.toggleModuleList(state);
     }
 
     case 'TOGGLE_SEARCHBAR': {
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          searchbarHidden: !state.searchbarHidden
-        },
-        searchbarHidden: !state.searchbarHidden
-      };
+      return UIHelper.toggleSearchBar(state);
     }
 
     case 'SECTION_SIZE_CHANGE': {
-      let config = {};
-      switch(action.section) {
-        case 'modules': {
-          config.modulesWidth = action.size;
-          break;
-        }
-        case 'search': {
-          config.searchWidth = action.size;
-          break;
-        }
-        case 'strongs': {
-          config.strongsMaxHeight = action.size;
-          break;
-        }
-        default: {
-          return state;
-        }
-      }
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          window: {
-            ...state.config.window,
-            ...config,
-          }
-        }
-      };
+      return UIHelper.sectionResize(state, action.section, action.size)
     }
 
     case 'SEARCH_START': {
-      const module = state.selectedModule ? state.selectedModule.getShortName() : '';
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          lists: state.config.lists.map(l => ((l.id === 'search') ? {
-            ...l, descriptor: `search(${module}):${action.searchText}`
-          } : l)),
-          searchHistory: [
-            action.searchText,
-            ...state.config.searchHistory.filter(s => (s !== action.searchText)).slice(0,19),
-          ],
-        },
-        lists: state.lists.map(l => ((l.id === 'search') ? {
-          ...l, verses: []
-        } : l)),
-        searchModule: state.selectedModule,
-        searchText: action.searchText,
-        searchResult: [],
-        searchStop: false,
-        searchInProgress: true,
-      };
+      return SearchHelper.start(state, action.searchText);
     }
 
     case 'SEARCH_PORTION': {
-      return {
-        ...state,
-        searchResult: [...state.searchResult, ...action.verses],
-        searchPath: action.path || '',
-      };
+      return SearchHelper.portion(state, action.path, action.verses);
     }
 
     case 'SEARCH_DONE': {
-      return {
-        ...state,
-        searchInProgress: false,
-        lists: state.lists.map(l => ((l.id === 'search') ? { ...l, verses: [...state.searchResult] } : l)),
-      };
+      return SearchHelper.done(state);
     }
 
     case 'SEARCH_BREAK': {
-      return {
-        ...state,
-        searchStop: true, // actually fails to work
-      };
+      return SearchHelper.break(state);
     }
 
     case 'COPY_VERSES': {
-      return ClipboardHelper.copyVerses(state, action.verses, action.text, action.html);
+      return ClipboardHelper.copy(state, action.verses, action.text, action.html);
     }
 
     case 'CUT_VERSES': {
-      return ClipboardHelper.removeVerses(
-        ClipboardHelper.copyVerses(state, action.verses, action.text, action.html),
-        action.listId,
-        action.verses
-      );
+      return ClipboardHelper.cut(state, action.listId, action.verses, action.text, action.html);
     }
 
     case 'REMOVE_VERSES': {
-      return ClipboardHelper.removeVerses(state, action.listId, action.verses);
+      return ClipboardHelper.remove(state, action.listId, action.verses);
     }
 
     case 'ADD_TAB_LIST': {
-      const newId = uniqueId(state);
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          lists: [
-            ...state.config.lists,
-            {
-              id: newId,
-              type: 'tab',
-              params: {},
-              descriptor: '',
-            }
-          ],
-          selectedTab: newId,
-        },
-        lists: [
-          ...state.lists,
-          {
-            id: newId,
-            verses: action.verses || [],
-          },
-        ],
-        selectedVerse: null,
-      };
+      return TabHelper.add(state, ModulesHelper.uniqueId(state));
     }
 
     case 'REMOVE_TAB_LIST': {
-      if (_.filter(state.config.lists, l => l.type === 'tab').length <= 1) return state;
-      const selectedTab = (action.listId === state.config.selectedTab)
-            ? _.chain(state.config.lists).find(l => (l.type === 'tab' && l.id !== action.listId)).get('id').value()
-            : state.config.selectedTab;
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          lists: [
-            ..._.filter(state.config.lists, l => l.id !==action.listId),
-          ],
-          selectedTab,
-        },
-        lists: [
-          ..._.filter(state.lists, l => l.id !==action.listId),
-        ],
-        selectedVerse: null,
-      };
+      return TabHelper.remove(state, action.listId);
     }
 
     case 'PASTE_VERSES': {
-      // first we try to use the clipboard:
-      const html = clipboard.readHTML('selection');
-      const text = clipboard.readText('selection');
-      let verses = null;
-
-      if (text || html) {
-        const rere = text && /^<BBOOXX:([^>]+)>$/.exec(text);
-        if (rere) {
-          verses = getListFromDescriptor(rere[1]);
-        }
-        // TODO get descriptor from html when text fails???
-      }
-
-      if (!verses) { // fallback when clipboard fails
-        verses = [
-          ..._.chain(state.lists)
-            .find(l => l.id === action.listId)
-            .get('verses')
-            .value(),
-          ...state.buffer.map(v => v.getNewInstance()),
-        ];
-      }
-
-      const lists = state.lists.map(l => {
-        if (l.id !== action.listId) return l;
-        return {
-          ...l,
-          verses,
-          chapter: null,
-        };
-      });
-
-      const listsConfigs = state.config.lists.map(l => {
-        if (l.id !== action.listId) return l;
-        return {
-          ...l,
-          descriptor: getDescriptorFromList(verses),
-          params: {
-            ...l.params,
-            customized: true
-          },
-        };
-      });
-
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          lists: listsConfigs,
-        },
-        lists,
-      };
+      return ClipboardHelper.paste(state, action.listId);
     }
 
     case 'SELECT_TAB_LIST': {
-      const selectedTab = action.listId || _.chain(state.config.lists).find(l => (l.type === 'tab')).get('id').value();
-      const li = _.find(state.lists, l => (l.id === selectedTab));
-      const newState =  {
-        ...state,
-        config: {
-          ...state.config,
-          selectedTab,
-        },
-        selectedVerse: null,
-      };
-      if (!_.get(li, 'chapter')) return newState;
-      return selectChapter(newState, li.chapter);
+      return TabHelper.select(state, action.listId);
     }
 
     case 'TOGGLE_FULLSCREEN': {
-      return {
-        ...state,
-        fullScreen: !state.fullScreen,
-      };
+      return UIHelper.toggleFullscreen(state);
     }
 
     case 'ZOOM_IN': {
-      let size = (state.fullScreen ? state.config.fontSizeFullscreen : state.config.fontSize) || 20;
-      if (size < 80) size += 2;
-      let sizeConfig = (state.fullScreen ? {fontSizeFullscreen: size} : {fontSize: size});
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          ...sizeConfig,
-        }
-      };
+      return UIHelper.zoomIn(state);
     }
 
     case 'ZOOM_OUT': {
-      let size = (state.fullScreen ? state.config.fontSizeFullscreen : state.config.fontSize) || 20;
-      if (size > 6) size -= 2;
-      let sizeConfig = (state.fullScreen ? {fontSizeFullscreen: size} : {fontSize: size});
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          ...sizeConfig,
-        }
-      };
+      return UIHelper.zoomOut(state);
     }
 
     case 'TOGGLE_UI_SIZE': {
-      let fontSize = _.get(state, 'config.window.fontSize', 16) > 16 ? 16 : 24;
-      return {
-        ...state,
-        config: {
-          ...state.config,
-          window: {
-            ...state.config.window,
-            fontSize,
-          },
-        }
-      };
+      return UIHelper.toggleUiSize(state);
     }
 
     case 'DISPLAY_STRONG_NUMBER': {
@@ -536,95 +282,6 @@ const fileReducer = (state = defaultState, action) => {
 
 export default fileReducer;
 
-
-function selectModule(state, module, toggle=true) {
-  const books = module.getBooks();
-  if (state.selectedModule === module && toggle) {
-    if (state.books.length) {
-      return { ...state, books: [] };
-    }
-    return { ...state, books };
-  }
-
-  const chapters = books.length === 1 ? books[0].getChapters() : [];
-
-  return {
-    ...state,
-    config: {
-      ...state.config,
-      selectedModule: module.getShortName(),
-    },
-    selectedModule: module,
-    selectedBook: books.length === 1 ? books[0] : null,
-    selectedChapter: chapters.length === 1 ? chapters[0] : null,
-    selectedVerse: null,
-    books
-  };
-}
-
-function selectBook(state, book) {
-  if (book.getChapters().length === 1) {
-    return selectChapter(state, book.getChapters()[0]);
-  }
-
-  return {
-    ...state,
-    config: {
-      ...state.config,
-      selectedModule: book.getModule().getShortName(),
-      selectedBook: book.getShortName(),
-    },
-    selectedModule: book.getModule(),
-    selectedBook: book,
-    selectedVerse: null,
-  };
-}
-
-function selectChapter(state, chapter, verse) {
-  const verses = chapter.getVerses();
-  const descriptor = chapter.getDescriptor();
-  let targetList = _.find(state.config.lists, l => (l.id === state.config.selectedTab && !_.get(l, 'params.customized')))
-    || _.find(state.config.lists, l => (l.type === 'tab' && !_.get(l, 'params.customized') && _.get(l, 'descriptor', '') === ''));
-  const isNewList = !targetList;
-  targetList = targetList  || {
-      id: uniqueId(state),
-      type: 'tab',
-      descriptor: chapter.getDescriptor(),
-    };
-  const listConfigs = isNewList
-    ? [ ...state.config.lists, targetList ]
-    : state.config.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, descriptor }));
-  const lists = isNewList
-    ? [ ...state.lists, { id: targetList.id, verses } ]
-    : state.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, chapter, verses }));
-
-  return {
-    ...state,
-    config: {
-      ...state.config,
-      lists: listConfigs,
-      selectedModule: chapter.getModule().getShortName(),
-      selectedBook: chapter.getBook().getShortName(),
-      selectedChapter: chapter.getNum(),
-      selectedTab: targetList.id,
-    },
-    selectedModule: chapter.getModule(),
-    selectedBook: chapter.getBook(),
-    selectedChapter: chapter,
-    selectedVerse: verse,
-    books: chapter.getModule().getBooks(),
-    lists
-  };
-}
-
-function uniqueId(state) {
-  const ids = _.chain(state.lists)
-    .filter(l => !_.isNaN(+l.id))
-    .map(l => +l.id)
-    .value();
-  const maxId = Math.max(...ids);
-  return (maxId + 1).toString();
-}
 
 function getStrongText(strongs, num) {
   if (_.isNull(num)) return null;
