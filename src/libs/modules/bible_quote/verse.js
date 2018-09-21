@@ -33,6 +33,7 @@ export default class Verse {
       this.lexems = parseLexems(this.text, {
         hasStrongs: this.getModule().hasStrongNumbers(),
         hasVerseNumber: this.getModule().isBible(),
+        font: this.getModule().config.DesiredFontName,
       });
       if (_.get(this.lexems,[0, 't']) === 'versenum') this.numText = _.get(this.lexems,[0, 't', 'verseNum']);
     }

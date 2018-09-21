@@ -24,6 +24,7 @@ class LexemList extends Component {
   render() {
     let cont = false;
     let br = false;
+    let beginning = true;
 
     return _.map(this.props.lexems, (l, i) => {
       let classes = {};
@@ -33,7 +34,7 @@ class LexemList extends Component {
       if (_.get(l, 'mode.italic')) classes[`bx-t-italic`] = true;
 
       if (l.t === 'block' || l.t === '/block') {
-        if (i === this.props.lexems.length - 1 || this.props.lexems[i+1].t !== 'block') {
+        if (i === this.props.lexems.length - 1 || (!beginning && this.props.lexems[i+1].t !== 'block')) {
           br = 0;
           return (<br key={i}/>);
         }
@@ -41,13 +42,15 @@ class LexemList extends Component {
         return null;
       }
 
+      if (l.t === 'versenum') {
+        return null; // never show verse numbers here.
+      }
+
+      beginning = false;
+
       if (l.t === 'linebreak') {
         if (i === this.props.lexems.length - 1) return null;
         return ( <br key={i} /> );
-      }
-
-      if (l.t === 'versenum') {
-        return null; // never show verse numbers here.
       }
 
       if (l.t === 'img') {

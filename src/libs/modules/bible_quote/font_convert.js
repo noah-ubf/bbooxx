@@ -30,11 +30,30 @@ const HEBREW = {
   'y':'י',       'z':'ז',      '{':'\u05B7', '|':'|',       '}':'\u05B6', '~':'~',
 };
 
+// const HEBREW2 = {
+//   '!':'!',    '"':'"',    '#':'#',    '$':'$',    '%':'%',    '&':'&',    '\'':'א',  '(':'(',
+//   ')':')',    '*':'*',    '+':'+',    ',':',',    '-':'-',    '.':'.',    '/':'/',   '0':'0',
+//   '1':'1',    '2':'2',    '3':'3',    '4':'4',    '5':'5',    '6':'6',    '7':'7',   '8':'8',
+//   '9':'9',    ':':':',    ';':';',    '<':'<',    '=':'=',    '>':'>',    '?':'?',   '@':'@',
+//   'A':'A',    'B':'B',    'C':'C',    'D':'D',    'E':'E',    'F':'F',    'G':'G',   'H':'ש',
+//   'I':'I',    'J':'ם',    'K':'K',    'L':'L',    'M':'M',    'N':'N',    'O':'O',   'P':'P',
+//   'Q':'Q',    'R':'R',    'S':'S',    'T':'T',    'U':'U',    'V':'V',    'W':'W',   'X':'X',
+//   'Y':'Y',    'Z':'Z',    '[':'[',    '\\':'\\',  ']':']',    '^':'^',    '_':'_',   '`':'`',
+//   'a':'a',    'b':'ב',    'c':'c',    'd':'d',    'e':'e',    'f':'f',    'g':'g',   'h':'ה',
+//   'i':'i',    'j':'j',    'k':'k',    'l':'l',    'm':'m',    'n':'n',    'o':'o',   'p':'p',
+//   'q':'q',    'r':'ר',    's':'s',    't':'ת',    'u':'u',    'v':'v',    'w':'ו',   'x':'x',
+//   'y':'y',    'z':'z',    '{':'{',    '|':'|',    '}':'}',    '~':'~',
+// };
+//  ב ְ ּ ר ֵ א ש ִ ׁ ֖ י ת 
+// b Р ь r г ' H i y t
+// "<p><sup>1</sup> בְּרֵאשִׁ֖יתH7225 <font color='#7a8080'>be-re-Shit</font> In the beginning בָּרָ֣אH1254 <font color='#7a8080'>ba-Ra</font> created אֱלֹהִ֑יםH430 <font color='#7a8080'>E-lo-Him;</font> God אֵ֥תH853 <font color='#7a8080'>'et הַשָּׁמַ֖יִםH8064 <font color='#7a8080'>hash-sha-Ma-yim</font> the heaven וְאֵ֥תH853 <font color='#7a8080'>ve-'Et הָאָֽרֶץ׃H776 <font color='#7a8080'>ha-'A-retz.</font> the earth</font></sup>"
+//"<sup>1</sup> :¦еrA'Ah tE'Мw ЈЗyamAKHah tE' ЈyihИlй' 'ЯrAРb tyiH'гrьРb<br>"
 export function convertFontToUtf8(fontName, text) {
   if(!fontName) return text;
   let table = null;
-  if (fontName.match(/^(grk|graeca)/i)) table = GREEK;
+  if (fontName.match(/^(grk|graeca|symbol)/i)) table = GREEK;
   if (fontName.match(/^heb/i)) table = HEBREW;
+  // if (fontName.match(/^sil ezra/i)) table = HEBREW2;
   if (!table) return text;
   let res = text.split('').map(c => (table[c] || c));
   if (table === HEBREW) res = _.reverse(res);

@@ -231,7 +231,7 @@ class Display extends Component {
               </SplitterLayout>
             </SplitterLayout>
           </Box>,
-          <div className="bx-fullscreen">
+          <div className="bx-fullscreen" key="fullscreen">
             { this.renderFullScreenMode() }
           </div>
         ]

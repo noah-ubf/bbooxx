@@ -31,7 +31,7 @@ export default function parseLexems(text, options) {
 
   const processStringContent = (str, mode) => {
     // console.log('processStringContent: ', str, mode)
-    const text = convertToUtf8(str, mode.font);
+    const text = convertToUtf8(str, mode.font || options.font);
     const rtl = mode.font && mode.font.match(/^Heb/i);
     if (rtl) plainTree.push({t: 'dir', dir: 'rtl' });
     _.chain(text).split(/\s/)
@@ -129,7 +129,7 @@ export default function parseLexems(text, options) {
         return null;
       } else if (isBlockLevel(ntype)) {
         if (n.childNodes.length === 0) {
-          plainTree.push({ t: 'block/', mode, ntype, text: convertToUtf8(n.textContent, mode.font) });
+          plainTree.push({ t: 'block/', mode, ntype, text: convertToUtf8(n.textContent, mode.font || options.font) });
         } else {
           plainTree.push({ t: 'block', mode, ntype });
           processNodeContent(n, mode);
@@ -152,10 +152,10 @@ export default function parseLexems(text, options) {
         let name = _.chain(n.attributes).find({name: 'name'}).get('value').value();
         // console.log('LINK: ', n, href, name, n.textContent)
         if (href) {
-          plainTree.push({ t: 'link', text: convertToUtf8(n.textContent, mode.font), mode, href });
+          plainTree.push({ t: 'link', text: convertToUtf8(n.textContent, mode.font || options.font), mode, href });
         } else if (name) {
           plainTree.push({ t: 'anchor', mode, name });
-          plainTree.push({ t: 'text', text: convertToUtf8(n.textContent, mode.font), mode });
+          plainTree.push({ t: 'text', text: convertToUtf8(n.textContent, mode.font || options.font), mode });
         }
       } else if(ntype === 'FONT') {
         contentStarted = true;

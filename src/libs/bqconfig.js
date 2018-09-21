@@ -41,6 +41,7 @@ const defaultConfig = {
   Apocrypha: '',
   Greek: '',
   Alphabet: '',
+  DesiredFontName: null,
   DesiredFontCharset: null,
   ChapterSign: '',
   VerseSign: '',
