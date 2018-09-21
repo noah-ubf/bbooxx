@@ -12,6 +12,7 @@ import './index.css';
 class VerseListWrapper extends Component {
   getToolbar() {
     const list = this.props.list;
+    const verses = _.get(list, 'verses', []);
     if (!list) return null;
     if (this.props.fullScreen) {
       return {
@@ -48,6 +49,7 @@ class VerseListWrapper extends Component {
       },
       paste: list.id === 'search' ? null : () => this.props.pasteVersesAction(list.id),
       strongs: list.id !== 'search' ? (num) => this.props.showStrongsAction(num) : null,
+      xrefs: list.id !== 'search' && verses.some(v => v.getModule().isBible()),
       zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,
       zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
       fullscreen: list.id !== 'search' ? () => this.props.toggleFullscreenAction() : null,
@@ -85,6 +87,9 @@ class VerseListWrapper extends Component {
       reorder={(from, to) => this.props.reorderAction(this.props.listId, from, to)}
       fireLink={link => this.props.goChapterAction(link)}
       highlighted={this.props.selectedVerse}
+      selectChapterAction={this.props.selectChapterAction}
+      addTabListAction={this.props.addTabListAction}
+      copyVersesAction={this.props.copyVersesAction}
     />
   }
 }

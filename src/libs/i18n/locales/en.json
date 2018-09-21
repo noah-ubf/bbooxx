@@ -40,9 +40,13 @@
     "toolbar.cut": "Cut",
     "toolbar.paste": "Paste",
     "toolbar.strongs": "Toggle Strongs",
+    "toolbar.xrefs": "Toggle Cross References",
     "toolbar.zoomIn": "Zoom in",
     "toolbar.zoomOut": "Zoom out",
     "toolbar.fullscreen": "Maximize",
-    "toolbar.closeFullscreen": "Unmaximize"
+    "toolbar.closeFullscreen": "Unmaximize",
+
+    "verse.xrefs.open": "Open references in new tab",
+    "verse.xrefs.copy": "Copy references"
   }
 }

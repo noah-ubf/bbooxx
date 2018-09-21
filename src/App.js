@@ -14,7 +14,6 @@ const store = createStore(rootReducer, applyMiddleware(thunk));
 
 
 class App extends Component {
-
   render() {
     return (
       <Provider store={store}>

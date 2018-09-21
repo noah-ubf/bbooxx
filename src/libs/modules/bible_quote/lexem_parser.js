@@ -36,7 +36,7 @@ export default function parseLexems(text, options) {
     if (rtl) plainTree.push({t: 'dir', dir: 'rtl' });
     _.chain(text).split(/\s/)
       .map((s, i) => {
-        let rere = /^([^ !.,;:'"?]*)([ !.,;:'"?]+)$/.exec(s);// Авд.1:1 - XXXX! doesn't work
+        let rere = /^([^ !.,;:'"?)]*)([ !.,;:'"?)]+)$/.exec(s);// Авд.1:1 - XXXX! doesn't work
         // console.log(s, rere)
         if (rere) {
           return [

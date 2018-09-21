@@ -36,6 +36,7 @@ const ICONS = {
   arrowLeftWhite: '\uf732',
   arrowRightBlack: '\uf734',
   arrowRightWhite: '\uf735',
+  xrefs: '\uf397',
 };
 
 export default props => {

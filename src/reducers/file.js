@@ -33,12 +33,25 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'ADD_MODULES': {
-      const modules = _.filter(action.modules, m => (!state.config.modules[m.getShortName()]));
-      const strongs = _.filter(action.strongs, m => (!state.config.strongs[m.getName()]));
-      const dictionaries = _.filter(action.dictionaries, m => (!state.config.dictionaries[m.getPath()]));
-      const mconfigs = _.chain(modules).map(m => ([m.getShortName(), m.getFileName()])).fromPairs().value();
+      const modules = _.filter(action.modules, m => (m && !state.config.modules[m.getShortName()]));
+      const strongs = _.filter(action.strongs, m => (m && !state.config.strongs[m.getName()]));
+      const dictionaries = _.filter(action.dictionaries, m => (m && !state.config.dictionaries[m.getPath()]));
+      const mconfigs = modules ? _.chain(modules).map(m => ([m.getShortName(), m.getFileName()])).fromPairs().value() : [];
       const sconfigs = _.chain(strongs).map(m => ([m.getName(), m.getPath()])).fromPairs().value();
       const dconfigs = _.chain(dictionaries).map(m => ([m.getName(), m.getPath()])).fromPairs().value();
+
+      _.forEach(action.modules, m => {
+        if (!m || !m.isBible()) return null;
+        let mmm = {
+          name: m.getName(),
+          books: m && _.map(m.getBooks(), b => (b && {
+            name: b.getStandardName(),
+            chNum: b.getChapters().length,
+            chapters: b && _.map(b.getChapters(), c => (c && c.getVerses().length))
+          }))
+        }
+        console.log('MMM:', JSON.stringify(mmm));
+      });
 
       return {
         ...state,
@@ -198,7 +211,7 @@ const fileReducer = (state = defaultState, action) => {
     }
 
     case 'ADD_TAB_LIST': {
-      return TabHelper.add(state, ModulesHelper.uniqueId(state));
+      return TabHelper.add(state, ModulesHelper.uniqueId(state), action.verses, action.verse);
     }
 
     case 'REMOVE_TAB_LIST': {

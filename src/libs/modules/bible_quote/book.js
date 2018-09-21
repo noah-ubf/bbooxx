@@ -4,6 +4,7 @@ const electron = window.require('electron');
 const fs = electron.remote.require('fs');
 
 import Chapter from './chapter';
+import { getStandardName } from '../manager';
 import { BIBLE_BOOKS } from '../descriptor';
 
 
@@ -23,6 +24,7 @@ export default class Book {
     Ap: false,
     section: ''
   };
+  error = false;
 
   constructor(params) {
     this.params = params;
@@ -60,7 +62,14 @@ export default class Book {
   }
 
   load() {
-    const fileContent = fs.readFileSync(this.params.path);
+    let fileContent;
+    try {
+      fileContent = fs.readFileSync(this.params.path);
+    } catch (e) {
+      fileContent = '';
+      this.error = true;
+      return;
+    }
     const text = iconv.decode(fileContent, this.params.module.config.__encoding)
     this.lines = this._convertLines(text.split(/\r\n|\n\r|\n|\r/));
 
@@ -99,6 +108,10 @@ export default class Book {
     return name;
   }
 
+  getShortNames() {
+    return this.shortNames ? [...this.shortNames] : [];
+  }
+
   getPrevBook() {
     let books = this.getModule().getBooks();
     let index = books.indexOf(this);
@@ -114,21 +127,28 @@ export default class Book {
   }
 
   getChapters() {
+    if (!this.loaded) this.load();
+    if (this.error) return [];
     return this.chapters;
   }
 
   getChapterByNum(num) {
+    if (!this.loaded) this.load();
+    if (this.error) return null;
+    // console.log('getChapterByNum: ', num, this.chapters)
     const res = _.find(this.chapters, c => (c.getNum() === +num));
     return res;
   }
 
   getText(chapter) {
     if (!this.loaded) this.load();
+    if (this.error) return '';
 
     return this.lines && this.lines.join('\n');
   }
 
   _getChapterText(chapter) {
+    if (this.error) return '';
     // returns whole chapter as a text
     if (!this.loaded) this.load();
 
@@ -144,6 +164,7 @@ export default class Book {
   }
 
   _convertLines(lines) {
+    if (this.error) return null;
     // const regexp = /<\/?(table|tr|td|p|sup|dl|dt|dd|big|small)( [^>]*)?>/i;
     const regexpBR = /<(\/body|\/html)( [^>]*)?>/ig;
 
@@ -183,6 +204,7 @@ export default class Book {
   }
 
   _getChapterVerses(chapter) {
+    if (this.error) return [];
     if (!this.loaded) this.load();
 
     const positions = this.vLines[chapter.getNum()];
@@ -194,6 +216,7 @@ export default class Book {
   }
 
   search(words, options, portion, done, stopped) {
+    if (this.error) done();
     let chapters = [...this.getChapters()];
 
     const searchNext = () => {
@@ -209,7 +232,7 @@ export default class Book {
   }
 
   getStandardName() {
-    
+    return getStandardName(this);
   }
 
   isOT() { return this.bibleParams.OT; }

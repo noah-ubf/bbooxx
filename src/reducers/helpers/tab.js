@@ -5,7 +5,7 @@ import ModulesHelper from './modules';
 
 
 class TabHelper {
-  add(state, id, verses = []) {
+  add(state, id, verses = [], verse = null) {
     return {
       ...state,
       config: {
@@ -28,7 +28,7 @@ class TabHelper {
           verses,
         },
       ],
-      selectedVerse: null,
+      selectedVerse: verse,
     };
   }
 

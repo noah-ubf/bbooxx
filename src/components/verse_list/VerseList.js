@@ -15,6 +15,7 @@ class VerseList extends Component {
   state = {
     selected: [],
     showStrongs: false,
+    showXRefs: false,
     highlighted: null,
   };
   thisEl;
@@ -44,6 +45,10 @@ class VerseList extends Component {
     if (this.props.highlighted) {
       this.setHighlighted(this.props.highlighted);
     }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.highlightTimeout);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -151,6 +156,10 @@ class VerseList extends Component {
         ? this.renderButton('hash', 'toolbar.strongs', () => this.toggleStrongs(), {highlighted: this.state.showStrongs})
         : null
       ),
+      (tools.xrefs
+        ? this.renderButton('xrefs', 'toolbar.xrefs', () => this.toggleXRefs(), {highlighted: this.state.showXRefs})
+        : null
+      ),
       (tools.zoomIn
         ? this.renderButton('zoomIn', 'toolbar.zoomIn', () => tools.zoomIn())
         : null
@@ -191,6 +200,10 @@ class VerseList extends Component {
   toggleSelect(verse) {
     if (this.isSelected(verse)) this.setState({selected: _.filter(this.state.selected, v => (v !== verse))});
     else this.setState({selected: [...this.state.selected, verse]})
+  }
+
+  toggleXRefs() {
+    this.setState({showXRefs: !this.state.showXRefs});
   }
 
   toggleStrongs() {
@@ -299,10 +312,14 @@ class VerseList extends Component {
                     showHeader={0&&this.props.showHeader}
                     selected={this.isSelected(v)}
                     showStrongs={this.state.showStrongs}
+                    showXRefs={this.state.showXRefs}
                     fireLink={this.props.fireLink}
                     displayStrong={this.props.displayStrong}
                     showContent={true}
-                    highlighted={this.state.highlighted === v}
+                    highlighted={this.state.highlighted && this.state.highlighted.getNum() === v.getNum()}
+                    selectChapterAction={this.props.selectChapterAction}
+                    addTabListAction={this.props.addTabListAction}
+                    copyVersesAction={this.props.copyVersesAction}
                   />
                 </div>
               ]
