@@ -16,16 +16,21 @@
 ± tame the scrolling
 ± verse actions (show context, ...)
 ± export texts
+± cross-references
+
+------------------------------------------------------------
+BUGS:
+";" in greek must be "῾"
 
 ------------------------------------------------------------
 
+- save scroll position ???
 - name tab lists
 - parallel view
 - dictionaries
 - notes
 - daily devotional
 - external html view
-- cross-references
 - strongs navigation
 
 - app settings

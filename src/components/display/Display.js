@@ -9,6 +9,7 @@ import SplitterLayout from 'react-splitter-layout';
 import {FormattedMessage} from "react-intl";
 
 import * as Actions from '../../actions/file';
+import TabBar from '../tab_bar/TabBar';
 import VerseList from '../verse_list/VerseListWrapper';
 import SearchForm from '../search_form/SearchForm';
 import ModuleList from '../module_list/ModuleListWrapper';
@@ -104,8 +105,8 @@ class Display extends Component {
   renderTabs() {
     return (
       <div className="bx-tabs">
-        <div className="bx-tabs-bar">
-          <div className="bx-tabs-bar-actions">
+        <TabBar
+          buttonsLeft={[
             <FormattedMessage id={this.props.toolbarHidden ? 'tabs.showModuleList' : 'tabs.hideModuleList'}>
             {
               titleTranslated => <Button
@@ -114,45 +115,13 @@ class Display extends Component {
                 title={titleTranslated}/>
             }
             </FormattedMessage>
-          </div>
-          <div className="bx-tabs-bar-tabs">
-            {
-              this.props.tabs.map(l => (
-                <div
-                  key={l.id}
-                  onClick={() => this.props.selectTabListAction(l.id)}
-                  className={classNames({'bx-tabs-bar-tab': true, selected: this.props.selectedTab === l.id})}
-                >
-                  <div className="bx-tabs-bar-tab-name">
-                    {_.get(l, 'config.params.customized') ? '*' : ''}
-                    {l.name || l.config.descriptor || <FormattedMessage id="tabs.empty" />}
-                  </div>
-                  <div className="bx-tabs-bar-tab-close" onClick={() => this.props.selectTabListAction(l.id)}>
-                    {
-                      this.props.tabs.length > 1 ? (
-                        <FormattedMessage id="tabs.close">
-                        {
-                          titleTranslated => <Button
-                              action={() => this.props.removeTabListAction(l.id)}
-                              icon="remove"
-                              title={titleTranslated}
-                              round={true}
-                            />
-                        }
-                        </FormattedMessage>
-                      ) : null
-                    }
-                  </div>
-                </div>
-              ))
-            }
-          </div>
-          <div className="bx-tabs-bar-actions">
+          ]}
+          buttonsRight={[
             <FormattedMessage id="tabs.new">
             {
               titleTranslated => <Button action={() => this.props.addTabListAction()} icon="addList" title={titleTranslated}/>
             }
-            </FormattedMessage>
+            </FormattedMessage>,
             <FormattedMessage id={this.props.searchbarHidden ? 'tabs.showSearch' : 'tabs.hideSearch'}>
             {
               titleTranslated => <Button
@@ -161,8 +130,18 @@ class Display extends Component {
                 title={titleTranslated}/>
             }
             </FormattedMessage>
-          </div>
-        </div>
+          ]}
+          tabs={
+            this.props.tabs.map(l => ({
+              id: l.id,
+              title: (l.name || l.config.descriptor || <FormattedMessage id="tabs.empty" />),
+              customized: _.get(l, 'config.params.customized'),
+              onSelect: () => this.props.selectTabListAction(l.id),
+              onRemove: () => this.props.removeTabListAction(l.id),
+            }))
+          }
+          selected={ this.props.selectedTab }
+        />
         <div className="bx-tabs-content">
           {
             this.props.tabs.map(l => (
