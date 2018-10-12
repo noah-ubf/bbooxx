@@ -176,7 +176,7 @@ class XRefs {
       if (!data[b1][c1][v1]) data[b1][c1][v1] = [];
       data[b1][c1][v1].push([b2, c2, v2, b3, c3, v3, w]);
     }
-    // console.log(data)
+    console.log(data)
     this.obxrefs = data;
   }
 

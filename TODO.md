@@ -20,8 +20,10 @@
 
 ------------------------------------------------------------
 BUGS:
-";" in greek must be "῾"
-
+- ";" in greek must be "῾"
+- when show/hide panels some list options (strongs, xrefs) turn off
+- verses are copied in the order they were selected
+  
 ------------------------------------------------------------
 
 - save scroll position ???

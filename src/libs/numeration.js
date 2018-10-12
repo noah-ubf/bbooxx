@@ -154,6 +154,98 @@ const psalmsVerseCount = {
   150: 6,
 };
 
+// const proverbsVerseCount = {
+//   1: 33,
+//   2: 22,
+//   3: 35,
+//   4: 27,
+//   5: 23,
+//   6: 35,
+//   7: 27,
+//   8: 36,
+//   9: 18,
+//   10: 32,
+//   11: 31,
+//   12: 28,
+//   13: 25,
+//   14: 35,
+//   15: 33,
+//   16: 33,
+//   17: 28,
+//   18: 24,
+//   19: 29,
+//   20: 30,
+//   21: 31,
+//   22: 29,
+//   23: 35,
+//   24: 34,
+//   25: 28,
+//   26: 28,
+//   27: 27,
+//   28: 28,
+//   29: 27,
+//   30: 33,
+//   31: 31,
+// };
+
+// const jobVerseCount = {
+  //   1: 22,
+  //   2: 13,
+  //   3: 26,
+  //   4: 21,
+  //   5: 27,
+  //   6: 30,
+  //   7: 21,
+  //   8: 22,
+  //   9: 35,
+  //   10: 22,
+  //   11: 20,
+  //   12: 25,
+  //   13: 28,
+  //   14: 22,
+  //   15: 35,
+  //   16: 22,
+  //   17: 16,
+  //   18: 21,
+  //   19: 29,
+  //   20: 29,
+  //   21: 34,
+  //   22: 30,
+  //   23: 17,
+  //   24: 25,
+  //   25: 6,
+  //   26: 14,
+  //   27: 23,
+  //   28: 28,
+  //   29: 25,
+  //   30: 31,
+  //   31: 40,
+  //   32: 22,
+  //   33: 33,
+  //   34: 37,
+  //   35: 16,
+  //   36: 33,
+  //   37: 24,
+  //   38: 41,
+  //   39: 30,
+  //   40: 24,
+  //   41: 34,
+  //   42: 17,
+// };
+
+// const estherVerseCount = {
+//   1: 22,
+//   2: 23,
+//   3: 15,
+//   4: 17,
+//   5: 14,
+//   6: 14,
+//   7: 10,
+//   8: 17,
+//   9: 32,
+//   10: 3,
+// };
+
 export function numToEn(module, [b, ch, v]) {
   const book = module.getBookByShortName(b);
   const vcount = ch => {
@@ -249,41 +341,79 @@ export function numToEn(module, [b, ch, v]) {
       if (res2) return res2;
       break;
     }
-    // case 'Esther': {
-    //   break;
-    // }
-    // case 'Job': {
-    //   break;
-    // }
+    case 'Esther': {
+      if (vcount(3) === 15) {
+        // TODO
+      }
+      break;
+    }
+    case 'Job': {
+      if (vcount(39) === 35) {
+        if (ch === 39 && v > 30) { ch = 40; v -= 30; }
+        else if (ch === 40) {
+          if (v <= 19) { v += 5; }
+          else { ch = 41; v -= 19; }
+        } else if (ch === 41) {
+          v += 8;
+        }
+      } else if (vcount(40) === 32) {
+        if (ch === 40 && v > 24) { ch = 41; v -= 24; }
+        else if (ch === 41) { v += 8; }
+      }
+      break;
+    }
     case 'Psalms': {
       const isGreek = (vcount(9) > 20);
-      const cntEn9 = 20;
-      const cntEn114 = 8;
       let chEn = ch;
       let vEn = v;
 
       if (isGreek) {
         if (ch <= 8 || ch >= 148) {
+          if (psalmsVerseCount[chEn] !== vcount(ch)) {
+            vEn += psalmsVerseCount[chEn] - vcount(ch);
+          }
         } else if (ch === 9) {
-          if (v < cntEn9) { chEn = 9; vEn = v; }
-          else { chEn = 10; vEn = v - cntEn9; }
+          const cntEn9 = vcount(9) - psalmsVerseCount[10];
+          if (v < cntEn9) {
+            chEn = 9; vEn = v;
+            if (psalmsVerseCount[chEn] !== cntEn9) {
+              vEn += psalmsVerseCount[chEn] - cntEn9;
+            }
+          } else { chEn = 10; vEn = v - cntEn9; }
         } else if (ch >= 10 && ch <= 112) {
           chEn = ch + 1;
+          if (psalmsVerseCount[chEn] !== vcount(ch)) {
+            vEn += psalmsVerseCount[chEn] - vcount(ch);
+          }
         } else if (ch === 113) {
+          const cntEn114 = psalmsVerseCount[114];
           if (v < cntEn114) { chEn = 114; vEn = v; }
           else { chEn = 115; vEn = v - cntEn114; }
         } else if (ch === 114) {
           chEn = 116;
+          if (psalmsVerseCount[chEn] !== vcount(ch)) {
+            vEn += psalmsVerseCount[chEn] - vcount(ch);
+          }
         } else if (ch === 115) {
           chEn = 116; vEn = v + vcount(114);
         } else if (ch >= 116 && ch <=145) {
           chEn = ch + 1;
+          if (psalmsVerseCount[chEn] !== vcount(ch)) {
+            vEn += psalmsVerseCount[chEn] - vcount(ch);
+          }
         } else if (ch === 146) {
           chEn = 147;
         } else if (ch === 147) {
           chEn = 147; vEn = v + vcount(146);
         }
+      } else {
+        if (psalmsVerseCount[chEn] !== vcount(ch)) {
+          vEn += psalmsVerseCount[chEn] - vcount(ch);
+        }
       }
+
+      // if (vEn <=0) vEn = 1; // ??? TODO
+
       return [b, chEn, vEn];
     }
     //   1–8       1–8
@@ -323,9 +453,26 @@ export function numToEn(module, [b, ch, v]) {
       if (res) return res;
       break;
     }
-    // case 'Daniel': {
-    //   break;
-    // }
+    case 'Daniel': {
+      const res = vShift(5, 31, 30);
+      if (res) return res;
+      if (ch === 4 ) {
+        if (vcount(4) !== 37) {
+          v += 3;
+        }
+      } else if (ch === 3) {
+        if (vcount(3) === 33) {
+          if (v > 30) {
+            ch = 4; v -= 30;
+          }
+        } else if (vcount(3) === 100) {
+          if (v > 97) {
+            ch = 4; v -= 97;
+          }
+        }
+      }
+      break;
+    }
     case 'Hosea': {
       const res = vShift(1, 11, 9);
       if (res) return res;
@@ -340,9 +487,15 @@ export function numToEn(module, [b, ch, v]) {
       if (res) return res;
       break;
     }
-    // case 'Joel': {
-    //   break;
-    // }
+    case 'Joel': {
+      if (vcount(2) === 27) {
+        if (ch === 3) { ch = 2; v += 27; }
+        else if (ch === 4) {
+          ch -= 1;
+        }
+      }
+      break;
+    }
     case 'Micah': {
       const res = vShift(4, 13, 14);
       if (res) return res;
@@ -364,9 +517,13 @@ export function numToEn(module, [b, ch, v]) {
     // case 'Acts': {
     //   break;
     // }
-    // case 'Romans': {
-    //   break;
-    // }
+    case 'Romans': {
+      if (vcount(14) === 26 && ch === 14 && v >=24) {
+        ch = 16;
+        v += 1;
+      }
+      break;
+    }
     // case '2Corinthians': {
     //   break;
     // }
@@ -482,51 +639,67 @@ export function numFromEn(module, [b, ch, v]) {
       if (res2) return res2;
       break;
     }
-    // case 'Esther': {
-    //   break;
-    // }
-    // case 'Job': {
-    //   break;
-    // }
+    case 'Esther': {
+      if (vcount(3) === 15) {
+        // TODO
+      }
+      break;
+    }
+    case 'Job': {
+      if (vcount(39) === 35) {
+        if (ch === 40 && v <= 5) { ch = 39; v += 30; }
+        else if (ch === 40 && v > 5) { v -= 5; }
+        else if (ch === 41 && v <= 8) { ch = 40; v += 19; }
+        else if (ch === 41) { v -= 8; }
+      } else if (vcount(40) === 32) {
+        if (ch === 41 && v <= 8) { ch = 40; v += 24; }
+        else if (ch === 41) { v -= 8; }
+      }
+      break;
+    }
     case 'Psalms': {
       const isGreek = (vcount(9) > 20);
       const cntEn9 = 20;
       const cntEn116 = 19;
-      let chEn = ch;
-      let vEn = v;
+      let chCur = ch;
+      let vCur = v;
 
       if (isGreek) {
         if (ch <= 8 || ch >= 148) {
+          if (psalmsVerseCount[ch] !== vcount(chCur)) {
+            vCur -= psalmsVerseCount[ch] - vcount(chCur);
+          }
         } else if (ch === 9) {
-          if (v < cntEn9) { chEn = 9; vEn = v; }
-          else { chEn = 10; vEn = v - cntEn9; }
+          if (v < cntEn9) { chCur = 9; vCur = v; }
+          else { chCur = 10; vCur = v - cntEn9; }
         } else if (ch >= 11 && ch <= 113) {
-          chEn = ch - 1;
+          chCur = ch - 1;
+          if (psalmsVerseCount[chCur] !== vcount(ch)) {
+            vCur -= psalmsVerseCount[ch] - vcount(chCur);
+          }
         } else if (ch === 114) {
-          chEn = 113;
+          chCur = 113;
         } else if (ch === 115) {
-          chEn = 113; vEn = v + vcount(114);
+          chCur = 113; vCur = v + vcount(114);
         } else if (ch === 116) {
-          if (v < cntEn116) { chEn = 114; }
-          else { chEn = 115; vEn = v - cntEn116; }
+          if (v < cntEn116) { chCur = 114; }
+          else { chCur = 115; vCur = v - cntEn116; }
         } else if (ch >= 117 && ch <=146) {
-          chEn = ch - 1;
+          chCur = ch - 1;
+          if (psalmsVerseCount[chCur] !== vcount(ch)) {
+            vCur -= psalmsVerseCount[ch] - vcount(chCur);
+          }
         } else if (ch === 147) {
-          if (v < vcount(146)) { chEn = 146; }
-          else { chEn = 147; vEn = v - vcount(146); }
+          if (v < vcount(146)) { chCur = 146; }
+          else { chCur = 147; vCur = v - vcount(146); }
+        }
+      } else {
+        if (psalmsVerseCount[ch] !== vcount(chCur)) {
+          vCur -= psalmsVerseCount[ch] - vcount(chCur);
         }
       }
-      return [b, chEn, vEn];
+      return [b, chCur, vCur];
     }
-    //   1–8       1–8
-    //   9–10      9
-    //   11–113    10–112
-    //   114–115   113
-    //   116       114–115
-    //   117–146   116–145
-    //   147       146–147
-    //   148–150   148–150
-
     // case 'Proverbs': {
     //   break;
     // }
@@ -555,9 +728,17 @@ export function numFromEn(module, [b, ch, v]) {
       if (res) return res;
       break;
     }
-    // case 'Daniel': {
-    //   break;
-    // }
+    case 'Daniel': {
+      const res = vShift(5, 31, 30);
+      if (res) return res;
+      if (ch === 4 ) {
+        if (v > 3) v -= 3;
+        else {
+          ch = 3; v += vcount(3) - 3;
+        }
+      }
+      break;
+    }
     case 'Hosea': {
       const res = vShift(1, 11, 9);
       if (res) return res;
@@ -572,9 +753,16 @@ export function numFromEn(module, [b, ch, v]) {
       if (res) return res;
       break;
     }
-    // case 'Joel': {
-    //   break;
-    // }
+    case 'Joel': {
+      if (vcount(2) === 27) {
+        if (ch === 2) {
+          if (v > 27) { ch = 3; v -= 27; }
+        } else if (ch === 3) {
+          ch += 1;
+        }
+      }
+      break;
+    }
     case 'Micah': {
       const res = vShift(4, 13, 14);
       if (res) return res;
@@ -596,9 +784,13 @@ export function numFromEn(module, [b, ch, v]) {
     // case 'Acts': {
     //   break;
     // }
-    // case 'Romans': {
-    //   break;
-    // }
+    case 'Romans': {
+      if (vcount(14) === 26 && ch === 16 && v >=25) {
+        ch = 14;
+        v -= 1;
+      }
+      break;
+    }
     // case '2Corinthians': {
     //   break;
     // }
