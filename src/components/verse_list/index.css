@@ -53,6 +53,11 @@
 }
 
 .bx-verse-list-toolbar {
+  background: #f0f0f5;
+  box-shadow: 0.5em 0.5em 0.5em #f0f0f5,
+    -0.5em -0.5em 0.5em #f0f0f5,
+    -0.5em 0.5em 0.5em #f0f0f5,
+    0.5em -0.5em 0.5em #f0f0f5;
   margin: 0.5em;
   display: flex;
   flex-direction: row;
@@ -101,9 +106,30 @@
 .bx-verse-list-chapter {
   background: #99d5cc;
   font-weight: bold;
-  font-size: .8em;
+  font-size: .7em;
   margin-top: .5em;
-  padding: .5em;
+  padding: .25em;
   border-top-left-radius: .5em;
   border-top-right-radius: .5em;
+}
+
+.bs-verse-xrefs {
+  /*background: #ddeef5;*/
+  border-top: solid 1px #ddddff;
+  margin: 0.25em;
+  font-size: 0.7em;
+}
+
+.bx-verse-xref {
+  cursor: pointer;
+  color: #0000ff;
+  margin: 0.25em;
+}
+
+.bx-verse-xref-tools {
+  float: right;
+  visibility: hidden;
+}
+.bs-verse-xrefs:hover .bx-verse-xref-tools {
+  visibility: visible;
 }

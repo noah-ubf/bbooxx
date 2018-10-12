@@ -55,7 +55,7 @@ export default class BibleQuoteModule {
   }
 
   getBookByShortName(name) {
-    const res = _.find(this.books, b => (b.getShortName() === name));
+    const res = _.find(this.books, b => (b.getName() === name || b.getStandardName() === name || b.getShortNames().indexOf(name) !== -1));
     return res;
   }
 
@@ -78,5 +78,26 @@ export default class BibleQuoteModule {
     }
 
     searchNext();
+  }
+
+  getXrefVerses(xref) {
+    // console.log('getXrefVerses: ', xref)
+    let book = this.getBookByShortName(xref[0]); if (!book) return [];
+    const book2 = this.getBookByShortName(xref[3]) || book;
+    if (book !== book2 && book.getNextBook() !== book2) return [];
+    if (book === book2 && xref[4] < xref[1]) return [];
+    let chapter =  book.getChapterByNum(xref[1]); if (!chapter) return [];
+    if (xref[4] === xref[1] && xref[5] < xref[2]) return [];
+    let verse = chapter.getVerseByNum(xref[2]); if (!verse) return [];
+    let verses = [ verse ];
+    let i = 0;
+    while (i++ < 30 && verse
+      && (verse.getChapter().getNum() < xref[4]
+          || (verse.getChapter().getNum() === xref[4] && verse.getNum() < xref[5])
+    )) {
+      verse = verse.getNextVerse();
+      if (verse) verses.push(verse);
+    }
+    return verses;
   }
 }

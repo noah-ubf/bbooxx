@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 
 import levenshtein from '../../levenshtein';
 import parseLexems from './lexem_parser';
+import XRefs from '../../../libs/xref';
 
 export default class Verse {
   params = null;
@@ -13,14 +14,16 @@ export default class Verse {
   debug = {};
   words = null;
   descriptor = null;
+  xrefs = null;
 
   constructor(params=null) {
     if (!_.isNull(params)) {
       this.params = params;
       this.text = this.params.lines ? this.params.lines.join('\n') : '';
-      if (params.module.isBible()) {
-        const rere = /^(\D*(<[^>]>)*)*(\d+([.>-]\d+)?)/.exec(this.text);
-        if (rere) this.numText = rere[3];
+      if (params.module.isBible() && this.text) {
+        // const rere = /^(\D*(<[^>]>)*)*(\d+([.>-]\d+)?)/.exec(this.text.substring(0, 50)); // TODO
+        const rere = /(\d+)/.exec(this.text.substring(0, 50));
+        if (rere) this.numText = rere[1];
         else this.numText = parseInt(this.text.replace(/^\D+/, ''), 10);
       } else {
         this.numText = params.num;
@@ -51,6 +54,7 @@ export default class Verse {
     this.lexems = verse.lexems;
     this.strongsCount = verse.strongsCount;
     this.debug = verse.debug;
+    this.xrefs = verse.xrefs;
     return this;
   }
 
@@ -112,7 +116,7 @@ export default class Verse {
 
   getWords(caseSensitive) {
     if (_.isNull(this.words)) {
-      const text = this.text.replace(/<[^>]*>/, ' ');
+      const text = this.text.replace(/<\/?[^>]*>/, ' ');
       this.words = _.chain(text.split(/[ ,.:;+'"!?()[\]\\\/-]+/))
         .map(w => {
           if(!caseSensitive) w = w.toLowerCase();
@@ -140,5 +144,30 @@ export default class Verse {
     return _.every(words, w => {
       return myWords.some(ww => (levenshtein(ww, w) <= Math.round((w.length + ww.length) / 9)));
     });
+  }
+
+  getXRefs() {
+    if (!this.getModule().isBible()) return [];
+    if (!this.xrefs) this.xrefs = XRefs.getOBRefs(this);
+    return this.xrefs;
+  }
+
+  getPlainText() {
+    return this.getLexems().filter(l => l.t !== 'strong').map(l => l.text).join(' ').replace(/ ([.,;:!?)])/g, '$1');
+  }
+
+  getNextVerse() {
+    let verses = this.getChapter().getVerses();
+    let index;
+    verses.forEach((v, i) => { if (v.getNum() === this.getNum()) { index = i; } });
+
+    if (index === verses.length - 1) {
+      const chapter = this.getChapter().getNextChapter();
+      if (!chapter) return null;
+      verses = chapter.getVerses();
+      index = -1;
+    }
+
+    return verses[index + 1];
   }
 }

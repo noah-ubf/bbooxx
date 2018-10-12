@@ -9,6 +9,7 @@ const dialog = remote.dialog;
 
 import bqconfig from '../libs/bqconfig';
 import BQStrongs from '../libs/modules/bible_quote/strongs';
+// import { readXRefs } from '../libs/xref';
 
 const setWindowParams = (cfg) => {
   if (!cfg) return;
@@ -49,6 +50,7 @@ export const readConfigAction = () => {
   return function (dispatch, getState) {
     const path = app.getPath('userData');
     const filename = `${path}/${CONFIG_FILE_NAME}`;
+    // const xrefs = readXRefs();
     fs.readFile(filename, (err, data) => {
       if (err) {
         dispatch({type: 'READ_CONFIG_ERROR'});
@@ -295,9 +297,10 @@ export const pasteVersesAction = listId => ({
   listId
 });
 
-export const addTabListAction = verses => ({
+export const addTabListAction = (verses, verse=null) => ({
   type: 'ADD_TAB_LIST',
-  verses
+  verses,
+  verse,
 });
 
 export const removeTabListAction = listId => ({

@@ -73,11 +73,15 @@ export default class Chapter {
       book: this.params.book,
       chapter: this,
     };
-    this.verses = this.params.book._getChapterVerses(this).map((lines, num) => new Verse({...config, lines, num}));
+    const chVerses = this.params.book._getChapterVerses(this);
+    this.verses = chVerses.map((lines, num) => {
+      return new Verse({...config, lines, num})
+    });
   }
 
   getVerseByNum(num) {
-    return _.find(this.verses, v => (v.getNum() === num));
+    this.parse();
+    return _.find(this.verses, v => (v.getNum() === +num));
   }
 
   getVerses(v1=null, v2=null) {
