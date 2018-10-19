@@ -121,6 +121,7 @@ const fileReducer = (state = defaultState, action) => {
       const selectedTab = _.find(lists, t => (t.id === config.selectedTab))
         ? config.selectedTab
         : _.find(lists, t => (t.type === 'tab')).id;
+      const tabOrder = _.chain(lists).filter(t => (t.type === 'tab')).map(t => t.id).without(selectedTab).unshift(selectedTab).value();
 
       return {
         ...defaultState,
@@ -143,6 +144,7 @@ const fileReducer = (state = defaultState, action) => {
           chapter: _.get(li, 'params.customized')
             ? null : getChapterFromDescriptor(li, modulesDict),
         })),
+        tabOrder,
       };
     }
     /*

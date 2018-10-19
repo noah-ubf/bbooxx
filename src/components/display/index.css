@@ -99,3 +99,8 @@
   font-size: 2rem;
   color: #7777dd;
 }
+
+.bx-section-placeholder {
+  width: 10px;
+  background: #ccccff;
+}

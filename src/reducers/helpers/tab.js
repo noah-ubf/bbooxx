@@ -6,6 +6,8 @@ import ModulesHelper from './modules';
 
 class TabHelper {
   add(state, id, verses = [], verse = null) {
+    const tabOrder = _.chain(state.tabOrder).without(id).unshift(id).value();
+    console.log('==>', tabOrder)
     return {
       ...state,
       config: {
@@ -29,6 +31,7 @@ class TabHelper {
         },
       ],
       selectedVerse: verse,
+      tabOrder,
     };
   }
 
@@ -60,10 +63,12 @@ class TabHelper {
   }
 
   remove(state, listId) {
+    const tabOrder = _.chain(state.tabOrder).without(listId).value();
+    console.log('==>', tabOrder)
     if (_.filter(state.config.lists, l => l.type === 'tab').length <= 1) return state;
-    const selectedTab = (listId === state.config.selectedTab)
-          ? _.chain(state.config.lists).find(l => (l.type === 'tab' && l.id !== listId)).get('id').value()
-          : state.config.selectedTab;
+    const selectedTab = tabOrder[0] || ((listId === state.config.selectedTab)
+              ? _.chain(state.config.lists).find(l => (l.type === 'tab' && l.id !== listId)).get('id').value()
+              : state.config.selectedTab);
     return {
       ...state,
       config: {
@@ -77,10 +82,13 @@ class TabHelper {
         ..._.filter(state.lists, l => l.id !== listId),
       ],
       selectedVerse: null,
+      tabOrder,
     };
   }
 
   select(state, listId) {
+    const tabOrder = _.chain(state.tabOrder).without(listId).unshift(listId).value();
+    console.log('==>', tabOrder)
     const selectedTab = listId || _.chain(state.config.lists).find(l => (l.type === 'tab')).get('id').value();
     const li = _.find(state.lists, l => (l.id === selectedTab));
     const newState =  {
@@ -90,6 +98,7 @@ class TabHelper {
         selectedTab,
       },
       selectedVerse: null,
+      tabOrder,
     };
     if (!_.get(li, 'chapter')) return newState;
     return ModulesHelper.selectChapter(newState, li.chapter);

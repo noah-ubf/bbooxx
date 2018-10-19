@@ -58,4 +58,5 @@ export default {
   searchResult: [],
   buffer: [],
   strongNumber: null,
+  tabOrder: [],
 };
