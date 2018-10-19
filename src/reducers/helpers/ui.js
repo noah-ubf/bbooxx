@@ -85,9 +85,9 @@ class UIHelper {
       ...state,
       config: {
         ...state.config,
-        toolbarHidden: !state.toolbarHidden
+        leftBarHidden: !state.leftBarHidden
       },
-      toolbarHidden: !state.toolbarHidden
+      leftBarHidden: !state.leftBarHidden
     };
   }
 
@@ -96,9 +96,9 @@ class UIHelper {
       ...state,
       config: {
         ...state.config,
-        searchbarHidden: !state.searchbarHidden
+        rightBarHidden: !state.rightBarHidden
       },
-      searchbarHidden: !state.searchbarHidden
+      rightBarHidden: !state.rightBarHidden
     };
   }
 
@@ -124,6 +124,16 @@ class UIHelper {
           ...state.config.window,
           ...windowConfigs,
         }
+      },
+    };
+  }
+
+  showLeftToolbarTab(state, id) {
+    return {
+      ...state,
+      config: {
+        ...state.config,
+        selectedTabLeft: id,
       },
     };
   }

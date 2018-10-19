@@ -3,6 +3,7 @@ import classNames from 'classnames';
 
 
 const ICONS = {
+  book: '\uf0be',
   next: '\uf054',
   prev: '\uf04d',
   select: '\uf135',
@@ -37,6 +38,7 @@ const ICONS = {
   arrowRightBlack: '\uf734',
   arrowRightWhite: '\uf735',
   xrefs: '\uf397',
+  pageAtRight: '\uf22a',
 };
 
 export default props => {

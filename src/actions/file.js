@@ -303,6 +303,11 @@ export const addTabListAction = (verses, verse=null) => ({
   verse,
 });
 
+export const toTempListAction = (verses) => ({
+  type: 'TO_TEMP_LIST',
+  verses,
+});
+
 export const removeTabListAction = listId => ({
   type: 'REMOVE_TAB_LIST',
   listId
@@ -359,3 +364,11 @@ export const setWindowHandlersAction = () => {
     win.on('close', e => writeConfigAction()(dispatch, getState));
   };
 };
+
+export const showModulesTabAction = () => ({
+  type: 'SHOW_MODULES_TAB',
+});
+
+export const selectSearchTabAction = () => ({
+  type: 'SHOW_SEARCH_TAB',
+});

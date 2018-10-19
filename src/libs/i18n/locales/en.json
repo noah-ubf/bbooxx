@@ -13,6 +13,8 @@
     "tabs.hideModuleList": "Hide Module List",
     "tabs.showSearch": "Show Search",
     "tabs.hideSearch": "Hide Search",
+    "tabs.moduleList": "Modules",
+    "tabs.search": "Search",
 
     "modules.remove": "Remove module",
     "modules.search": "Search modules",
@@ -47,6 +49,7 @@
     "toolbar.closeFullscreen": "Unmaximize",
 
     "verse.xrefs.open": "Open references in new tab",
-    "verse.xrefs.copy": "Copy references"
+    "verse.xrefs.copy": "Copy references",
+    "verse.xrefs.pageAtRight": "View in temporary list"
   }
 }

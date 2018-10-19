@@ -33,6 +33,7 @@ class VerseListWrapper extends Component {
       if (next) nextChapter = () => this.props.selectChapterAction(next);
     }
 
+    const isTab = list.id !== 'search' && list.id !== 'temp';
     return {
       select: true,
       invert: true,
@@ -48,11 +49,11 @@ class VerseListWrapper extends Component {
         return this.props.cutVersesAction(list.id, verses, text, html)
       },
       paste: list.id === 'search' ? null : () => this.props.pasteVersesAction(list.id),
-      strongs: list.id !== 'search' ? (num) => this.props.showStrongsAction(num) : null,
-      xrefs: list.id !== 'search' && verses.some(v => v.getModule().isBible()),
-      zoomIn: list.id !== 'search' ? () => this.props.zoomInAction() : null,
-      zoomOut: list.id !== 'search' ? () => this.props.zoomOutAction() : null,
-      fullscreen: list.id !== 'search' ? () => this.props.toggleFullscreenAction() : null,
+      strongs: isTab ? (num) => this.props.showStrongsAction(num) : null,
+      xrefs: isTab && verses.some(v => v.getModule().isBible()),
+      zoomIn: isTab ? () => this.props.zoomInAction() : null,
+      zoomOut: isTab ? () => this.props.zoomOutAction() : null,
+      fullscreen: isTab ? () => this.props.toggleFullscreenAction() : null,
       prevChapter,
       nextChapter,
     };
@@ -90,6 +91,8 @@ class VerseListWrapper extends Component {
       selectChapterAction={this.props.selectChapterAction}
       addTabListAction={this.props.addTabListAction}
       copyVersesAction={this.props.copyVersesAction}
+      customized={this.props.list.id === 'search' || _.get(this.props.list, 'config.params.customized')}
+      toTempListAction={this.props.toTempListAction}
     />
   }
 }

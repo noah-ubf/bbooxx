@@ -113,6 +113,7 @@ class VerseView extends Component {
       <div className="bx-verse-xref-tools">
         { this.renderButton('addList', 'verse.xrefs.open', () => this.props.addTabListAction(verses), {}) }
         { this.renderButton('copy', 'verse.xrefs.copy', () => this.props.copyVersesAction(verses, '', ''/* TODO */), {}) }
+        { this.renderButton('pageAtRight', 'verse.xrefs.pageAtRight', () => this.props.toTempListAction(verses), {}) }
       </div>
       { links }
     </div>;

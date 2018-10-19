@@ -35,7 +35,6 @@ class Display extends Component {
   }
 
   renderModuleList() {
-    if (this.props.toolbarHidden) return null;
     return (
       <div className="bx-section">
         <ModuleList />
@@ -52,7 +51,7 @@ class Display extends Component {
   // }
 
   // renderSplitter(pos) {
-  //   const label = (pos === 'left' ? this.props.toolbarHidden : !this.props.searchbarHidden)
+  //   const label = (pos === 'left' ? this.props.leftBarHidden : !this.props.rightBarHidden)
   //     ? '> > >' : '< < <';
   //   return (
   //     <div className="bx-vsplitter" onClick={() => this.props.toggleToolbarAction(pos)}>
@@ -67,7 +66,6 @@ class Display extends Component {
   }
 
   renderSearch() {
-    if (this.props.searchbarHidden) return null;
     return (
       <div className="bx-section bx-search-section">
         <div className="bx-searchlist">
@@ -107,11 +105,11 @@ class Display extends Component {
       <div className="bx-tabs">
         <TabBar
           buttonsLeft={[
-            <FormattedMessage id={this.props.toolbarHidden ? 'tabs.showModuleList' : 'tabs.hideModuleList'}>
+            <FormattedMessage id={this.props.leftBarHidden ? 'tabs.showModuleList' : 'tabs.hideModuleList'}>
             {
               titleTranslated => <Button
                 action={() => this.props.toggleToolbarAction('left')}
-                icon={ this.props.toolbarHidden ? 'arrowRightWhite' : 'arrowLeftBlack'}
+                icon={ this.props.leftBarHidden ? 'arrowRightWhite' : 'arrowLeftBlack'}
                 title={titleTranslated}/>
             }
             </FormattedMessage>
@@ -122,11 +120,11 @@ class Display extends Component {
               titleTranslated => <Button action={() => this.props.addTabListAction()} icon="addList" title={titleTranslated}/>
             }
             </FormattedMessage>,
-            <FormattedMessage id={this.props.searchbarHidden ? 'tabs.showSearch' : 'tabs.hideSearch'}>
+            <FormattedMessage id={this.props.rightBarHidden ? 'tabs.showSearch' : 'tabs.hideSearch'}>
             {
               titleTranslated => <Button
                 action={() => this.props.toggleToolbarAction('right')}
-                icon={ this.props.searchbarHidden ? 'arrowLeftWhite' : 'arrowRightBlack'}
+                icon={ this.props.rightBarHidden ? 'arrowLeftWhite' : 'arrowRightBlack'}
                 title={titleTranslated}/>
             }
             </FormattedMessage>
@@ -163,6 +161,53 @@ class Display extends Component {
     </LangContainer>; //TODO
   }
 
+  renderLeftBar() {
+    if (this.props.leftBarHidden) return null;
+    let selected;
+    if (this.props.selectedChapter) selected = this.props.selectedBook.getDescriptor();
+    else if (this.props.selectedBook) selected = this.props.selectedBook.getDescriptor();
+    else selected = this.props.selectedModule.getDescriptor();
+
+    return (<div className="bx-tabs">
+      <div className="bx-selected-descriptor">
+        <span className="mdi bx-selected-descriptor-icon">{'\uf0c0'}</span>
+        { selected }
+      </div>
+      <TabBar
+        tabs={[
+          {
+            id: 'modules',
+            title: (<span><span className="mdi">{'\uf0be'}</span> <FormattedMessage id="tabs.moduleList" /></span>),
+            onSelect: () => this.props.showModulesTabAction(),
+          },{
+            id: 'search',
+            title: (<span><span className="mdi">{'\uf349'}</span> <FormattedMessage id="tabs.search" /></span>),
+            onSelect: () => this.props.selectSearchTabAction(),
+          }
+        ]}
+        selected={ this.props.selectedTabLeft }
+      />
+      <div className="bx-tabs-content">
+        <div key="modules" className={classNames({'bx-tabs-content-item': true, active: this.props.selectedTabLeft === 'modules'})}>
+          { this.renderModuleList() }
+        </div>
+        <div key="search" className={classNames({'bx-tabs-content-item': true, active: this.props.selectedTabLeft === 'search'})}>
+          { this.renderSearch() }
+        </div>
+      </div>
+    </div>);
+  }
+
+  renderRightBar () {
+    if (this.props.rightBarHidden) return null;
+    return (
+      <VerseList
+        key="fullscreen"
+        listId={this.props.tempTab.id}
+      />
+    );
+  }
+
   render() {
     if (!this.props.configLoaded) return this.renderSplash();
     const body = document.getElementsByTagName("BODY")[0];
@@ -185,7 +230,7 @@ class Display extends Component {
               secondaryInitialSize={this.props.modulesWidth || 300}
               onSecondaryPaneSizeChange={w => this.props.saveSectionWidthAction('modules', w)}
             >
-              { this.renderModuleList() }
+              { this.renderLeftBar() }
               <SplitterLayout
                 primaryIndex={0}
                 primaryMinSize={200}
@@ -206,7 +251,7 @@ class Display extends Component {
                     { this.renderStrongs() }
                   </SplitterLayout>
                 </div>
-                { this.renderSearch() }
+                { this.renderRightBar() }
               </SplitterLayout>
             </SplitterLayout>
           </Box>,
@@ -227,10 +272,12 @@ function mapStateToProps(state, props) {
 
   return {
     configLoaded: state.configLoaded,
-    toolbarHidden: state.toolbarHidden,
-    searchbarHidden: state.searchbarHidden,
+    leftBarHidden: state.leftBarHidden,
+    rightBarHidden: state.rightBarHidden,
     tabs: _.filter(lists, l => (l.config.type === 'tab')),
+    tempTab: _.find(lists, l => (l.config.type === 'temp')),
     selectedTab: state.config.selectedTab,
+    selectedTabLeft: state.config.selectedTabLeft,
     fullScreen: state.fullScreen,
     strongNumber: state.strongNumber,
     fontSize: state.config.fontSize || 20,
@@ -239,6 +286,9 @@ function mapStateToProps(state, props) {
     modulesWidth: _.get(state, 'config.window.modulesWidth', 300),
     searchWidth: _.get(state, 'config.window.searchWidth', 300),
     strongsMaxHeight: _.get(state, 'config.window.strongsMaxHeight', 300),
+    selectedModule: state.selectedModule,
+    selectedBook: state.selectedBook,
+    selectedChapter: state.selectedChapter,
   };
 }
 

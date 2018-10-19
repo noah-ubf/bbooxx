@@ -106,6 +106,18 @@ const fileReducer = (state = defaultState, action) => {
         ];
       }
 
+      if (!_.find(lists, l => l.type === 'temp')) {
+        lists = [
+          ...lists,
+          {
+            id: 'temp',
+            type: 'temp',
+            params: {},
+            descriptor: '',
+          }
+        ];
+      }
+
       const selectedTab = _.find(lists, t => (t.id === config.selectedTab))
         ? config.selectedTab
         : _.find(lists, t => (t.type === 'tab')).id;
@@ -123,8 +135,8 @@ const fileReducer = (state = defaultState, action) => {
         selectedModule,
         selectedBook,
         selectedChapter,
-        toolbarHidden: config.toolbarHidden,
-        searchbarHidden: config.searchbarHidden,
+        leftBarHidden: config.leftBarHidden,
+        rightBarHidden: config.rightBarHidden,
         lists: lists.map(li => ({
           id: li.id,
           verses: getListFromDescriptor(li, modulesDict),
@@ -178,6 +190,13 @@ const fileReducer = (state = defaultState, action) => {
       return UIHelper.toggleSearchBar(state);
     }
 
+    case 'SHOW_MODULES_TAB': {
+      return UIHelper.showLeftToolbarTab(state, 'modules');
+    }
+    case 'SHOW_SEARCH_TAB': {
+      return UIHelper.showLeftToolbarTab(state, 'search');
+    }
+
     case 'SECTION_SIZE_CHANGE': {
       return UIHelper.sectionResize(state, action.section, action.size)
     }
@@ -212,6 +231,10 @@ const fileReducer = (state = defaultState, action) => {
 
     case 'ADD_TAB_LIST': {
       return TabHelper.add(state, ModulesHelper.uniqueId(state), action.verses, action.verse);
+    }
+
+    case 'TO_TEMP_LIST': {
+      return TabHelper.toTemp(state, action.verses);
     }
 
     case 'REMOVE_TAB_LIST': {

@@ -13,7 +13,7 @@ class TabBar extends Component {
     return (
       <div className="bx-tabs-bar">
         <div className="bx-tabs-bar-actions">
-          { this.props.buttonsLeft.map((b, i) => <span  key={i}>{ b }</span>) }
+          { this.props.buttonsLeft && this.props.buttonsLeft.map((b, i) => <span  key={i}>{ b }</span>) }
         </div>
         <div className="bx-tabs-bar-tabs">
           {
@@ -27,7 +27,7 @@ class TabBar extends Component {
                   { tab.customized ? '*' : null }
                   { tab.title }
                 </div>
-                <div className="bx-tabs-bar-tab-close">
+                { tab.onRemove && <div className="bx-tabs-bar-tab-close">
                   {
                     this.props.tabs.length > 1 ? (
                       <FormattedMessage id="tabs.close">
@@ -42,13 +42,13 @@ class TabBar extends Component {
                       </FormattedMessage>
                     ) : null
                   }
-                </div>
+                </div> }
               </div>
             ))
           }
         </div>
         <div className="bx-tabs-bar-actions">
-          { this.props.buttonsRight.map((b, i) => <span  key={i}>{ b }</span>) }
+          { this.props.buttonsRight && this.props.buttonsRight.map((b, i) => <span  key={i}>{ b }</span>) }
         </div>
       </div>
     );

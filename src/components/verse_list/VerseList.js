@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from "react-dom";
 import * as _ from 'lodash';
 import {FormattedMessage} from "react-intl";
+import classNames from 'classnames';
 
 import VerseView from './VerseView';
 import Button from '../button/Button';
@@ -291,11 +292,29 @@ class VerseList extends Component {
           {
             _.map(this.props.verses, (v, i) => {
               const oldDescriptor = chDescriptor;
+              const module = v.getModule().getShortName();
+              const bookNum = v.getBook().getNum();
+              const chapter = v.getChapter().getNum();
+              const verse = v.getNum();
+              const href = `go ${module} ${bookNum} ${chapter} ${verse}`;
+              const active = !!this.props.customized;
               chDescriptor = v.getChapter().getDescriptor();
               return [
                 oldDescriptor === chDescriptor
                   ? null
-                  : (<div key={'h' + i} className="bx-verse-list-chapter">{ chDescriptor }</div>),
+                  : (
+                    <div
+                      key={'h' + i}
+                      className={classNames({"bx-verse-list-chapter": true, "active": active})}
+                    >
+                      <span
+                        className="bx-verse-list-chapter-content"
+                        onClick={e => active && this.props.fireLink(href)}
+                      >
+                        { chDescriptor }
+                      </span>
+                    </div>
+                  ),
 
                 <div
                   key={i}
@@ -320,6 +339,7 @@ class VerseList extends Component {
                     selectChapterAction={this.props.selectChapterAction}
                     addTabListAction={this.props.addTabListAction}
                     copyVersesAction={this.props.copyVersesAction}
+                    toTempListAction={this.props.toTempListAction}
                   />
                 </div>
               ]

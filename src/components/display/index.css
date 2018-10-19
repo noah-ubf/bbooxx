@@ -87,3 +87,15 @@
   overflow: hidden;
   display: flex;
 }
+
+.bx-selected-descriptor {
+  padding: 0.5rem 0.25rem;
+  font-weight: bold;
+}
+
+.bx-selected-descriptor-icon {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 2rem;
+  color: #7777dd;
+}

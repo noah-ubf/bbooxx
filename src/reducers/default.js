@@ -4,8 +4,8 @@ export default {
     selectedModule: null,
     selectedBook: null,
     selectedChapter: null,
-    toolbarHidden: false,
-    searchbarHidden: false,
+    leftBarHidden: false,
+    rightBarHidden: true,
     searchHistory: [],
     window: {
       x: null,
@@ -30,6 +30,7 @@ export default {
     strongs: [],
     dictionaries: [],
     selectedTab: null,
+    selectedTabLeft: 'modules',
     fontSize: 20,
     fontSizeFullscreen: 44,
   },

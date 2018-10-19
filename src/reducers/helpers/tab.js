@@ -32,6 +32,33 @@ class TabHelper {
     };
   }
 
+  toTemp(state, verses = []) {
+    return {
+      ...state,
+      config: {
+        ...state.config,
+        lists: state.config.lists.map(l => {
+          if (l.id !== 'temp') return l;
+          return {
+            id: 'temp',
+            type: 'temp',
+            params: {},
+            descriptor: getDescriptorFromList(verses),
+          };
+        }),
+        rightBarHidden: false,
+      },
+      rightBarHidden: false,
+      lists: state.lists.map(l => {
+        if (l.id !== 'temp') return l;
+        return {
+          id: 'temp',
+          verses,
+        };
+      }),
+    };
+  }
+
   remove(state, listId) {
     if (_.filter(state.config.lists, l => l.type === 'tab').length <= 1) return state;
     const selectedTab = (listId === state.config.selectedTab)
