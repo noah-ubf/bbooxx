@@ -15,6 +15,7 @@ import SearchForm from '../search_form/SearchForm';
 import ModuleList from '../module_list/ModuleListWrapper';
 import StrongNumbers from '../strong_numbers/StrongNumbers';
 import Button from '../button/Button';
+import Icon from '../icon/Icon';
 
 import './index.css';
 
@@ -170,18 +171,20 @@ class Display extends Component {
 
     return (<div className="bx-tabs">
       <div className="bx-selected-descriptor">
-        <span className="mdi bx-selected-descriptor-icon">{'\uf0c0'}</span>
+        <span className="mdi bx-selected-descriptor-icon">
+          <Icon name="bookmark"/>
+        </span>
         { selected }
       </div>
       <TabBar
         tabs={[
           {
             id: 'modules',
-            title: (<span><span className="mdi">{'\uf0be'}</span> <FormattedMessage id="tabs.moduleList" /></span>),
+            title: (<span><span className="bx-tab-icon"><Icon name="book"/></span> <FormattedMessage id="tabs.moduleList" /></span>),
             onSelect: () => this.props.showModulesTabAction(),
           },{
             id: 'search',
-            title: (<span><span className="mdi">{'\uf349'}</span> <FormattedMessage id="tabs.search" /></span>),
+            title: (<span><span className="bx-tab-icon"><Icon name="search"/></span> <FormattedMessage id="tabs.search" /></span>),
             onSelect: () => this.props.selectSearchTabAction(),
           }
         ]}

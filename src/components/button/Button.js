@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-
+import Icon from '../icon/Icon';
 
 const ICONS = {
   book: '\uf0be',
@@ -49,16 +49,12 @@ export default props => {
     "bx-button-disabled": props.disabled,
   });
 
-  const renderContent = () => {
-    return (<span className="mdi">{ ICONS[props.icon] || props.children }</span>);
-  }
-
   return (
     <div className={classes} title={props.title} onClick={e => {
       e.stopPropagation();
       props.disabled || (props.action && props.action(e));
     }}>
-      { renderContent() }
+      <Icon name={props.icon} />
     </div>
   );
 }

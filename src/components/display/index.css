@@ -97,10 +97,20 @@
   display: inline-block;
   vertical-align: middle;
   font-size: 2rem;
-  color: #7777dd;
+  fill: #7777dd;
+  width: 2rem;
+  height: 2rem;
 }
 
 .bx-section-placeholder {
   width: 10px;
   background: #ccccff;
+}
+
+.bx-tab-icon {
+  display: inline-block;
+  height: 1.3rem;
+  width: 1.3rem;
+  vertical-align: top;
+  line-height: 1.3rem;
 }

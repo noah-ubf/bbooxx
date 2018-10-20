@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "author": "Oleksandr Zaikin aka Noah<nuh.ubf@gmail.com>",
   "description": "Cross-platform Bible reading and studying",
+  "icon": "./src/assets/img/icon",
   "private": true,
   "devDependencies": {
     "electron": "^1.7.9",

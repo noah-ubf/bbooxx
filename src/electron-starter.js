@@ -15,7 +15,13 @@ let mainWindow;
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({show: false, width: 800, height: 600});
+    mainWindow = new BrowserWindow({
+        show: false,
+        width: 800,
+        height: 600,
+        title: 'Bbooxx',
+        icon: __dirname + '/app/assets/img/icon.png'
+    });
     mainWindow.once('ready-to-show', () => { mainWindow.show(); });
 
     // and load the index.html of the app.

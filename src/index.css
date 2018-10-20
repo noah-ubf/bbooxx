@@ -6,7 +6,7 @@ body {
 }
 
 @font-face {
-  font-family: 'Material Design Icons';
+  font-family: Material Design Icons;
   font-style: normal;
   font-weight: 300;
   src: url(/public/fonts/materialdesignicons-webfont.woff2) format('woff2'),
@@ -17,7 +17,7 @@ body {
 }
 
 .mdi {
-  font-family: "Material Design Icons";
+  font-family: Material Design Icons;
   text-transform: none;
 }
 
@@ -43,9 +43,16 @@ body {
     user-select: none;  
 }
 
+.bx-button svg {
+  margin: 12.5%;
+  width: 75%;
+  height: 75%;
+}
+
 .bx-button:hover {
-  background: #f0f0ff;
-  color: #006600;
+  background: #e0e0ee;
+  color: #007700;
+  fill: #007700;
 }
 
 .bx-button.bx-button-round {
