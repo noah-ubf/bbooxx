@@ -149,10 +149,12 @@ const OBBooks = [
 
 class XRefs {
   obxrefs = {};
+  strongs = {};
   saved = false;
 
   constructor() {
     this.readOBXRefs();
+    this.readStrongs();
   }
 
   readOBXRefs() {
@@ -176,8 +178,20 @@ class XRefs {
       if (!data[b1][c1][v1]) data[b1][c1][v1] = [];
       data[b1][c1][v1].push([b2, c2, v2, b3, c3, v3, w]);
     }
-    console.log(data)
+    // console.log(data)
     this.obxrefs = data;
+  }
+
+  readStrongs() {
+    // console.log('filePath:', remote.app.getAppPath())
+    const filePath = path.join(remote.app.getAppPath(), 'src', 'libs', 'strongs.json');
+    const buf = fs.readFileSync(filePath, 'utf8');
+    try {
+      this.strongs = JSON.parse(buf);
+      // console.log(this.strongs)
+    } catch(e) {
+      
+    }
   }
 
   getOBRefs(verse) {
@@ -191,6 +205,24 @@ class XRefs {
       ...numFromEn(module, [ref[3], ref[4], ref[5]]),
       ref[6],
     ]);
+  }
+
+  getStrongs(verse) {
+    const module = verse.getModule();
+    const bookName = verse.getBook().getStandardName();
+    const chNum = verse.getChapter().getNum();
+    const vNum = verse.getNum();
+    let [b, c, v] = numToEn(module, [bookName, chNum, vNum]);
+    return _.get(this.strongs, [b, c, v], []).map(s => {
+      if ( s.match(/^[hg]/i)) return s;
+      if (verse.getBook().isOT()) {
+        return `H${s}`;
+      }
+      if (verse.getBook().isNT()) {
+        return `G${s}`;
+      }
+      return s;
+    });
   }
 
 

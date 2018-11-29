@@ -7,6 +7,7 @@ import {FormattedMessage} from "react-intl";
 
 import * as Actions from '../../actions/file';
 import Button from '../button/Button';
+import Icon from '../icon/Icon';
 
 import './index.css';
 
@@ -142,7 +143,8 @@ class SearchForm extends Component {
         <div className="bx-search-form-blocker-count"><FormattedMessage id="search.found" />: <span>{ this.props.foundCount }</span></div>
         <div className="bx-search-form-blocker-stop">
           <button onClick={() => this.props.searchStopAction()}>
-            <span className="mdi">{ '\uF0AD' }</span>
+            <Icon name="cancel" width="24" height="24" fill="red"/>
+            <br/>
             <FormattedMessage id="search.stop" />
           </button>
         </div>

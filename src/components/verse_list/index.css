@@ -148,3 +148,16 @@
 .bs-verse-xrefs:hover .bx-verse-xref-tools {
   visibility: visible;
 }
+
+.bx-verse-icon {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  color: #99d5cc;
+  fill: #99d5cc;
+  line-height: 1em;
+  vertical-align: middle;
+}
+.bx-verse-icon svg {
+  width: 100%;
+}

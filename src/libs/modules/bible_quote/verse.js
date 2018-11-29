@@ -152,6 +152,12 @@ export default class Verse {
     return this.xrefs;
   }
 
+  getStrongs() {
+    if (!this.getModule().isBible() || this.getModule().hasStrongNumbers()) return [];
+    if (!this.strongs) this.strongs = XRefs.getStrongs(this);
+    return this.strongs;
+  }
+
   getPlainText() {
     return this.getLexems().filter(l => l.t !== 'strong').map(l => l.text).join(' ').replace(/ ([.,;:!?)])/g, '$1');
   }

@@ -85,6 +85,10 @@ export default class Chapter {
   }
 
   getVerses(v1=null, v2=null) {
+    return this._getVerses(v1, v2);
+  }
+
+  _getVerses(v1=null, v2=null) {
     this.parse();
     if (_.isNull(v1)) return this.verses.map(v => v.getNewInstance()).filter(v => (v.getNum() > 0));
     else if (_.isNull(v2)) return this.verses.filter(v => (v.getNum() === +v1)).map(v => v.getNewInstance());

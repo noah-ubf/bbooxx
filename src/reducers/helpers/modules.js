@@ -59,7 +59,7 @@ class ModulesHelper {
       ? [ ...state.config.lists, targetList ]
       : state.config.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, descriptor }));
     const lists = isNewList
-      ? [ ...state.lists, { id: targetList.id, verses } ]
+      ? [ ...state.lists, { id: targetList.id, chapter, verses } ]
       : state.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, chapter, verses }));
 
     return {

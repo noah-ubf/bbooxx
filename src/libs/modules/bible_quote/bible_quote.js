@@ -1,6 +1,11 @@
+// const electron = window.require('electron');
+// const remote = electron.remote;
+// const fs = remote.require('fs');
+// const path = remote.require('path');
 import * as _ from 'lodash';
 
 import Book from './book';
+// import { numToEn } from '../../numeration';
 
 
 export default class BibleQuoteModule {
@@ -19,7 +24,36 @@ export default class BibleQuoteModule {
       ChapterZero: this.config.ChapterZero,
       num: i + 1,
     }));
+    // this.convStrongs();
   }
+
+  // convStrongs() {
+  //   if (this.hasStrongNumbers()) {
+  //     let strongs = {};
+  //     this.getBooks().forEach(b => {
+  //       const bookName = b.getStandardName();
+  //       b.getChapters().forEach(c => {
+  //         const chNum = c.getNum();
+  //         c.getVerses().forEach(v => {
+  //           const vNum = v.getNum();
+  //           const enNum = numToEn(this, [bookName, chNum, vNum]);
+  //           let verseStrongs = v.getLexems().filter(l => l.t === 'strong').map(l => l.text);
+  //           // console.log(enNum)
+  //           if (!strongs[enNum[0]]) strongs[enNum[0]] = {};
+  //           if (!strongs[enNum[0]][enNum[1]]) strongs[enNum[0]][enNum[1]] = {};
+  //           if (!strongs[enNum[0]][enNum[1]][enNum[2]]) strongs[enNum[0]][enNum[1]][enNum[2]] = [];
+  //           strongs[enNum[0]][enNum[1]][enNum[2]] = [
+  //             ...strongs[enNum[0]][enNum[1]][enNum[2]],
+  //             ...verseStrongs,
+  //           ];
+  //         });
+  //       });
+  //     });
+  //     console.log('#STRONGS  = ', strongs)
+  //     const filePathW = path.join(remote.app.getAppPath(), 'src', 'libs', this.getShortName() + '-strongs.json');
+  //     fs.writeFileSync(filePathW, JSON.stringify(strongs));
+  //   }
+  // }
 
   getDescriptor() {
     const name = this.getShortName();

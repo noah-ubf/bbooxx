@@ -5,23 +5,6 @@ body {
   font-size: 1em;
 }
 
-@font-face {
-  font-family: Material Design Icons;
-  font-style: normal;
-  font-weight: 300;
-  src: url(/public/fonts/materialdesignicons-webfont.woff2) format('woff2'),
-    url(/public/fonts/materialdesignicons-webfont.woff) format('woff'),
-    url(/public/fonts/materialdesignicons-webfont.ttf) format('ttf'),
-    url(/public/fonts/materialdesignicons-webfont.svg) format('svg'),
-    url(/public/fonts/materialdesignicons-webfont.eot) format('eot');
-}
-
-.mdi {
-  font-family: Material Design Icons;
-  text-transform: none;
-}
-
-
 .bx-button {
   flex-shrink: 0;
   flex-grow: 0;

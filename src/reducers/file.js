@@ -13,7 +13,7 @@ import UIHelper from './helpers/ui';
 
 
 const fileReducer = (state = defaultState, action) => {
-  console.log('ACTION: ', action);
+  // console.log('ACTION: ', action);
   switch (action.type) {
     case 'ADD_MODULE': {
       const shortName = action.module.getShortName();

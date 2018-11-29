@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import LexemList from '../lexem_list/LexemList';
 import Button from '../button/Button';
+import Icon from '../icon/Icon';
 
 import "./index.css"
 
@@ -99,7 +100,7 @@ class VerseView extends Component {
       return <span
         className="bx-verse-xref"
         key={xref}
-        onClick={() => this.props.addTabListAction(xrefVerses)}
+        onClick={e => {e.stopPropagation(); this.props.toTempListAction(xrefVerses);}}
         title={ text }
       >
       {
@@ -115,7 +116,28 @@ class VerseView extends Component {
         { this.renderButton('copy', 'verse.xrefs.copy', () => this.props.copyVersesAction(verses, '', ''/* TODO */), {}) }
         { this.renderButton('pageAtRight', 'verse.xrefs.pageAtRight', () => this.props.toTempListAction(verses), {}) }
       </div>
+      <span className="bx-verse-icon"><Icon name="xrefs"/></span>
       { links }
+    </div>;
+  }
+
+  renderStrongs() {
+    const module = this.props.verse.getModule();
+    if (module.hasStrongNumbers()) return null;
+
+    const strongs = this.props.verse.getStrongs();
+
+    return <div className="bs-verse-xrefs">
+    <span className="bx-verse-icon"><Icon name="hash"/></span>
+    {
+      strongs.map((num, i) => <span key={i}>
+        <span
+          className="bx-t-strong"
+          onClick={e => {e.stopPropagation(); this.displayStrong(num);}}
+        >{ num }</span>
+        {" "}
+      </span>)
+    }
     </div>;
   }
 
@@ -131,6 +153,7 @@ class VerseView extends Component {
       >
       { this.renderHeader() }
       { this.props.showContent ? this.renderContent(lexems) : null }
+      { this.props.showStrongs ? this.renderStrongs() : null }
       { this.props.showXRefs ? this.renderXRefs() : null }
       </div>
     );

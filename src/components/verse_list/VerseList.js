@@ -153,7 +153,7 @@ class VerseList extends Component {
         : null
       ),
       (group1 || group2 ? <div key="separator2" className="bx-toolbar-separator"></div> : null),
-      (tools.strongs && this.props.verses.some(v => v.hasStrongs())
+      (tools.strongs && this.props.verses.some(v => v.getModule().isBible())
         ? this.renderButton('hash', 'toolbar.strongs', () => this.toggleStrongs(), {highlighted: this.state.showStrongs})
         : null
       ),
@@ -231,6 +231,7 @@ class VerseList extends Component {
   // }
 
   dragStart(e) {
+    console.log(e)
     if (!this.props.reorder) return;
     this.dragged = e.currentTarget;
     e.dataTransfer.effectAllowed = 'move';
