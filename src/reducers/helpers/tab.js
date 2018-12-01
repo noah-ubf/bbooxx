@@ -47,6 +47,7 @@ class TabHelper {
             type: 'temp',
             params: {},
             descriptor: getDescriptorFromList(verses),
+            customized: true,
           };
         }),
         rightBarHidden: false,

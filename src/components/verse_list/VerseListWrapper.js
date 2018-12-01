@@ -91,7 +91,7 @@ class VerseListWrapper extends Component {
       selectChapterAction={this.props.selectChapterAction}
       addTabListAction={this.props.addTabListAction}
       copyVersesAction={this.props.copyVersesAction}
-      customized={this.props.list.id === 'search' || _.get(this.props.list, 'config.params.customized')}
+      customized={this.props.list.id === 'search' || this.props.list.id === 'temp' || _.get(this.props.list, 'config.params.customized')}
       toTempListAction={this.props.toTempListAction}
     />
   }
