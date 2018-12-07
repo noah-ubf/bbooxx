@@ -9,7 +9,7 @@ import * as Actions from '../../actions/file';
 import LeftBar from './LeftBar';
 
 
-class ModuleListWrapper extends Component {
+class LeftBarWrapper extends Component {
   fontSizeUI;
 
   render() {
@@ -41,4 +41,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(Actions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModuleListWrapper);
+export default connect(mapStateToProps, mapDispatchToProps)(LeftBarWrapper);

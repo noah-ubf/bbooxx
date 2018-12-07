@@ -27,7 +27,7 @@ class TabHelper {
         ...state.lists,
         {
           id,
-          verses,
+          verses: verses.map(v => ({v})),
         },
       ],
       selectedVerse: verse,
@@ -51,13 +51,14 @@ class TabHelper {
           };
         }),
         rightBarHidden: false,
+        selectedTabRight: 'temp',
       },
       rightBarHidden: false,
       lists: state.lists.map(l => {
         if (l.id !== 'temp') return l;
         return {
           id: 'temp',
-          verses,
+          verses: verses.map(v => ({v})),
         };
       }),
     };
@@ -89,7 +90,6 @@ class TabHelper {
 
   select(state, listId) {
     const tabOrder = _.chain(state.tabOrder).without(listId).unshift(listId).value();
-    console.log('==>', tabOrder)
     const selectedTab = listId || _.chain(state.config.lists).find(l => (l.type === 'tab')).get('id').value();
     const li = _.find(state.lists, l => (l.id === selectedTab));
     const newState =  {

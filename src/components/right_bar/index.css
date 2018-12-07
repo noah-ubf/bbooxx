@@ -1,0 +1,38 @@
+.bx-temptab-section {
+  flex-grow: 50;
+  flex-shrink: 70;
+  min-width: 30%;
+}
+
+.bx-templist {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  max-width: 400vw;
+}
+
+
+.bx-paralleltab-section {
+  flex-grow: 50;
+  flex-shrink: 70;
+  min-width: 30%;
+}
+
+.bx-parallellist {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
+  max-width: 400vw;
+}
+
+.bx-parallel-select {
+  font-size: 1.2rem;
+  padding: 0.25rem;
+}
+
+.bx-parallel-select option {
+  max-width: 30vw;
+  overflow: hidden;
+}

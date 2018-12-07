@@ -118,6 +118,18 @@ const fileReducer = (state = defaultState, action) => {
         ];
       }
 
+      if (!_.find(lists, l => l.type === 'parallel')) {
+        lists = [
+          ...lists,
+          {
+            id: 'parallel',
+            type: 'parallel',
+            params: {},
+            descriptor: '',
+          }
+        ];
+      }
+
       const selectedTab = _.find(lists, t => (t.id === config.selectedTab))
         ? config.selectedTab
         : _.find(lists, t => (t.type === 'tab')).id;
@@ -140,7 +152,7 @@ const fileReducer = (state = defaultState, action) => {
         rightBarHidden: config.rightBarHidden,
         lists: lists.map(li => ({
           id: li.id,
-          verses: getListFromDescriptor(li, modulesDict),
+          verses: getListFromDescriptor(li, modulesDict).map(v => ({v})),
           chapter: _.get(li, 'params.customized')
             ? null : getChapterFromDescriptor(li, modulesDict),
         })),
@@ -166,6 +178,10 @@ const fileReducer = (state = defaultState, action) => {
     */
     case 'SELECT_MODULE': {
       return ModulesHelper.selectModule(state, action.module);
+    }
+
+    case 'SELECT_PARALLEL_BIBLE': {
+      return ModulesHelper.selectParallelBible(state, action.moduleShortName);
     }
 
     case 'REMOVE_MODULE': {
@@ -199,6 +215,13 @@ const fileReducer = (state = defaultState, action) => {
       return UIHelper.showLeftToolbarTab(state, 'search');
     }
 
+    case 'SHOW_TEMP_TAB': {
+      return UIHelper.showRightToolbarTab(state, 'temp');
+    }
+    case 'SHOW_PARALLEL_TAB': {
+      return UIHelper.showRightToolbarTab(state, 'parallel');
+    }
+
     case 'SECTION_SIZE_CHANGE': {
       return UIHelper.sectionResize(state, action.section, action.size)
     }
@@ -217,6 +240,53 @@ const fileReducer = (state = defaultState, action) => {
 
     case 'SEARCH_BREAK': {
       return SearchHelper.break(state);
+    }
+
+    case 'SELECT_VERSES': {
+      return {
+        ...state,
+        lists: state.lists.map(l => {
+          if (l.id !== action.listId) return l;
+          return {
+            ...l,
+            verses: l.verses.map(v => {
+              if (action.verses.indexOf(v) === -1) return v;
+              return { ...v, selected: true }
+            })
+          };
+        }),
+      };
+    }
+
+    case 'DESELECT_VERSES': {
+      return {
+        ...state,
+        lists: state.lists.map(l => {
+          if (l.id !== action.listId) return l;
+          return {
+            ...l,
+            verses: l.verses.map(v => {
+              if (action.verses.indexOf(v) === -1) return v;
+              return { ...v, selected: false }
+            })
+          };
+        }),
+      };
+    }
+
+    case 'SELECT_INVERSE': {
+      return {
+        ...state,
+        lists: state.lists.map(l => {
+          if (l.id !== action.listId) return l;
+          return {
+            ...l,
+            verses: l.verses.map(v => {
+              return { ...v, selected: !v.selected }
+            })
+          };
+        }),
+      };
     }
 
     case 'COPY_VERSES': {
@@ -283,7 +353,7 @@ const fileReducer = (state = defaultState, action) => {
         if (l.id !== action.listId) return l;
         const verses = [...l.verses];
         verses.splice(action.to, 0, verses.splice(action.from, 1)[0]);
-        descriptor = getDescriptorFromList(verses);
+        descriptor = getDescriptorFromList(verses.map(v => v.v));
         return {
           ...l,
           verses,

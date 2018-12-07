@@ -90,17 +90,16 @@ export default class Chapter {
 
   _getVerses(v1=null, v2=null) {
     this.parse();
-    if (_.isNull(v1)) return this.verses.map(v => v.getNewInstance()).filter(v => (v.getNum() > 0));
-    else if (_.isNull(v2)) return this.verses.filter(v => (v.getNum() === +v1)).map(v => v.getNewInstance());
+    if (_.isNull(v1)) return this.verses.filter(v => (v.getNum() > 0));
+    else if (_.isNull(v2)) return this.verses.filter(v => (v.getNum() === +v1));
     else return _.chain(this.verses)
       .filter(v => (v.getNum() >= +v1 && v.getNum() <= +v2))
-      .map(v => v.getNewInstance())
       .value();
   }
 
   search(words, options) {
     return _.chain(this.getVerses())
-      .map(v => v.matches(words, options) ? v.getNewInstance() : null)
+      .map(v => v.matches(words, options) ? v : null)
       .compact()
       .value();
   }

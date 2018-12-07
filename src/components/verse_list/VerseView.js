@@ -13,30 +13,30 @@ import "./index.css"
 class VerseView extends Component {
   renderHeader() {
     if (!this.props.showHeader) return null;
-    const module = this.props.verse.getModule().getShortName();
-    const bookNum = this.props.verse.getBook().getNum();
-    const chapter = this.props.verse.getChapter().getNum();
-    const verse = this.props.verse.getNum();
+    const module = this.props.verse.v.getModule().getShortName();
+    const bookNum = this.props.verse.v.getBook().getNum();
+    const chapter = this.props.verse.v.getChapter().getNum();
+    const verse = this.props.verse.v.getNum();
     const href = `go ${module} ${bookNum} ${chapter} ${verse}`;
     return (
       <span className="bx-verse-header">
         <span onClick={e => {e.stopPropagation(); this.fireLink(href);}}>
-          { this.props.verse.getHeader() }
+          { this.props.verse.v.getHeader() }
         </span>
       </span>
     );
   }
 
   renderVerseNum() {
-    if (this.props.showHeader || !this.props.verse.getModule().isBible()) return null;
+    if (this.props.showHeader || !this.props.verse.v.getModule().isBible()) return null;
     return (
-      <span className="bx-verse-num">{ this.props.verse.getNum() }</span>
+      <span className="bx-verse-num">{ this.props.verse.v.getNum() }</span>
     );
   }
 
   displayStrong(num) {
     if (this.props.displayStrong) {
-      const kind = this.props.verse.getBook().isOT() ? 'H' : 'G';
+      const kind = this.props.verse.v.getBook().isOT() ? 'H' : 'G';
       num = (num.match(/^(H|G)/i) ? num : `${kind}${num}`);
       this.props.displayStrong(num);
     }
@@ -50,14 +50,14 @@ class VerseView extends Component {
   renderContent(lexems) {
     return (
       <span
-        dir={this.props.verse.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
-        title={this.props.verse.getHeader()}
+        dir={this.props.verse.v.getModule().isRightToLeft() ? 'rtl' : 'ltr'}
+        title={this.props.verse.v.getHeader()}
       >
         { this.renderVerseNum() }
         <LexemList
           lexems={lexems}
           fireLink={ href => this.fireLink(href) }
-          displayStrong={ this.props.showStrongs && this.props.verse.hasStrongs() ? (num => this.displayStrong(num)) : null }
+          displayStrong={ this.props.showStrongs && this.props.verse.v.hasStrongs() ? (num => this.displayStrong(num)) : null }
         />
       </span>
     );
@@ -74,8 +74,8 @@ class VerseView extends Component {
   }
 
   renderXRefs() {
-    const xrefs = this.props.verse.getXRefs();
-    const module = this.props.verse.getModule();
+    const xrefs = this.props.verse.v.getXRefs();
+    const module = this.props.verse.v.getModule();
     if (!xrefs) return null;
     let verses = [];
     const links = xrefs.map(xref => {
@@ -122,10 +122,10 @@ class VerseView extends Component {
   }
 
   renderStrongs() {
-    const module = this.props.verse.getModule();
+    const module = this.props.verse.v.getModule();
     if (module.hasStrongNumbers()) return null;
 
-    const strongs = this.props.verse.getStrongs();
+    const strongs = this.props.verse.v.getStrongs();
 
     return <div className="bs-verse-xrefs">
     <span className="bx-verse-icon"><Icon name="hash"/></span>
@@ -142,14 +142,14 @@ class VerseView extends Component {
   }
 
   render() {
-    const lexems = this.props.verse.getLexems();
-    if (lexems.length === 0 && this.props.verse.getText().trim() === '') return null;
-    if (this.props.verse.getNum() === 0) return null;
+    const lexems = this.props.verse.v.getLexems();
+    if (lexems.length === 0 && this.props.verse.v.getText().trim() === '') return null;
+    if (this.props.verse.v.getNum() === 0) return null;
     return (
       <div
         className={classNames({"bx-verse" : true, "selected": this.props.selected, 'bx-highlighted': this.props.highlighted})}
         onClick={e => this.props.onClick(e)}
-        title={this.props.verse.getHeader()}
+        title={this.props.verse.v.getHeader()}
       >
       { this.renderHeader() }
       { this.props.showContent ? this.renderContent(lexems) : null }

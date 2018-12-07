@@ -36,7 +36,7 @@ class SearchHelper {
     return {
       ...state,
       searchInProgress: false,
-      lists: state.lists.map(l => ((l.id === 'search') ? { ...l, verses: [...state.searchResult] } : l)),
+      lists: state.lists.map(l => ((l.id === 'search') ? { ...l, verses: state.searchResult.map(v => ({v})) } : l)),
     };
   }
 

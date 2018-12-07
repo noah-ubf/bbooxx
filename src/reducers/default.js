@@ -2,6 +2,7 @@ export default {
   config: {
     modules: {},
     selectedModule: null,
+    parallelModule: null,
     selectedBook: null,
     selectedChapter: null,
     leftBarHidden: false,
@@ -31,6 +32,7 @@ export default {
     dictionaries: [],
     selectedTab: null,
     selectedTabLeft: 'modules',
+    selectedTabRight: 'temp',
     fontSize: 20,
     fontSizeFullscreen: 44,
   },
@@ -38,6 +40,7 @@ export default {
   modules: [],
   books: [],
   selectedModule: null,
+  parallelModule: null,
   selectedBook: null,
   selectedChapter: null,
   selectedVerse: null,

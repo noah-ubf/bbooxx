@@ -271,6 +271,23 @@ export const searchStopAction = () => {
   } 
 };
 
+export const selectVersesAction = (listId, verses) => ({
+  type: 'SELECT_VERSES',
+  listId,
+  verses,
+});
+
+export const deselectVersesAction = (listId, verses) => ({
+  type: 'DESELECT_VERSES',
+  listId,
+  verses,
+});
+
+export const selectInverseAction = (listId) => ({
+  type: 'SELECT_INVERSE',
+  listId,
+});
+
 export const copyVersesAction = (verses, text, html) => ({
   type: 'COPY_VERSES',
   verses,
@@ -371,4 +388,17 @@ export const showModulesTabAction = () => ({
 
 export const selectSearchTabAction = () => ({
   type: 'SHOW_SEARCH_TAB',
+});
+
+export const showTempListTabAction = () => ({
+  type: 'SHOW_TEMP_TAB',
+});
+
+export const selectParallelTabAction = () => ({
+  type: 'SHOW_PARALLEL_TAB',
+});
+
+export const selectParallelBibleAction = moduleShortName => ({
+  type: 'SELECT_PARALLEL_BIBLE',
+  moduleShortName
 });

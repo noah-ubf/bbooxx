@@ -14,6 +14,7 @@ import VerseList from '../verse_list/VerseListWrapper';
 import StrongNumbers from '../strong_numbers/StrongNumbers';
 import Button from '../button/Button';
 import LeftBar from '../left_bar/LeftBarWrapper';
+import RightBar from '../right_bar/RightBarWrapper';
 
 import './index.css';
 
@@ -127,12 +128,7 @@ class Display extends Component {
 
   renderRightBar () {
     if (this.props.rightBarHidden) return null;
-    return (
-      <VerseList
-        key="fullscreen"
-        listId="temp"
-      />
-    );
+    return (<RightBar />);
   }
 
   render() {

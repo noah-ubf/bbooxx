@@ -42,22 +42,6 @@ export default class Verse {
     }
   }
 
-  getNewInstance() {
-    return new Verse().clone(this);
-  }
-
-  clone(verse) {
-    this.params = verse.params;
-    this.text = verse.text;
-    this.numText = verse.numText;
-    this.header = verse.header;
-    this.lexems = verse.lexems;
-    this.strongsCount = verse.strongsCount;
-    this.debug = verse.debug;
-    this.xrefs = verse.xrefs;
-    return this;
-  }
-
   getDescriptor() {
     if (_.isNull(this.descriptor)) {
       const module = this.params.module.getShortName();

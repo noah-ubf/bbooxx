@@ -14,6 +14,8 @@
     "tabs.showSearch": "Show Search",
     "tabs.hideSearch": "Hide Search",
     "tabs.moduleList": "Modules",
+    "tabs.tempList": "Temp",
+    "tabs.parallelList": "Parallel",
     "tabs.search": "Search",
 
     "modules.remove": "Remove module",

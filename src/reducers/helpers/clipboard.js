@@ -7,7 +7,8 @@ import { getListFromDescriptor, getDescriptorFromList } from '../../libs/modules
 
 class ClipboardHelper {
   copy(state, verses, text, html) {
-    const descriptor = getDescriptorFromList(verses);
+    console.log(verses)
+    const descriptor = getDescriptorFromList(verses.map(v => v.v));
     clipboard.write({
       text: `<BBOOXX:${descriptor}>\n${text || ''}`,
       html: `<head>
@@ -20,7 +21,7 @@ class ClipboardHelper {
     })
     return {
       ...state,
-      buffer: verses,
+      buffer: verses.map(v => v.v),
     };
   }
 
@@ -47,7 +48,7 @@ class ClipboardHelper {
       if (l.id !== listId) return l;
       return {
         ...l,
-        descriptor: getDescriptorFromList(verses),
+        descriptor: getDescriptorFromList(verses.map(v => v.v)),
         params: {
           ...l.params,
           customized: true
@@ -84,7 +85,7 @@ class ClipboardHelper {
           .find(l => l.id === listId)
           .get('verses')
           .value(),
-        ...state.buffer.map(v => v.getNewInstance()),
+        ...state.buffer.map(v => ({v})),
       ];
     }
 
@@ -101,7 +102,7 @@ class ClipboardHelper {
       if (l.id !== listId) return l;
       return {
         ...l,
-        descriptor: getDescriptorFromList(verses),
+        descriptor: getDescriptorFromList(verses.map(v => v.v)),
         params: {
           ...l.params,
           customized: true

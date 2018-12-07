@@ -12,7 +12,7 @@ import './index.css';
 class VerseListWrapper extends Component {
   getToolbar() {
     const list = this.props.list;
-    const verses = _.get(list, 'verses', []);
+    const verses = _.get(list, 'verses', []).map(v => v.v);
     if (!list) return null;
     if (this.props.fullScreen) {
       return {
@@ -26,31 +26,32 @@ class VerseListWrapper extends Component {
     let prevChapter = null;
     let nextChapter = null;
     const chapter = _.get(this.props.list, 'chapter');
-    if (chapter) {
+    if (chapter && list.config.type !== 'temp') {
       const prev = chapter.getPrevChapter();
       const next = chapter.getNextChapter();
       if (prev) prevChapter = () => this.props.selectChapterAction(prev);
       if (next) nextChapter = () => this.props.selectChapterAction(next);
     }
 
-    const isTab = list.id !== 'search' && list.id !== 'temp';
+    const isTab = list.config.type === 'tab';
+    const isParallel = list.config.type === 'parallel';
     return {
       select: true,
       invert: true,
-      remove: verses => this.props.removeVersesAction(list.id, verses),
+      remove: isTab ? verses => this.props.removeVersesAction(list.id, verses) : null,
       copy: verses => {
-        const text = verses.map(v => v.getText().replace(/<[^>]+>/g, '')).join('\n');
-        const html = verses.map(v => v.getText()).join('\n');
+        const text = verses.map(v => v.v.getText().replace(/<[^>]+>/g, '')).join('\n');
+        const html = verses.map(v => v.v.getText()).join('\n');
         return this.props.copyVersesAction(verses, text, html)
       },
-      cut: verses => {
-        const text = verses.map(v => v.getText().replace(/<[^>]+>/g, '')).join('\n');
-        const html = verses.map(v => v.getText()).join('\n');
+      cut: isTab ? verses => {
+        const text = verses.map(v => v.v.getText().replace(/<[^>]+>/g, '')).join('\n');
+        const html = verses.map(v => v.v.getText()).join('\n');
         return this.props.cutVersesAction(list.id, verses, text, html)
-      },
-      paste: list.id === 'search' ? null : () => this.props.pasteVersesAction(list.id),
-      strongs: isTab ? (num) => this.props.showStrongsAction(num) : null,
-      xrefs: isTab && verses.some(v => v.getModule().isBible()),
+      } : null,
+      paste: isTab ? () => this.props.pasteVersesAction(list.id) : null,
+      strongs: isTab || isParallel ? (num) => this.props.showStrongsAction(num) : null,
+      xrefs: (isTab || isParallel) && verses.some(v => v.getModule().isBible()),
       zoomIn: isTab ? () => this.props.zoomInAction() : null,
       zoomOut: isTab ? () => this.props.zoomOutAction() : null,
       fullscreen: isTab ? () => this.props.toggleFullscreenAction() : null,
@@ -93,6 +94,9 @@ class VerseListWrapper extends Component {
       copyVersesAction={this.props.copyVersesAction}
       customized={this.props.list.id === 'search' || this.props.list.id === 'temp' || _.get(this.props.list, 'config.params.customized')}
       toTempListAction={this.props.toTempListAction}
+      selectVersesAction={verses => this.props.selectVersesAction(this.props.list.id, verses)}
+      deselectVersesAction={verses => this.props.deselectVersesAction(this.props.list.id, verses)}
+      selectInverseAction={() => this.props.selectInverseAction(this.props.list.id)}
     />
   }
 }
@@ -106,7 +110,7 @@ function mapStateToProps(state, props) {
 
   let selectedVerse = null;
   if (list.id === state.config.selectedTab) {
-    selectedVerse = _.find(list.verses, v => (v.getNum() === state.selectedVerse));
+    selectedVerse = _.find(list.verses, v => (v.v.getNum() === state.selectedVerse));
     // console.log('STATE***: ', state, props, selectedVerse)
   }
 

@@ -137,6 +137,16 @@ class UIHelper {
       },
     };
   }
+
+  showRightToolbarTab(state, id) {
+    return {
+      ...state,
+      config: {
+        ...state.config,
+        selectedTabRight: id,
+      },
+    };
+  }
 };
 
 export default new UIHelper();

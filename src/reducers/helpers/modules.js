@@ -26,6 +26,66 @@ class ModulesHelper {
     };
   }
 
+  selectParallelBible(state, moduleShortName) {
+    const parallelModule = moduleShortName && state.modulesDict[moduleShortName];
+    const newState = {
+      ...state,
+      config: {
+        ...state.config,
+        parallelModule: moduleShortName,
+      },
+      parallelModule,
+    };
+    return this.syncParallelBible(newState);
+  }
+
+  syncParallelBible(state) {
+    if (!state.parallelModule) {
+      const lists = state.lists.map(l => {
+      if (l.id !== 'parallel') return l;
+
+      return {
+        ...l,
+        verses: [],
+      };
+    });
+      return {
+        ...state,
+        lists,
+      }
+    }
+    if (state.rightBarHidden || state.config.selectedTabRight !== 'parallel') return state;
+    const selectedTab = state.config.selectedTab;
+    const selectedList = state.lists.find(l => (l.id === selectedTab));
+    if (!selectedList.chapter) return state;
+
+    // const listConfigs = state.config.lists.map(l => {
+    //   if (l.id !== 'parallel') return l;
+    // });
+
+    const book = state.parallelModule.getBookByNum(selectedList.chapter.getBook().getNum());
+    const chapter = book.getChapterByNum(selectedList.chapter.getNum());
+    const verses = chapter.getVerses().map(v => ({v}));
+
+    const lists = state.lists.map(l => {
+      if (l.id !== 'parallel') return l;
+
+      return {
+        ...l,
+        verses,
+      };
+    });
+
+    return {
+      ...state,
+      // config: {
+      //   ...state.config,
+      //   lists: listConfigs,
+      // },
+      lists,
+    }
+  }
+
   selectBook(state, book) {
     if (book.getChapters().length === 1) {
       return this.selectChapter(state, book.getChapters()[0]);
@@ -45,7 +105,7 @@ class ModulesHelper {
   }
 
   selectChapter(state, chapter, verse) {
-    const verses = chapter.getVerses();
+    const verses = chapter.getVerses().map(v => ({v}));
     const descriptor = chapter.getDescriptor();
     let targetList = _.find(state.config.lists, l => (l.id === state.config.selectedTab && !_.get(l, 'params.customized')))
       || _.find(state.config.lists, l => (l.type === 'tab' && !_.get(l, 'params.customized') && _.get(l, 'descriptor', '') === ''));
@@ -62,7 +122,7 @@ class ModulesHelper {
       ? [ ...state.lists, { id: targetList.id, chapter, verses } ]
       : state.lists.map(l => ((l.id !==targetList.id) ? l : { ...l, chapter, verses }));
 
-    return {
+    const newState = {
       ...state,
       config: {
         ...state.config,
@@ -79,6 +139,8 @@ class ModulesHelper {
       books: chapter.getModule().getBooks(),
       lists
     };
+
+    return this.syncParallelBible(newState);
   }
 
   uniqueId(state) {

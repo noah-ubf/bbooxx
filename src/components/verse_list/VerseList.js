@@ -14,7 +14,6 @@ placeholder.className = "placeholder";
 
 class VerseList extends Component {
   state = {
-    selected: [],
     showStrongs: false,
     showXRefs: false,
     highlighted: null,
@@ -29,7 +28,7 @@ class VerseList extends Component {
   setHighlighted(highlighted) {
     this.setState({ highlighted });
     let i = this.props.verses.indexOf(highlighted);
-    if (i === -1) i = 0;
+    if (i === -1) return; // i = 'top';
     if (this.refs[i]) {
       this.refs[i].scrollIntoView({block: 'center', behavior: 'smooth'});
     }
@@ -55,9 +54,6 @@ class VerseList extends Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     // console.log('componentDidUpdate: ', prevProps, prevState, snapshot)
     if (prevProps.verses !== this.props.verses) {
-      this.setState({
-        selected: _.filter(this.props.verses, v => (this.state.selected.indexOf(v) !== -1)),
-      });
       this.setHighlighted(this.props.highlighted)
     }
     if (prevProps.highlighted !== this.props.highlighted) {
@@ -95,8 +91,8 @@ class VerseList extends Component {
     );
   }
 
-  renderToolbarButtons() {
-    const allSelected = (this.state.selected.length === this.props.verses.length);
+  renderToolbarButtons() { //
+    const allSelected = this.props.verses.every(v => v.selected);
     const tools = this.props.toolbar || {};
     const group1 = tools.select || tools.invert;
     const group2 = tools.remove || tools.copy || tools.paste;
@@ -135,9 +131,9 @@ class VerseList extends Component {
         ? this.renderButton('invert', 'toolbar.invertSelection', () => this.invertSelection())
         : null
       ),
-      (group1 && group2 ? <div key="separator" className="bx-toolbar-separator"></div> : null),
+      (group1 && group2 ? <div key="separator" className="bx-toolbar-separator"></div> : null), //
       (tools.remove
-        ? this.renderButton('trash', 'toolbar.removeSelected', () => tools.remove(this.state.selected))
+        ? this.renderButton('trash', 'toolbar.removeSelected', () => tools.remove(this.props.verses.filter(v => v.selected)))
         : null
       ),
       (tools.copy
@@ -152,8 +148,8 @@ class VerseList extends Component {
         ? this.renderButton('paste', 'toolbar.paste', () => tools.paste())
         : null
       ),
-      (group1 || group2 ? <div key="separator2" className="bx-toolbar-separator"></div> : null),
-      (tools.strongs && this.props.verses.some(v => v.getModule().isBible())
+      (group1 || group2 ? <div key="separator2" className="bx-toolbar-separator"></div> : null), //
+      (tools.strongs && this.props.verses.some(v => v.v.getModule().isBible())
         ? this.renderButton('hash', 'toolbar.strongs', () => this.toggleStrongs(), {highlighted: this.state.showStrongs})
         : null
       ),
@@ -177,30 +173,36 @@ class VerseList extends Component {
         ? this.renderButton('closeFullscreen', 'toolbar.closeFullscreen', () => tools.closeFullscreen())
         : null
       ),
-      (((group1 || group2 || group3) && tools.text) ? <div key="separator3" className="bx-toolbar-separator"></div> : null),
+      (((group1 || group2 || group3) && tools.text) ? <div key="separator3" className="bx-toolbar-separator"></div> : null), //
       (tools.text
         ? <div key="text" className="bx-toolbar-text">{ tools.text }</div> : null
       )
     ];
   }
 
+  getSelected() { //
+    let selected = this.props.verses.filter(v => v.selected);
+    if (selected.length === 0) selected = this.props.verses;
+    return selected;
+  }
+
   copy() {
     const tools = this.props.toolbar || {};
-    return tools.copy(this.state.selected.length > 0 ? this.state.selected : this.props.verses);
+    return tools.copy(this.getSelected());
   }
 
   cut() {
     const tools = this.props.toolbar || {};
-    return tools.cut(this.state.selected.length > 0 ? this.state.selected : this.props.verses);
+    return tools.cut(this.getSelected());
   }
 
   isSelected(verse) {
-    return (this.state.selected.indexOf(verse) !== -1);
+    return !!verse.selected;
   }
 
   toggleSelect(verse) {
-    if (this.isSelected(verse)) this.setState({selected: _.filter(this.state.selected, v => (v !== verse))});
-    else this.setState({selected: [...this.state.selected, verse]})
+    if (verse.selected) this.props.deselectVersesAction([verse]);
+    else this.props.selectVersesAction([verse]);
   }
 
   toggleXRefs() {
@@ -212,15 +214,15 @@ class VerseList extends Component {
   }
 
   selectAll() {
-    this.setState({selected: [...this.props.verses]});
+    this.props.selectVersesAction(this.props.verses);
   }
 
   deselectAll() {
-    this.setState({selected: []});
+    this.props.deselectVersesAction(this.props.verses);
   }
 
   invertSelection() {
-    this.setState({selected: _.filter(this.props.verses, v => !this.isSelected(v))});
+    this.props.selectInverseAction(this.props.verses);
   }
 
   // enterFullscreenMode() {
@@ -231,7 +233,7 @@ class VerseList extends Component {
   // }
 
   dragStart(e) {
-    console.log(e)
+    // console.log(e)
     if (!this.props.reorder) return;
     this.dragged = e.currentTarget;
     e.dataTransfer.effectAllowed = 'move';
@@ -245,7 +247,7 @@ class VerseList extends Component {
     if (!this.props.reorder || !this.dragged) return;
     this.dragged.style.display = 'block';
     placeholder.parentNode.removeChild(placeholder);
-    
+
     // update state
     var from = Number(this.dragged.dataset.id);
     var to = Number(this.over.dataset.id);
@@ -290,16 +292,17 @@ class VerseList extends Component {
           onScroll={event => this.rememberScroll(event)}
           ref="content"
         >
+          <div ref="top" />
           {
             _.map(this.props.verses, (v, i) => {
               const oldDescriptor = chDescriptor;
-              const module = v.getModule().getShortName();
-              const bookNum = v.getBook().getNum();
-              const chapter = v.getChapter().getNum();
-              const verse = v.getNum();
+              const module = v.v.getModule().getShortName();
+              const bookNum = v.v.getBook().getNum();
+              const chapter = v.v.getChapter().getNum();
+              const verse = v.v.getNum();
               const href = `go ${module} ${bookNum} ${chapter} ${verse}`;
               const active = !!this.props.customized;
-              chDescriptor = v.getChapter().getDescriptor();
+              chDescriptor = v.v.getChapter().getDescriptor();
               return [
                 oldDescriptor === chDescriptor
                   ? null
@@ -336,7 +339,7 @@ class VerseList extends Component {
                     fireLink={this.props.fireLink}
                     displayStrong={this.props.displayStrong}
                     showContent={true}
-                    highlighted={this.state.highlighted && this.state.highlighted.getNum() === v.getNum()}
+                    highlighted={this.state.highlighted && this.state.highlighted.v.getNum() === v.v.getNum()}
                     selectChapterAction={this.props.selectChapterAction}
                     addTabListAction={this.props.addTabListAction}
                     copyVersesAction={this.props.copyVersesAction}
